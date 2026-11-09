@@ -1,0 +1,9 @@
+{"data": {"metrics": [
+  {"name": "sleep_analysis", "units": "hr", "data": [
+    {"date": "2026-01-11 00:00:00 +0300", "asleep": 6.5, "inBed": 7.0, "inBedStart": "2026-01-11 00:10:00 +0300", "inBedEnd": "2026-01-11 07:10:00 +0300"}
+  ]},
+  {"name": "step_count", "units": "count", "data": [{"date": "2026-01-10 00:00:00 +0300", "qty": 10500}]}
+], "workouts": [
+  {"name": "Indoor Cycling", "start": "2026-01-11 18:30:00 +0300", "duration": 2400,
+   "activeEnergy": {"qty": 250, "units": "kcal"}, "avgHeartRate": {"qty": 128}, "maxHeartRate": {"qty": 140}}
+]}}

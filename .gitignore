@@ -1,0 +1,10 @@
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.venv/
+# never commit real health data or credentials to this public repo
+data/
+state/
+inbox/
+*.key.json
+service-account*.json
