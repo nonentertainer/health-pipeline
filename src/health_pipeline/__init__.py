@@ -1,3 +1,3 @@
-"""Incremental ETL from Health Auto Export (Apple Health) into tidy daily CSVs."""
+"""Incremental ETL from Apple Health (iOS Shortcut or Health Auto Export) into tidy daily CSVs."""
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

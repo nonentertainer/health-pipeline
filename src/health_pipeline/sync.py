@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Iterable, Protocol
 
-from . import parse_hae
+from . import parse_hae, parse_shortcut
 from .model import DAILY_COLUMNS, WORKOUT_COLUMNS
 from .store import CsvTable, MergeReport
 
@@ -67,9 +67,12 @@ def run(sources: Iterable[Source], data_dir: str, state_path: str, full: bool = 
                 continue
             try:
                 doc = parse_hae.load(src.download(f))
-                days = parse_hae.parse_metrics(doc)
+                if parse_shortcut.is_shortcut_payload(doc):
+                    days, wk = parse_shortcut.parse(doc), []
+                else:
+                    days, wk = parse_hae.parse_metrics(doc), parse_hae.parse_workouts(doc)
                 daily.merge(({"date": d, **vals} for d, vals in sorted(days.items())), res.daily)
-                workouts.merge(parse_hae.parse_workouts(doc), res.workouts)
+                workouts.merge(wk, res.workouts)
             except Exception as e:  # one bad file must not block the rest
                 res.files_failed.append(f"{f.name}: {type(e).__name__}")
                 continue

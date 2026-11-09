@@ -1,11 +1,14 @@
 # Copy to .github/workflows/sync.yml in your PRIVATE data repository.
-# Secrets needed there: GDRIVE_SA_KEY (service account JSON), GDRIVE_FOLDER_ID.
+# Shortcut route needs no secrets. Drive route needs GDRIVE_SA_KEY and GDRIVE_FOLDER_ID.
 name: sync
 
 on:
+  # the iOS Shortcut POSTs here: /repos/nonentertainer/health-data/dispatches {"event_type":"health", "client_payload":{...}}
+  repository_dispatch:
+    types: [health]
+  # optional Drive source (Health Auto Export); harmless without the secrets
   schedule:
     - cron: "15 5 * * *"    # 08:15 Europe/Istanbul
-    - cron: "15 10 * * *"   # 13:15, picks up late sleep/HRV revisions
   workflow_dispatch:
     inputs:
       full:
@@ -29,17 +32,34 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install "health-pipeline[drive] @ git+https://github.com/nonentertainer/health-pipeline@v0.1.0"
+      - run: pip install "health-pipeline[drive] @ git+https://github.com/nonentertainer/health-pipeline@v0.2.0"
+
+      - name: Save Shortcut payload to inbox
+        if: github.event_name == 'repository_dispatch'
+        env:
+          PAYLOAD: ${{ toJson(github.event.client_payload) }}
+        run: |
+          python - <<'PY'
+          import json, os, datetime
+          payload = json.loads(os.environ["PAYLOAD"])
+          day = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=3))).strftime("%Y-%m-%d")
+          os.makedirs("inbox/shortcut", exist_ok=True)
+          with open(f"inbox/shortcut/{day}.json", "w", encoding="utf-8") as f:
+              json.dump(payload, f, ensure_ascii=False, indent=1, sort_keys=True)
+          print("saved", f"inbox/shortcut/{day}.json", "keys:", ", ".join(sorted(payload)))
+          PY
+
       - name: Sync
         env:
           GDRIVE_SA_KEY: ${{ secrets.GDRIVE_SA_KEY }}
           GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
         run: health-pipeline sync --data-dir data --state state/sync_state.json --inbox inbox ${{ inputs.full && '--full' || '' }}
+
       - name: Commit
         run: |
           git config user.name "health-pipeline[bot]"
           git config user.email "health-pipeline@users.noreply.github.com"
-          git add data state
+          git add data state inbox
           if git diff --cached --quiet; then echo "no changes"; exit 0; fi
-          git commit -m "sync $(date -u +%Y-%m-%dT%H:%MZ)"
+          git commit -m "sync ${{ github.event_name }} $(date -u +%Y-%m-%dT%H:%MZ)"
           git push

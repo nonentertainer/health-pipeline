@@ -1,0 +1,57 @@
+import json
+import os
+
+import pytest
+
+from health_pipeline import parse_shortcut as ps
+from health_pipeline import sync
+from health_pipeline.sources.local import LocalSource
+
+FX = os.path.join(os.path.dirname(__file__), "fixtures")
+
+
+@pytest.mark.parametrize("text,expected", [
+    ("30,1", 30.1), ("10.234", 10234), ("1.234,5", 1234.5), ("87.75", 87.75), ("87,75", 87.75),
+    ("12 345", 12345), ("57 bpm", 57), ("0.965", 0.965), ("1,234,567", 1234567), ("2.5", 2.5),
+    ("", None), ("abc", None), (42, 42.0),
+])
+def test_parse_number_locales(text, expected):
+    assert ps.parse_number(text) == expected
+
+
+def test_night_assignment():
+    from datetime import datetime
+    assert ps.night_of(datetime(2026, 1, 11, 7, 25)) == "2026-01-11"
+    assert ps.night_of(datetime(2026, 1, 10, 23, 50)) == "2026-01-11"
+    assert ps.night_of(datetime(2026, 1, 11, 15, 0)) == "2026-01-11"   # afternoon nap -> same day
+
+
+def test_payload_turkish():
+    with open(os.path.join(FX, "shortcut_tr.json"), encoding="utf-8") as f:
+        doc = json.load(f)
+    assert ps.is_shortcut_payload(doc)
+    days = ps.parse(doc)
+    assert days["2026-01-09"]["steps"] == 10234 and days["2026-01-09"]["active_kcal"] == 512.4
+    assert days["2026-01-11"]["hrv_ms"] == 29.8 and days["2026-01-11"]["weight_kg"] == 87.75
+    n = days["2026-01-11"]
+    # asleep = 23:40-02:30 (overlapping deep segments merged) + 03:00-07:15 = 170 + 255
+    assert n["sleep_min"] == 425
+    assert n["sleep_deep_min"] == 80 and n["sleep_rem_min"] == 60 and n["sleep_awake_min"] == 30
+    assert n["in_bed_min"] == 480 and n["sleep_start"] == "2026-01-10 23:40" and n["sleep_end"] == "2026-01-11 07:15"
+    assert days["2026-01-10"]["sleep_min"] == 420  # "Uykuda" (unspecified) counts as asleep
+
+
+def test_flat_payload_and_detection():
+    days = ps.parse({"date": "11.01.2026", "hrv_ms": "31,5", "steps": 9000})
+    assert days == {"2026-01-11": {"hrv_ms": 31.5, "steps": 9000.0}}
+    assert not ps.is_shortcut_payload({"data": {"metrics": []}})
+
+
+def test_sync_routes_shortcut_payload(tmp_path):
+    inbox = tmp_path / "inbox"
+    inbox.mkdir()
+    (inbox / "2026-01-11.json").write_text(open(os.path.join(FX, "shortcut_tr.json"), encoding="utf-8").read(), encoding="utf-8")
+    r = sync.run([LocalSource(str(inbox))], str(tmp_path / "data"), str(tmp_path / "s.json"))
+    assert r.files_processed == 1 and sorted(r.daily.added) == ["2026-01-09", "2026-01-10", "2026-01-11"]
+    csv = (tmp_path / "data" / "daily.csv").read_text()
+    assert "2026-01-11,425,80,60," in csv
