@@ -32,7 +32,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install "health-pipeline[drive] @ git+https://github.com/nonentertainer/health-pipeline@v0.2.0"
+      - run: pip install "health-pipeline[drive] @ git+https://github.com/nonentertainer/health-pipeline@v0.3.1"
 
       - name: Save Shortcut payload to inbox
         if: github.event_name == 'repository_dispatch'

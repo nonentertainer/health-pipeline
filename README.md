@@ -38,12 +38,12 @@ flowchart LR
 | Group | Columns |
 |---|---|
 | Sleep (minutes, night ending on `date`) | `sleep_min`, `sleep_deep_min`, `sleep_rem_min`, `sleep_core_min`, `sleep_awake_min`, `in_bed_min`, `sleep_start`, `sleep_end` |
-| Heart | `hrv_ms`, `resting_hr_bpm`, `hr_min_bpm`, `hr_avg_bpm`, `hr_max_bpm` |
+| Heart | `hrv_ms`, `resting_hr_bpm`, `hr_min_bpm`, `hr_avg_bpm`, `hr_max_bpm`, `walking_hr_bpm`, `vo2max` |
 | Recovery signals | `resp_rate_bpm`, `spo2_pct`, `wrist_temp_c` |
-| Activity | `steps`, `active_kcal`, `basal_kcal`, `distance_km`, `exercise_min` |
-| Body | `weight_kg`, `body_fat_pct` |
+| Activity | `steps`, `active_kcal`, `basal_kcal`, `distance_km`, `exercise_min`, `flights` |
+| Body | `weight_kg`, `body_fat_pct`, `lean_mass_kg`, `bmi` |
 
-`data/workouts.csv`: `start`, `date`, `name`, `duration_min`, `distance_km`, `active_kcal`, `hr_avg_bpm`, `hr_max_bpm`.
+`data/workouts.csv`: `start`, `date`, `name`, `end`, `duration_min`, `distance_km`, `active_kcal`, `hr_avg_bpm`, `hr_max_bpm`.
 
 Units are normalised on the way in: kJ → kcal, miles/metres → km, lb → kg, °F → °C, SpO₂ fractions → percent, hours → minutes.
 
@@ -54,8 +54,9 @@ Units are normalised on the way in: kJ → kcal, miles/metres → km, lb → kg,
 3. **Shortcut.** Build a Shortcut that, for each metric, runs *Find Health Samples* (last 3 days, grouped by day), formats each result as `YYYY-MM-DD=value`, joins them with `;`, and finally calls *Get Contents of URL*:
    - `POST https://api.github.com/repos/<owner>/<data-repo>/dispatches`
    - Headers: `Authorization: Bearer <token>`, `Accept: application/vnd.github+json`
-   - JSON body: `{"event_type": "health", "client_payload": {"source": "shortcut", "steps": "...", "active_kcal": "...", "hrv_ms": "...", "resting_hr_bpm": "...", "sleep": "..."}}`
-   - Sleep is sent as raw segments `start|end|stage;...` with `start`/`end` formatted `yyyy-MM-dd'T'HH:mm`.
+   - JSON body: `{"event_type": "health", "client_payload": {"source": "shortcut", "metrics": {"steps": "...", "hrv_ms": "...", ...}, "sleep": "...", "workouts": "..."}}` (GitHub caps `client_payload` at 10 top-level keys, so metrics are nested).
+   - Building 18 near-identical blocks by hand is error-prone, so [`tools/build_shortcut.py`](tools/build_shortcut.py) generates the whole Shortcut (128 actions) from a small hand-built reference: it clones the reference's own action dictionaries, so parameter shapes match what the Shortcuts app actually writes. Sign it on a Mac with `shortcuts sign -i Saglik_unsigned.shortcut -o Saglik.shortcut` and open it.
+   - Sleep is sent as raw segments `start|end|stage;...`, workouts as `start|end|name|kcal|km;...`, timestamps formatted `yyyy-MM-dd'T'HH:mm`.
    - Payload format is documented in [`parse_shortcut.py`](src/health_pipeline/parse_shortcut.py).
 4. **Automation.** Shortcuts → Automation → *App* → "is opened" (an app you open every morning) → *Run Immediately*.
 
@@ -89,6 +90,7 @@ src/health_pipeline/
   sources/drive.py  Google Drive via service account (recursive, oldest first)
   sources/local.py  local inbox folder
   cli.py            `health-pipeline sync`
+tools/build_shortcut.py  generates the iOS Shortcut from a hand-built reference (clone, don't guess)
 tests/              synthetic fixtures: Shortcut payload (Turkish locale) and both Health Auto Export schemas
 ```
 

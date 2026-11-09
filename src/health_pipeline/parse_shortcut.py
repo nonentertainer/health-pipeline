@@ -5,16 +5,19 @@ Health and sends the values as plain strings. Everything that is easy to get
 wrong on a phone (day bucketing, sleep-stage overlaps, locale number formats)
 happens here, where it is tested.
 
-Payload (GitHub ``repository_dispatch`` ``client_payload``)::
+Payload (GitHub ``repository_dispatch`` ``client_payload``; GitHub allows at most
+10 top-level keys, so metrics are nested)::
 
     {
       "source": "shortcut",
-      "steps":          "2026-11-07=10.234;2026-11-08=8.120",   # Health "group by day" output
-      "active_kcal":    "2026-11-07=512,4;2026-11-08=430",
-      "hrv_ms":         "2026-11-08=30,1;2026-11-09=29,8",
-      "resting_hr_bpm": "2026-11-08=57;2026-11-09=57,3",
-      "weight_kg":      "2026-11-09=87,75",
-      "sleep":          "2026-11-08T23:40|2026-11-09T02:10|Çekirdek;2026-11-09T02:10|2026-11-09T02:55|Derin;..."
+      "metrics": {
+        "steps":          "2026-11-07=10.234;2026-11-08=8.120",   # Health "group by day" output
+        "active_kcal":    "2026-11-07=512,4;2026-11-08=430",
+        "hrv_ms":         "2026-11-08=30,1;2026-11-09=29,8",
+        ...                                                        # any daily column or alias
+      },
+      "sleep":    "2026-11-08T23:40|2026-11-09T02:10|Çekirdek;...",
+      "workouts": "2026-11-08T18:06|2026-11-08T18:27|Bisiklet|172|;..."   # start|end|name|kcal|km
     }
 
 Any metric key of the daily schema may appear as ``"YYYY-MM-DD=value;..."``.
@@ -44,6 +47,24 @@ STAGES = {
     "asleep": "asleep", "uykuda": "asleep", "asleep unspecified": "asleep", "uyku": "asleep",
 }
 ASLEEP = {"core", "deep", "rem", "asleep"}
+# HKCategoryValueSleepAnalysis raw values, in case a Shortcut prints numbers
+STAGE_CODES = {"0": "in_bed", "1": "asleep", "2": "awake", "3": "core", "4": "deep", "5": "rem"}
+# substring checks, most specific first ("Asleep Core", "Çekirdek Uyku", "Uykuda (Derin)" ...)
+STAGE_WORDS = [("in_bed", ("in bed", "yatakta", "yatak")), ("awake", ("awake", "uyanık", "uyanik")),
+               ("deep", ("deep", "derin")), ("rem", ("rem",)), ("core", ("core", "çekirdek", "cekirdek", "hafif", "light")),
+               ("asleep", ("asleep", "uykuda", "uyku", "sleep"))]
+
+
+def stage_of(text: str) -> str | None:
+    t = str(text).strip().lower()
+    if t in STAGES:
+        return STAGES[t]
+    if t in STAGE_CODES:
+        return STAGE_CODES[t]
+    for stage, words in STAGE_WORDS:
+        if any(w in t for w in words):
+            return stage
+    return None
 
 _NUM = re.compile(r"[-+]?[\d.,   ]*\d")
 
@@ -154,7 +175,7 @@ def parse_sleep(value: Any) -> dict[str, dict[str, Any]]:
         if len(parts) < 3:
             continue
         s, e = parse_dt(parts[0]), parse_dt(parts[1])
-        stage = STAGES.get(parts[2].strip().lower())
+        stage = stage_of(parts[2])
         if not s or not e or e <= s or not stage:
             continue
         segs[night_of(e)][stage].append((s, e))
@@ -178,16 +199,71 @@ def parse_sleep(value: Any) -> dict[str, dict[str, Any]]:
     return out
 
 
+# Short or Turkish keys a Shortcut may use, mapped onto the daily schema.
+ALIASES = {
+    "steps": "steps", "adim": "steps", "adım": "steps",
+    "kcal": "active_kcal", "active_energy": "active_kcal", "aktif_enerji": "active_kcal", "kalori": "active_kcal",
+    "basal_energy": "basal_kcal", "resting_energy": "basal_kcal", "dinlenme_enerjisi": "basal_kcal",
+    "hrv": "hrv_ms", "rhr": "resting_hr_bpm", "resting_hr": "resting_hr_bpm", "nabiz": "resting_hr_bpm",
+    "hr": "hr_avg_bpm", "heart_rate": "hr_avg_bpm", "walking_hr": "walking_hr_bpm",
+    "resp": "resp_rate_bpm", "respiratory_rate": "resp_rate_bpm", "spo2": "spo2_pct", "oxygen": "spo2_pct",
+    "temp": "wrist_temp_c", "wrist_temp": "wrist_temp_c", "body_temp": "wrist_temp_c",
+    "distance": "distance_km", "km": "distance_km", "exercise": "exercise_min", "flights_climbed": "flights",
+    "weight": "weight_kg", "kilo": "weight_kg", "body_fat": "body_fat_pct", "lean_mass": "lean_mass_kg",
+    "vo2": "vo2max", "cardio_fitness": "vo2max",
+}
+
+
+def _flatten(doc: dict) -> dict:
+    """Shortcut payloads nest metrics under "metrics" (GitHub caps client_payload at 10 top-level keys)."""
+    out = {k: v for k, v in doc.items() if k != "metrics"}
+    m = doc.get("metrics")
+    if isinstance(m, dict):
+        out.update(m)
+    return out
+
+
 def is_shortcut_payload(doc: Any) -> bool:
-    if not isinstance(doc, dict) or "data" in doc or "metrics" in doc:
+    if not isinstance(doc, dict) or "data" in doc:
         return False
-    return doc.get("source") == "shortcut" or "sleep" in doc or any(k in QUANTITY_KEYS for k in doc)
+    if "metrics" in doc and not isinstance(doc["metrics"], dict):  # Health Auto Export puts a list here
+        return False
+    flat = _flatten(doc)
+    return flat.get("source") == "shortcut" or "sleep" in flat or "workouts" in flat or any(
+        k in QUANTITY_KEYS or k in ALIASES for k in flat)
+
+
+def parse_workouts(value: Any) -> list[dict[str, Any]]:
+    """'start|end|name|kcal|km;...' (kcal and km optional) -> workout rows."""
+    rows = []
+    raw = value if isinstance(value, list) else re.split(r"[;\n]", str(value or ""))
+    for item in raw:
+        parts = [p.strip() for p in (item if isinstance(item, (list, tuple)) else str(item).split("|"))]
+        if len(parts) < 3:
+            continue
+        s, e = parse_dt(parts[0]), parse_dt(parts[1])
+        if not s or not e or e < s:
+            continue
+        kcal = parse_number(parts[3]) if len(parts) > 3 else None
+        km = parse_number(parts[4]) if len(parts) > 4 else None
+        rows.append({
+            "start": s.strftime("%Y-%m-%d %H:%M"),
+            "end": e.strftime("%Y-%m-%d %H:%M"),
+            "date": s.strftime("%Y-%m-%d"),
+            "name": parts[2],
+            "duration_min": (e - s).total_seconds() / 60,
+            "active_kcal": kcal,
+            "distance_km": km,
+        })
+    return rows
 
 
 def parse(doc: dict) -> dict[str, dict[str, Any]]:
     days: dict[str, dict[str, Any]] = defaultdict(dict)
+    doc = _flatten(doc)
     flat_date = parse_date(doc["date"]) if doc.get("date") else None
     for key, value in doc.items():
+        key = ALIASES.get(key.lower(), key) if isinstance(key, str) else key
         if key == "sleep":
             for night, rec in parse_sleep(value).items():
                 days[night].update(rec)

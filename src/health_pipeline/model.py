@@ -24,6 +24,8 @@ DAILY_COLUMNS: list[str] = [
     "hr_min_bpm",
     "hr_avg_bpm",
     "hr_max_bpm",
+    "walking_hr_bpm",
+    "vo2max",
     # recovery signals
     "resp_rate_bpm",
     "spo2_pct",
@@ -34,15 +36,19 @@ DAILY_COLUMNS: list[str] = [
     "basal_kcal",
     "distance_km",
     "exercise_min",
+    "flights",
     # body
     "weight_kg",
     "body_fat_pct",
+    "lean_mass_kg",
+    "bmi",
 ]
 
 WORKOUT_COLUMNS: list[str] = [
     "start",
     "date",
     "name",
+    "end",
     "duration_min",
     "distance_km",
     "active_kcal",
@@ -57,6 +63,7 @@ ROUNDING: dict[str, int] = {
     "hrv_ms": 1, "resting_hr_bpm": 1, "hr_min_bpm": 0, "hr_avg_bpm": 1, "hr_max_bpm": 0,
     "resp_rate_bpm": 1, "spo2_pct": 1, "wrist_temp_c": 2,
     "steps": 0, "active_kcal": 0, "basal_kcal": 0, "distance_km": 2, "exercise_min": 0,
-    "weight_kg": 2, "body_fat_pct": 1,
+    "weight_kg": 2, "body_fat_pct": 1, "lean_mass_kg": 2, "bmi": 1,
+    "walking_hr_bpm": 1, "vo2max": 1, "flights": 0,
     "duration_min": 1,
 }

@@ -68,7 +68,8 @@ def run(sources: Iterable[Source], data_dir: str, state_path: str, full: bool = 
             try:
                 doc = parse_hae.load(src.download(f))
                 if parse_shortcut.is_shortcut_payload(doc):
-                    days, wk = parse_shortcut.parse(doc), []
+                    days = parse_shortcut.parse(doc)
+                    wk = parse_shortcut.parse_workouts(parse_shortcut._flatten(doc).get("workouts"))
                 else:
                     days, wk = parse_hae.parse_metrics(doc), parse_hae.parse_workouts(doc)
                 daily.merge(({"date": d, **vals} for d, vals in sorted(days.items())), res.daily)
