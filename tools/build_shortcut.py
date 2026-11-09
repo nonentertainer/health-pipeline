@@ -37,8 +37,13 @@ METRICS = [
     ("temp", "Wrist Temperature"),
     ("vo2max", "Cardio Fitness"),
 ]
-DAYS_BACK = "3"
-SLEEP_DAYS_BACK = "2"
+# Find Health Samples raises "no samples found" (and stops the Shortcut) on an empty result,
+# and Shortcuts has no try/catch. So never ask for "the last 3 days": ask for the latest
+# 3 days *that have data* within a wide window. Gaps (watch not worn, no weigh-in) then
+# just return older days, which the pipeline upserts harmlessly.
+WINDOW_DAYS = "30"
+LATEST_DAYS = 3
+SLEEP_WINDOW_DAYS = "7"
 
 
 def U() -> str:
@@ -99,7 +104,7 @@ class Builder:
         self.out.append(a)
         return a
 
-    def find_samples(self, hk_type: str, days: str, group_day: bool) -> str:
+    def find_samples(self, hk_type: str, days: str, group_day: bool, latest: int | None = None) -> str:
         p = copy.deepcopy(self.t_find["WFWorkflowActionParameters"])
         uid = U()
         p["UUID"] = uid
@@ -109,7 +114,13 @@ class Builder:
         type_f["Values"]["Enumeration"]["Value"] = hk_type
         date_f["Values"]["Number"] = days
         p["WFContentItemFilter"]["Value"]["WFActionParameterFilterTemplates"] = [type_f, date_f]
-        p["WFContentItemLimitEnabled"] = False
+        if latest:
+            p["WFContentItemSortProperty"] = "Start Date"
+            p["WFContentItemSortOrder"] = "Latest First"
+            p["WFContentItemLimitEnabled"] = True
+            p["WFContentItemLimitNumber"] = latest
+        else:
+            p["WFContentItemLimitEnabled"] = False
         if group_day:
             p["WFHKSampleFilteringGroupBy"] = "Day"
         else:
@@ -159,7 +170,7 @@ class Builder:
 
     # ---- blocks -------------------------------------------------------------
     def metric_block(self, key: str, hk_type: str) -> None:
-        found = self.find_samples(hk_type, DAYS_BACK, group_day=True)
+        found = self.find_samples(hk_type, WINDOW_DAYS, group_day=True, latest=LATEST_DAYS)
         gid = self.repeat_start(found)
         d = self.format_date(None, "yyyy-MM-dd")
         self.text([out_token("Biçimlendirilmiş Tarih", d), "=", var_token("Repeat Item")])
@@ -167,7 +178,7 @@ class Builder:
         self.set_var(key, self.combine(end))
 
     def sleep_block(self) -> None:
-        found = self.find_samples("Sleep", SLEEP_DAYS_BACK, group_day=False)
+        found = self.find_samples("Sleep", SLEEP_WINDOW_DAYS, group_day=False)
         gid = self.repeat_start(found)
         s = self.format_date("Start Date", "yyyy-MM-dd'T'HH:mm")
         e = self.format_date("End Date", "yyyy-MM-dd'T'HH:mm")

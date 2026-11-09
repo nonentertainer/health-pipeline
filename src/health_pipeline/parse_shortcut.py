@@ -180,6 +180,10 @@ def parse_sleep(value: Any) -> dict[str, dict[str, Any]]:
             continue
         segs[night_of(e)][stage].append((s, e))
     out: dict[str, dict[str, Any]] = {}
+    # The Shortcut queries a fixed window, so the oldest night can start before the window
+    # and arrive truncated. Drop it rather than overwrite a complete earlier record.
+    if len(segs) >= 2:
+        segs.pop(min(segs))
     for night, by_stage in segs.items():
         asleep = _union([iv for st in ASLEEP for iv in by_stage.get(st, [])])
         if not asleep:

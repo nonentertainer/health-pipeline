@@ -38,7 +38,8 @@ def test_payload_turkish():
     assert n["sleep_min"] == 425
     assert n["sleep_deep_min"] == 80 and n["sleep_rem_min"] == 60 and n["sleep_awake_min"] == 30
     assert n["in_bed_min"] == 480 and n["sleep_start"] == "2026-01-10 23:40" and n["sleep_end"] == "2026-01-11 07:15"
-    assert days["2026-01-10"]["sleep_min"] == 420  # "Uykuda" (unspecified) counts as asleep
+    # the oldest night may be cut by the query window, so it is dropped
+    assert "sleep_min" not in days.get("2026-01-10", {})
 
 
 def test_flat_payload_and_detection():
@@ -117,3 +118,8 @@ def test_realistic_shortcut_output():
     assert n["hrv_ms"] == 29.8 and n["resting_hr_bpm"] == 57.3 and n["spo2_pct"] == 96 and n["wrist_temp_c"] == 36.2
     assert n["sleep_min"] == 140 and n["sleep_deep_min"] == 50 and n["sleep_awake_min"] == 20
     assert "weight_kg" not in n
+
+
+def test_single_night_is_kept_and_unspecified_counts_as_asleep():
+    d = ps.parse({"source": "shortcut", "sleep": "2026-01-09T23:55|2026-01-10T06:55|Uykuda"})
+    assert d["2026-01-10"]["sleep_min"] == 420
