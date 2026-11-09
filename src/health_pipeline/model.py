@@ -21,6 +21,7 @@ DAILY_COLUMNS: list[str] = [
     # heart
     "hrv_ms",
     "resting_hr_bpm",
+    "sleep_hr_bpm",
     "hr_min_bpm",
     "hr_avg_bpm",
     "hr_max_bpm",
@@ -30,12 +31,15 @@ DAILY_COLUMNS: list[str] = [
     "resp_rate_bpm",
     "spo2_pct",
     "wrist_temp_c",
+    "skin_temp_delta_c",
     # activity
     "steps",
     "active_kcal",
     "basal_kcal",
+    "total_kcal",
     "distance_km",
     "exercise_min",
+    "active_zone_min",
     "flights",
     # body
     "weight_kg",
@@ -52,6 +56,8 @@ WORKOUT_COLUMNS: list[str] = [
     "duration_min",
     "distance_km",
     "active_kcal",
+    "total_kcal",
+    "steps",
     "hr_avg_bpm",
     "hr_max_bpm",
 ]
@@ -61,8 +67,8 @@ ROUNDING: dict[str, int] = {
     "sleep_min": 0, "sleep_deep_min": 0, "sleep_rem_min": 0, "sleep_core_min": 0,
     "sleep_awake_min": 0, "in_bed_min": 0,
     "hrv_ms": 1, "resting_hr_bpm": 1, "hr_min_bpm": 0, "hr_avg_bpm": 1, "hr_max_bpm": 0,
-    "resp_rate_bpm": 1, "spo2_pct": 1, "wrist_temp_c": 2,
-    "steps": 0, "active_kcal": 0, "basal_kcal": 0, "distance_km": 2, "exercise_min": 0,
+    "resp_rate_bpm": 1, "spo2_pct": 1, "wrist_temp_c": 2, "skin_temp_delta_c": 2, "sleep_hr_bpm": 0,
+    "steps": 0, "active_kcal": 0, "basal_kcal": 0, "total_kcal": 0, "active_zone_min": 0, "distance_km": 2, "exercise_min": 0,
     "weight_kg": 2, "body_fat_pct": 1, "lean_mass_kg": 2, "bmi": 1,
     "walking_hr_bpm": 1, "vo2max": 1, "flights": 0,
     "duration_min": 1,

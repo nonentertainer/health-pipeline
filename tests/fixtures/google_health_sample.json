@@ -1,0 +1,572 @@
+{
+ "daily-heart-rate-variability": [
+  {
+   "dataSource": {
+    "recordingMethod": "DERIVED",
+    "device": {
+     "formFactor": "FITNESS_BAND",
+     "displayName": "Fitbit Air"
+    },
+    "platform": "FITBIT"
+   },
+   "dailyHeartRateVariability": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 11
+    },
+    "averageHeartRateVariabilityMilliseconds": 41.2,
+    "nonRemHeartRateBeatsPerMinute": "52",
+    "entropy": 2.7,
+    "deepSleepRootMeanSquareOfSuccessiveDifferencesMilliseconds": 44.0
+   }
+  },
+  {
+   "dataSource": {
+    "recordingMethod": "DERIVED",
+    "device": {
+     "formFactor": "FITNESS_BAND",
+     "displayName": "Fitbit Air"
+    },
+    "platform": "FITBIT"
+   },
+   "dailyHeartRateVariability": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 10
+    },
+    "averageHeartRateVariabilityMilliseconds": 38,
+    "nonRemHeartRateBeatsPerMinute": "54"
+   }
+  }
+ ],
+ "daily-resting-heart-rate": [
+  {
+   "dataSource": {
+    "recordingMethod": "DERIVED",
+    "device": {
+     "formFactor": "FITNESS_BAND",
+     "displayName": "Fitbit Air"
+    },
+    "platform": "FITBIT"
+   },
+   "dailyRestingHeartRate": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 11
+    },
+    "beatsPerMinute": "60",
+    "dailyRestingHeartRateMetadata": {
+     "calculationMethod": "WITH_SLEEP"
+    }
+   }
+  }
+ ],
+ "daily-oxygen-saturation": [
+  {
+   "dataSource": {
+    "recordingMethod": "DERIVED",
+    "device": {
+     "formFactor": "FITNESS_BAND",
+     "displayName": "Fitbit Air"
+    },
+    "platform": "FITBIT"
+   },
+   "dailyOxygenSaturation": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 11
+    },
+    "averagePercentage": 96.4,
+    "lowerBoundPercentage": 94.0,
+    "upperBoundPercentage": 98.9
+   }
+  }
+ ],
+ "daily-respiratory-rate": [
+  {
+   "dataSource": {
+    "recordingMethod": "DERIVED",
+    "device": {
+     "formFactor": "FITNESS_BAND",
+     "displayName": "Fitbit Air"
+    },
+    "platform": "FITBIT"
+   },
+   "dailyRespiratoryRate": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 11
+    },
+    "breathsPerMinute": 14.25
+   }
+  }
+ ],
+ "daily-vo2-max": [
+  {
+   "dataSource": {
+    "platform": "FITBIT"
+   },
+   "dailyVo2Max": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 11
+    },
+    "vo2Max": 47.31234,
+    "cardioFitnessLevel": "GOOD"
+   }
+  }
+ ],
+ "daily-sleep-temperature-derivations": [
+  {
+   "dataSource": {
+    "recordingMethod": "DERIVED",
+    "device": {
+     "formFactor": "FITNESS_BAND",
+     "displayName": "Fitbit Air"
+    },
+    "platform": "FITBIT"
+   },
+   "dailySleepTemperatureDerivations": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 11
+    },
+    "nightlyTemperatureCelsius": 34.1234,
+    "baselineTemperatureCelsius": 33.9,
+    "relativeNightlyStddev30dCelsius": 0.3
+   }
+  }
+ ],
+ "sleep": [
+  {
+   "dataSource": {
+    "recordingMethod": "DERIVED",
+    "device": {
+     "formFactor": "FITNESS_BAND",
+     "displayName": "Fitbit Air"
+    },
+    "platform": "FITBIT"
+   },
+   "sleep": {
+    "interval": {
+     "startTime": "2026-03-10T20:15:00Z",
+     "startUtcOffset": "10800s",
+     "endTime": "2026-03-11T04:30:00Z",
+     "endUtcOffset": "10800s"
+    },
+    "type": "STAGES",
+    "metadata": {
+     "mainSleep": true
+    },
+    "summary": {
+     "minutesInSleepPeriod": "495",
+     "minutesAsleep": "450",
+     "minutesAwake": "45",
+     "stagesSummary": [
+      {
+       "type": "AWAKE",
+       "minutes": "45",
+       "count": "5"
+      },
+      {
+       "type": "LIGHT",
+       "minutes": "250",
+       "count": "20"
+      },
+      {
+       "type": "DEEP",
+       "minutes": "90",
+       "count": "6"
+      },
+      {
+       "type": "REM",
+       "minutes": "110",
+       "count": "5"
+      }
+     ]
+    },
+    "stages": [
+     {
+      "startTime": "2026-03-10T20:15:00Z",
+      "startUtcOffset": "10800s",
+      "endTime": "2026-03-10T20:30:00Z",
+      "endUtcOffset": "10800s",
+      "type": "AWAKE"
+     }
+    ]
+   }
+  },
+  {
+   "dataSource": {
+    "recordingMethod": "DERIVED",
+    "device": {
+     "formFactor": "FITNESS_BAND",
+     "displayName": "Fitbit Air"
+    },
+    "platform": "FITBIT"
+   },
+   "sleep": {
+    "interval": {
+     "startTime": "2026-03-11T12:00:00Z",
+     "startUtcOffset": "10800s",
+     "endTime": "2026-03-11T12:40:00Z",
+     "endUtcOffset": "10800s"
+    },
+    "type": "CLASSIC",
+    "metadata": {
+     "mainSleep": false
+    },
+    "summary": {
+     "minutesInSleepPeriod": "40",
+     "minutesAsleep": "35",
+     "minutesAwake": "5"
+    }
+   }
+  },
+  {
+   "dataSource": {
+    "recordingMethod": "DERIVED",
+    "device": {
+     "formFactor": "FITNESS_BAND",
+     "displayName": "Fitbit Air"
+    },
+    "platform": "FITBIT"
+   },
+   "sleep": {
+    "interval": {
+     "startTime": "2026-03-09T23:05:00.000Z",
+     "startUtcOffset": "10800s",
+     "endTime": "2026-03-10T05:00:00.000Z",
+     "endUtcOffset": "10800s"
+    },
+    "type": "CLASSIC",
+    "metadata": {
+     "mainSleep": true
+    },
+    "summary": {
+     "minutesInSleepPeriod": "355",
+     "minutesAsleep": "330",
+     "minutesAwake": "25"
+    }
+   }
+  }
+ ],
+ "exercise": [
+  {
+   "dataSource": {
+    "recordingMethod": "DERIVED",
+    "device": {
+     "formFactor": "FITNESS_BAND",
+     "displayName": "Fitbit Air"
+    },
+    "platform": "FITBIT"
+   },
+   "exercise": {
+    "interval": {
+     "startTime": "2026-03-10T21:30:00.400Z",
+     "startUtcOffset": "10800s",
+     "endTime": "2026-03-10T22:35:30.400Z",
+     "endUtcOffset": "10800s"
+    },
+    "exerciseType": "WALKING",
+    "displayName": "Walk",
+    "activeDuration": "3900s",
+    "metricsSummary": {
+     "caloriesKcal": 410,
+     "distanceMillimeters": 5250000,
+     "steps": "6500",
+     "averageHeartRateBeatsPerMinute": "104",
+     "activeZoneMinutes": "6"
+    }
+   }
+  }
+ ],
+ "weight": [
+  {
+   "dataSource": {
+    "recordingMethod": "MANUAL"
+   },
+   "weight": {
+    "sampleTime": {
+     "physicalTime": "2026-03-11T19:00:00Z",
+     "utcOffset": "10800s"
+    },
+    "weightGrams": 81250
+   }
+  },
+  {
+   "dataSource": {
+    "recordingMethod": "MANUAL"
+   },
+   "weight": {
+    "sampleTime": {
+     "physicalTime": "2026-03-11T04:45:00Z",
+     "utcOffset": "10800s"
+    },
+    "weightGrams": 80600
+   }
+  }
+ ],
+ "body-fat": [
+  {
+   "dataSource": {
+    "recordingMethod": "MANUAL"
+   },
+   "bodyFat": {
+    "sampleTime": {
+     "physicalTime": "2026-03-11T04:45:00Z",
+     "utcOffset": "10800s"
+    },
+    "percentage": 19.4
+   }
+  }
+ ],
+ "steps.rollup": [
+  {
+   "civilStartTime": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 11
+    },
+    "time": {}
+   },
+   "civilEndTime": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 12
+    },
+    "time": {}
+   },
+   "steps": {
+    "countSum": "11234"
+   }
+  },
+  {
+   "civilStartTime": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 10
+    },
+    "time": {}
+   },
+   "civilEndTime": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 11
+    },
+    "time": {}
+   },
+   "steps": {
+    "countSum": "8021"
+   }
+  },
+  {
+   "civilStartTime": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 9
+    },
+    "time": {}
+   },
+   "civilEndTime": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 10
+    },
+    "time": {}
+   },
+   "steps": {}
+  }
+ ],
+ "distance.rollup": [
+  {
+   "civilStartTime": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 11
+    },
+    "time": {}
+   },
+   "civilEndTime": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 12
+    },
+    "time": {}
+   },
+   "distance": {
+    "millimetersSum": "8125300"
+   }
+  }
+ ],
+ "floors.rollup": [
+  {
+   "civilStartTime": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 11
+    },
+    "time": {}
+   },
+   "civilEndTime": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 12
+    },
+    "time": {}
+   },
+   "floors": {
+    "countSum": "7"
+   }
+  }
+ ],
+ "active-energy-burned.rollup": [
+  {
+   "civilStartTime": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 11
+    },
+    "time": {}
+   },
+   "civilEndTime": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 12
+    },
+    "time": {}
+   },
+   "activeEnergyBurned": {
+    "kcalSum": 702.4
+   }
+  }
+ ],
+ "total-calories.rollup": [
+  {
+   "civilStartTime": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 11
+    },
+    "time": {}
+   },
+   "civilEndTime": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 12
+    },
+    "time": {}
+   },
+   "totalCalories": {
+    "kcalSum": 2987.6
+   }
+  }
+ ],
+ "active-zone-minutes.rollup": [
+  {
+   "civilStartTime": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 11
+    },
+    "time": {}
+   },
+   "civilEndTime": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 12
+    },
+    "time": {}
+   },
+   "activeZoneMinutes": {
+    "sumInFatBurnHeartZone": "20",
+    "sumInCardioHeartZone": "8",
+    "sumInPeakHeartZone": "2"
+   }
+  }
+ ],
+ "active-minutes.rollup": [
+  {
+   "civilStartTime": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 11
+    },
+    "time": {}
+   },
+   "civilEndTime": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 12
+    },
+    "time": {}
+   },
+   "activeMinutes": {
+    "activeMinutesRollupByActivityLevel": [
+     {
+      "activityLevel": "LIGHT",
+      "activeMinutesSum": "180"
+     },
+     {
+      "activityLevel": "MODERATE",
+      "activeMinutesSum": "25"
+     },
+     {
+      "activityLevel": "VIGOROUS",
+      "activeMinutesSum": "18"
+     }
+    ]
+   }
+  }
+ ],
+ "heart-rate.rollup": [
+  {
+   "civilStartTime": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 11
+    },
+    "time": {}
+   },
+   "civilEndTime": {
+    "date": {
+     "year": 2026,
+     "month": 3,
+     "day": 12
+    },
+    "time": {}
+   },
+   "heartRate": {
+    "beatsPerMinuteAvg": 71.6,
+    "beatsPerMinuteMax": 151,
+    "beatsPerMinuteMin": 48
+   }
+  }
+ ]
+}

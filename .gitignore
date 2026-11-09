@@ -8,3 +8,6 @@ state/
 inbox/
 *.key.json
 service-account*.json
+# OAuth client / tokens from tools/google_login.py
+client_secret*.json
+token.json
