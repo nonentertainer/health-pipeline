@@ -4,6 +4,8 @@
         [--google [--google-days 7]]                 # creds from $GOOGLE_HEALTH_CREDS
         [--inbox inbox] [--drive-folder FOLDER_ID]   # key from $GDRIVE_SA_KEY
 
+    health-pipeline insights --data-dir data --out data/insights.json [--md data/insights.md]
+
 Logs only counts and dates, never metric values, so CI logs stay clean even if
 someone runs this from a public repository.
 """
@@ -31,7 +33,20 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--google", action="store_true",
                    help="fetch from the Google Health API (credentials JSON in $GOOGLE_HEALTH_CREDS)")
     s.add_argument("--google-days", type=int, default=7, help="trailing days to fetch (default 7)")
+    i = sub.add_parser("insights", help="analyse data/*.csv: habit/recovery associations and the illness-rule backtest")
+    i.add_argument("--data-dir", default="data")
+    i.add_argument("--out", default="data/insights.json")
+    i.add_argument("--md", default=None, help="also write a readable Markdown summary here")
     args = p.parse_args(argv)
+
+    if args.cmd == "insights":
+        from . import insights
+        ins = insights.build(args.data_dir)
+        insights.write(ins, args.out, args.md)
+        clear = sum(1 for d in ins["drivers"] if d["verdict"] == "clear")
+        print(f"insights: {len(ins['drivers'])} tests on {ins['nights']} nights, {clear} clear, "
+              f"{len(ins['alerts']['flagged'])} alert nights of {ins['alerts']['nights']} -> {args.out}")
+        return 0
 
     api_sources = []
     if args.google:

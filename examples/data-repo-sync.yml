@@ -29,13 +29,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install "health-pipeline @ git+https://github.com/nonentertainer/health-pipeline@v0.4.2"
+      - run: pip install "health-pipeline @ git+https://github.com/nonentertainer/health-pipeline@v0.5.0"
 
       - name: Sync from Google Health API
         env:
           GOOGLE_HEALTH_CREDS: ${{ secrets.GOOGLE_HEALTH_CREDS }}
           DAYS: ${{ inputs.days || '7' }}
         run: health-pipeline sync --google --google-days "$DAYS" --data-dir data --state state/sync_state.json
+
+      - name: Insights (habit/recovery associations, illness-rule backtest)
+        run: health-pipeline insights --data-dir data --out data/insights.json --md data/insights.md
 
       - name: Commit
         run: |
