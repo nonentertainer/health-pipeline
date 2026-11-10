@@ -292,35 +292,58 @@ def parse_rollups(raw: dict[str, list], days: dict[str, dict]) -> None:
         _put(days, d, "hr_max_bpm", _num(o.get("beatsPerMinuteMax")))
 
 
+NAP_HOURS = range(10, 19)  # a non-main session starting 10:00-18:59 local is a daytime nap
+NIGHT_SHIFT = timedelta(hours=6)  # a night belongs to the date of (end + 6 h): 23:40 and 09:44 ends both map to the next morning
+
+
 def parse_sleep(raw: dict[str, list], days: dict[str, dict]) -> None:
-    """One night per wake-up date: the session Fitbit marks as main sleep (else the longest)."""
-    best: dict[str, tuple[int, int, dict, datetime, datetime]] = {}
+    """One row per night, keyed by the wake-up date.
+
+    Fitbit splits a night into separate sessions when you are awake long enough in the
+    middle (e.g. 22:00-02:30 and 02:51-09:44). All non-nap sessions of the same night are
+    merged: minutes and stages are summed, start is the first fall-asleep, end the last
+    wake-up. Daytime naps are left out of the night.
+    """
+    nights: dict[str, list[tuple[dict, datetime, datetime]]] = {}
     for p in raw.get("sleep") or []:
         s = p.get("sleep") or {}
         iv = s.get("interval") or {}
         start = _local(iv.get("startTime"), iv.get("startUtcOffset"))
         end = _local(iv.get("endTime"), iv.get("endUtcOffset"))
-        if not start or not end:
+        if not start or not end or end <= start:
             continue
-        summ = s.get("summary") or {}
-        rank = (1 if (s.get("metadata") or {}).get("mainSleep") else 0, int(_num(summ.get("minutesAsleep")) or 0))
-        d = end.date().isoformat()
-        if d not in best or rank > best[d][:2]:
-            best[d] = (*rank, s, start, end)
+        main = bool((s.get("metadata") or {}).get("mainSleep"))
+        if not main and start.hour in NAP_HOURS:
+            continue
+        nights.setdefault((end + NIGHT_SHIFT).date().isoformat(), []).append((s, start, end))
 
-    for d, (_, _, s, start, end) in best.items():
-        summ = s.get("summary") or {}
-        stages = {x.get("type"): _num(x.get("minutes")) for x in summ.get("stagesSummary") or []}
+    for d, parts in nights.items():
+        parts.sort(key=lambda x: x[1])
+        tot = {"asleep": 0.0, "bed": 0.0, "awake": 0.0}
+        stage_tot: dict[str, float] = {}
+        any_stages = False
+        for s, _, _ in parts:
+            summ = s.get("summary") or {}
+            stages = {x.get("type"): _num(x.get("minutes")) for x in summ.get("stagesSummary") or []}
+            tot["asleep"] += _num(summ.get("minutesAsleep")) or 0
+            tot["bed"] += _num(summ.get("minutesInSleepPeriod")) or 0
+            aw = stages.get("AWAKE", _num(summ.get("minutesAwake")))
+            tot["awake"] += aw or 0
+            if s.get("type") == "STAGES":
+                any_stages = True
+                for k in ("DEEP", "REM", "LIGHT"):
+                    if stages.get(k) is not None:
+                        stage_tot[k] = stage_tot.get(k, 0.0) + stages[k]
         row = {
-            "sleep_min": _num(summ.get("minutesAsleep")),
-            "in_bed_min": _num(summ.get("minutesInSleepPeriod")),
-            "sleep_awake_min": stages.get("AWAKE", _num(summ.get("minutesAwake"))),
-            "sleep_start": start.strftime("%Y-%m-%d %H:%M"),
-            "sleep_end": end.strftime("%Y-%m-%d %H:%M"),
+            "sleep_min": tot["asleep"] or None,
+            "in_bed_min": tot["bed"] or None,
+            "sleep_awake_min": tot["awake"],
+            "sleep_start": parts[0][1].strftime("%Y-%m-%d %H:%M"),
+            "sleep_end": max(e for _, _, e in parts).strftime("%Y-%m-%d %H:%M"),
         }
-        if s.get("type") == "STAGES":
-            row.update({"sleep_deep_min": stages.get("DEEP"), "sleep_rem_min": stages.get("REM"),
-                        "sleep_core_min": stages.get("LIGHT")})
+        if any_stages:
+            row.update({"sleep_deep_min": stage_tot.get("DEEP"), "sleep_rem_min": stage_tot.get("REM"),
+                        "sleep_core_min": stage_tot.get("LIGHT")})
         for col, v in row.items():
             _put(days, d, col, v)
 

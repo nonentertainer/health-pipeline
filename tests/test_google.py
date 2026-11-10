@@ -237,3 +237,43 @@ def test_nan_baseline_temperature_is_dropped(tmp_path):
     assert days["2026-03-01"] == {"wrist_temp_c": 33.1}
     from health_pipeline.store import _fmt
     assert _fmt("skin_temp_delta_c", float("nan")) == ""
+
+
+def _sess(start, end, asleep, stages=None, main=False, bed=None):
+    s = {"interval": {"startTime": start, "startUtcOffset": "10800s", "endTime": end, "endUtcOffset": "10800s"},
+         "type": "STAGES" if stages else "CLASSIC", "metadata": {"mainSleep": main},
+         "summary": {"minutesAsleep": str(asleep), "minutesInSleepPeriod": str(bed or asleep + 10), "minutesAwake": "10"}}
+    if stages:
+        s["summary"]["stagesSummary"] = [{"type": k, "minutes": str(v)} for k, v in stages.items()]
+    return {"sleep": s}
+
+
+def test_split_night_is_merged():
+    # 22:05-02:30 and 02:51-09:44 local (UTC+3): one night ending 2026-11-10
+    raw = {"sleep": [
+        _sess("2026-11-09T19:05:00Z", "2026-11-09T23:30:00Z", 240, {"AWAKE": 15, "LIGHT": 130, "DEEP": 60, "REM": 50}),
+        _sess("2026-11-09T23:51:00Z", "2026-11-10T06:44:00Z", 407, {"AWAKE": 6, "LIGHT": 211, "DEEP": 91, "REM": 105}, main=True),
+    ]}
+    d = g.parse(raw)[0]["2026-11-10"]
+    assert d["sleep_start"] == "2026-11-09 22:05" and d["sleep_end"] == "2026-11-10 09:44"
+    assert d["sleep_min"] == 647 and d["sleep_deep_min"] == 151 and d["sleep_rem_min"] == 155
+    assert d["sleep_core_min"] == 341 and d["sleep_awake_min"] == 21
+    assert list(g.parse(raw)[0]) == ["2026-11-10"]
+
+
+def test_segment_ending_before_midnight_joins_next_morning():
+    raw = {"sleep": [
+        _sess("2026-03-01T18:00:00Z", "2026-03-01T20:40:00Z", 150),   # 21:00-23:40 local
+        _sess("2026-03-01T21:10:00Z", "2026-03-02T04:30:00Z", 420, main=True),  # 00:10-07:30
+    ]}
+    days = g.parse(raw)[0]
+    assert list(days) == ["2026-03-02"]
+    assert days["2026-03-02"]["sleep_min"] == 570 and days["2026-03-02"]["sleep_start"] == "2026-03-01 21:00"
+
+
+def test_daytime_nap_is_not_part_of_the_night():
+    raw = {"sleep": [
+        _sess("2026-03-01T21:00:00Z", "2026-03-02T05:00:00Z", 450, main=True),  # 00:00-08:00
+        _sess("2026-03-02T11:00:00Z", "2026-03-02T11:40:00Z", 35),              # 14:00-14:40 nap
+    ]}
+    assert g.parse(raw)[0]["2026-03-02"]["sleep_min"] == 450

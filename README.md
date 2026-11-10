@@ -12,7 +12,7 @@ Incremental ETL for wearable health data. It extracts Fitbit metrics from the Go
 - **Failure isolation.** One failing data type is reported and skipped while the rest still load; a rejected token fails the job loudly so the owner is notified.
 - **No infrastructure to run.** GitHub Actions is the scheduler and git is the audit log: every data change is a reviewable diff.
 - **Privacy split.** Public code, private data repository; logs carry counts and dates, never metric values or credentials.
-- **Tested.** 58 tests on synthetic fixtures, including a fake HTTP layer for the API client.
+- **Tested.** 61 tests on synthetic fixtures, including a fake HTTP layer for the API client.
 
 In my deployment the private data repository also builds `data/tracker.json` after every run, and a daily Claude scheduled task loads it into a training-log dashboard used for coaching. An iOS Shortcut source and a Drive-export source are implemented as alternative inputs into the same tables.
 
@@ -36,7 +36,7 @@ In my deployment the private data repository also builds `data/tracker.json` aft
 
 | Group | Columns |
 |---|---|
-| Sleep (minutes, main sleep ending on `date`) | `sleep_min`, `sleep_deep_min`, `sleep_rem_min`, `sleep_core_min`, `sleep_awake_min`, `in_bed_min`, `sleep_start`, `sleep_end` |
+| Sleep (minutes, the night ending on `date`: split sessions merged, daytime naps left out) | `sleep_min`, `sleep_deep_min`, `sleep_rem_min`, `sleep_core_min`, `sleep_awake_min`, `in_bed_min`, `sleep_start`, `sleep_end` |
 | Heart | `hrv_ms`, `resting_hr_bpm`, `sleep_hr_bpm`, `hr_min_bpm`, `hr_avg_bpm`, `hr_max_bpm`, `walking_hr_bpm`, `vo2max` |
 | Recovery signals | `resp_rate_bpm`, `spo2_pct`, `wrist_temp_c`, `skin_temp_delta_c` (nightly minus personal baseline) |
 | Activity | `steps`, `active_kcal`, `basal_kcal`, `total_kcal`, `distance_km`, `exercise_min`, `active_zone_min`, `flights` |
