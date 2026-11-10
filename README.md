@@ -1,12 +1,20 @@
 # health-pipeline
 
-Incremental ETL that turns wearable data into one tidy row per day, on a schedule, with no server, no phone in the loop and no paid export app.
+Incremental ETL for wearable health data. It extracts Fitbit metrics from the Google Health API, normalises them into a typed daily schema and maintains versioned CSV tables through idempotent upserts, scheduled on GitHub Actions.
 
 ![health-pipeline architecture: Fitbit → Google Health → GitHub Actions ETL → CSV → daily Claude task → training-log dashboard](docs/architecture.svg)
 
-**Extract** from the Google Health API (or, alternatively, payloads pushed by an iOS Shortcut / export files on Drive) → **transform** into a fixed daily schema with normalised units → **load** with keyed upserts into CSV, committed to a private repository three times a day.
+## Highlights
 
-In my own setup the private repo also builds `data/tracker.json` after every run; a daily Claude scheduled task copies it into a training-log dashboard, where an AI coach reads it. The iOS Shortcut and Drive routes below are alternative sources into the same tables.
+- **Source-of-truth extraction.** OAuth 2.0 with PKCE, token refresh, pagination, chunked daily roll-ups and retry with backoff against the Google Health API. Metrics that never reach Apple Health, such as HRV and nightly skin temperature, are included.
+- **Idempotent loads.** Column-level upserts keyed by date, with values rounded before comparison: re-running the same window produces a byte-identical file and no commit.
+- **Late data handled by design.** Each run re-reads a trailing 7-day window instead of keeping a cursor, so values Fitbit finalises hours later are picked up and there is no state to corrupt.
+- **Failure isolation.** One failing data type is reported and skipped while the rest still load; a rejected token fails the job loudly so the owner is notified.
+- **No infrastructure to run.** GitHub Actions is the scheduler and git is the audit log: every data change is a reviewable diff.
+- **Privacy split.** Public code, private data repository; logs carry counts and dates, never metric values or credentials.
+- **Tested.** 58 tests on synthetic fixtures, including a fake HTTP layer for the API client.
+
+In my deployment the private data repository also builds `data/tracker.json` after every run, and a daily Claude scheduled task loads it into a training-log dashboard used for coaching. An iOS Shortcut source and a Drive-export source are implemented as alternative inputs into the same tables.
 
 ## Why it is built this way
 
@@ -51,7 +59,7 @@ While the OAuth app is in *Testing* status Google expires refresh tokens after 7
 
 ## Alternative routes
 
-**iOS Shortcut → `repository_dispatch`.** A Shortcut reads Apple Health and POSTs the last 3 days to `https://api.github.com/repos/<owner>/<data-repo>/dispatches` with a fine-grained token (Contents: read/write on the data repo only). Payload format: [`parse_shortcut.py`](src/health_pipeline/parse_shortcut.py). [`tools/build_shortcut.py`](tools/build_shortcut.py) generates the whole Shortcut (128 actions) by cloning a small hand-built reference, so parameter shapes match what the Shortcuts app writes; sign it on a Mac with `shortcuts sign`. Caveats learned the hard way: Health type names must be Apple's internal identifiers, *Find Health Samples* aborts the Shortcut on an empty result (no try/catch), and Health data is unreadable while the phone is locked.
+**iOS Shortcut → `repository_dispatch`.** A Shortcut reads Apple Health and POSTs the last 3 days to `https://api.github.com/repos/<owner>/<data-repo>/dispatches` with a fine-grained token (Contents: read/write on the data repo only). Payload format: [`parse_shortcut.py`](src/health_pipeline/parse_shortcut.py). [`tools/build_shortcut.py`](tools/build_shortcut.py) generates the whole Shortcut (128 actions) by cloning a small hand-built reference, so parameter shapes match what the Shortcuts app writes; sign it on a Mac with `shortcuts sign`. Platform constraints worth knowing: Health type names must be Apple's internal identifiers, *Find Health Samples* aborts the Shortcut on an empty result (no try/catch), and Health data is unreadable while the phone is locked.
 
 **Health Auto Export → Google Drive.** The app writes daily JSON to a Drive folder; a service account (`drive.readonly`) reads it. Secrets: `GDRIVE_SA_KEY`, `GDRIVE_FOLDER_ID`. Files are processed incrementally by Drive `modifiedTime`.
 
