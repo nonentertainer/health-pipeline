@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import csv
 import io
+import math
 import os
 from dataclasses import dataclass, field
 from typing import Any, Iterable
@@ -20,6 +21,8 @@ from .model import ROUNDING
 
 def _fmt(col: str, v: Any) -> str:
     if v is None or v == "":
+        return ""
+    if isinstance(v, float) and not math.isfinite(v):
         return ""
     if isinstance(v, float) or (isinstance(v, int) and not isinstance(v, bool)):
         nd = ROUNDING.get(col)

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "health-pipeline"
-version = "0.4.0"
+version = "0.4.1"
 description = "Incremental ETL: Fitbit data via the Google Health API (or Apple Health via an iOS Shortcut) -> tidy daily CSVs, scheduled on GitHub Actions."
 readme = "README.md"
 requires-python = ">=3.10"

@@ -15,6 +15,7 @@ Credentials come from one JSON secret (``GOOGLE_HEALTH_CREDS``):
 from __future__ import annotations
 
 import json
+import math
 import os
 import time
 import urllib.error
@@ -193,9 +194,10 @@ def _num(v: Any) -> float | None:
     if v is None or v == "":
         return None
     try:
-        return float(v)
+        x = float(v)
     except (TypeError, ValueError):
         return None
+    return x if math.isfinite(x) else None  # e.g. skin temperature before Fitbit has a baseline
 
 
 def _date(d: dict | None) -> str | None:

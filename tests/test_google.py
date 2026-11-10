@@ -227,3 +227,13 @@ def test_cli_google_end_to_end_with_fake_api(monkeypatch, tmp_path, capsys):
     rc = cli.main(["sync", "--google", "--data-dir", str(tmp_path / "d"), "--state", str(tmp_path / "s.json")])
     out = capsys.readouterr().out
     assert rc == 1 and "token rejected" in out and "RT" not in out and '"r"' not in out
+
+
+def test_nan_baseline_temperature_is_dropped(tmp_path):
+    raw = {"daily-sleep-temperature-derivations": [{"dailySleepTemperatureDerivations": {
+        "date": {"year": 2026, "month": 3, "day": 1}, "nightlyTemperatureCelsius": 33.1,
+        "baselineTemperatureCelsius": "NaN"}}]}
+    days, _ = g.parse(raw)
+    assert days["2026-03-01"] == {"wrist_temp_c": 33.1}
+    from health_pipeline.store import _fmt
+    assert _fmt("skin_temp_delta_c", float("nan")) == ""
