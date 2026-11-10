@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="666" viewBox="0 0 680 666" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" role="img" aria-label="health-pipeline architecture: Fitbit to Google Health, GitHub Actions extract-transform-load into CSV, a daily Claude task copies it into a training-log dashboard">
+<defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#73726C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<rect x="0.5" y="0.5" width="679" height="665" rx="16" fill="#FFFFFF" stroke="#D3D1C7"/>
+<rect x="60" y="40" width="160" height="56" rx="8" fill="#F7F6F2" stroke="#B4B2A9" stroke-width="1"/>
+<text x="140.0" y="58" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#2C2C2A">Fitbit Air</text>
+<text x="140.0" y="78" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#5F5E5A">Wrist band</text>
+<line x1="220" y1="68" x2="256" y2="68" stroke="#73726C" stroke-width="1.5" marker-end="url(#a)"/>
+<rect x="260" y="40" width="180" height="56" rx="8" fill="#F7F6F2" stroke="#B4B2A9" stroke-width="1"/>
+<text x="350.0" y="58" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#2C2C2A">Google Health</text>
+<text x="350.0" y="78" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#5F5E5A">Cloud record</text>
+<rect x="480" y="40" width="160" height="56" rx="8" fill="#F7F6F2" stroke="#B4B2A9" stroke-width="1"/>
+<text x="560.0" y="58" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#2C2C2A">health-pipeline</text>
+<text x="560.0" y="78" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#5F5E5A">This repo</text>
+<rect x="40" y="150" width="600" height="170" rx="20" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
+<text x="340" y="176" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#085041">GitHub Actions · private data repo</text>
+<text x="340" y="196" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#0F6E56">3 scheduled runs a day + manual backfill</text>
+<path d="M350 96 L350 120 L140 120 L140 226" fill="none" stroke="#73726C" stroke-width="1.5" marker-end="url(#a)"/>
+<line x1="560" y1="96" x2="560" y2="146" stroke="#73726C" stroke-width="1.5" marker-end="url(#a)"/>
+<rect x="60" y="230" width="160" height="56" rx="8" fill="#FFFFFF" stroke="#5DCAA5" stroke-width="1"/>
+<text x="140.0" y="248" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#04342C">Extract</text>
+<text x="140.0" y="268" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#0F6E56">API, last 7 days</text>
+<line x1="220" y1="258" x2="256" y2="258" stroke="#73726C" stroke-width="1.5" marker-end="url(#a)"/>
+<rect x="260" y="230" width="160" height="56" rx="8" fill="#FFFFFF" stroke="#5DCAA5" stroke-width="1"/>
+<text x="340.0" y="248" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#04342C">Transform</text>
+<text x="340.0" y="268" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#0F6E56">Units, times, sleep</text>
+<line x1="420" y1="258" x2="456" y2="258" stroke="#73726C" stroke-width="1.5" marker-end="url(#a)"/>
+<rect x="460" y="230" width="160" height="56" rx="8" fill="#FFFFFF" stroke="#5DCAA5" stroke-width="1"/>
+<text x="540.0" y="248" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#04342C">Load</text>
+<text x="540.0" y="268" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#0F6E56">Keyed upsert</text>
+<line x1="540" y1="286" x2="540" y2="366" stroke="#73726C" stroke-width="1.5" marker-end="url(#a)"/>
+<rect x="300" y="370" width="320" height="56" rx="8" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
+<text x="460.0" y="388" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#085041">data/</text>
+<text x="460.0" y="408" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#0F6E56">daily.csv, workouts.csv, tracker.json</text>
+<line x1="160" y1="320" x2="160" y2="466" stroke="#73726C" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#a)"/>
+<rect x="60" y="470" width="200" height="56" rx="8" fill="#F7F6F2" stroke="#B4B2A9" stroke-width="1" stroke-dasharray="5 4"/>
+<text x="160.0" y="488" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#2C2C2A">Token rejected</text>
+<text x="160.0" y="508" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#5F5E5A">Job fails → e-mail</text>
+<line x1="460" y1="426" x2="460" y2="466" stroke="#73726C" stroke-width="1.5" marker-end="url(#a)"/>
+<rect x="300" y="470" width="320" height="56" rx="8" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="460.0" y="488" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#3C3489">Claude scheduled task</text>
+<text x="460.0" y="508" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#534AB7">Daily, copies tracker.json</text>
+<line x1="460" y1="526" x2="460" y2="566" stroke="#73726C" stroke-width="1.5" marker-end="url(#a)"/>
+<rect x="300" y="570" width="320" height="56" rx="8" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="460.0" y="588" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#3C3489">Training-log dashboard</text>
+<text x="460.0" y="608" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#534AB7">Cards, table, baselines</text>
+<line x1="298" y1="598" x2="264" y2="598" stroke="#73726C" stroke-width="1.5" marker-end="url(#a)"/>
+<rect x="60" y="570" width="200" height="56" rx="8" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<text x="160.0" y="588" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="600" fill="#3C3489">AI coach</text>
+<text x="160.0" y="608" text-anchor="middle" dominant-baseline="central" font-size="12" fill="#534AB7">Reads, interprets</text>
+</svg>

@@ -2,17 +2,11 @@
 
 Incremental ETL that turns wearable data into one tidy row per day, on a schedule, with no server, no phone in the loop and no paid export app.
 
-```mermaid
-flowchart LR
-    A[Fitbit band] --> B[(Google Health cloud)]
-    B -->|Google Health API<br/>OAuth, trailing 7 days| E[GitHub Actions<br/>in a private repo]
-    E -->|parse + upsert| F[(data/daily.csv<br/>data/workouts.csv)]
-    F --> H[Analysis / coaching / dashboards]
-    C[Apple Health] -.->|alt: iOS Shortcut<br/>repository_dispatch| E
-    G[(Drive folder)] -.->|alt: Health Auto Export<br/>service account| E
-```
+![health-pipeline architecture: Fitbit → Google Health → GitHub Actions ETL → CSV → daily Claude task → training-log dashboard](docs/architecture.svg)
 
 **Extract** from the Google Health API (or, alternatively, payloads pushed by an iOS Shortcut / export files on Drive) → **transform** into a fixed daily schema with normalised units → **load** with keyed upserts into CSV, committed to a private repository three times a day.
+
+In my own setup the private repo also builds `data/tracker.json` after every run; a daily Claude scheduled task copies it into a training-log dashboard, where an AI coach reads it. The iOS Shortcut and Drive routes below are alternative sources into the same tables.
 
 ## Why it is built this way
 
