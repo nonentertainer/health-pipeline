@@ -37,6 +37,9 @@ def test_pipeline_recovers_what_the_generator_planted():
     flagged = {x["date"] for x in ins["alerts"]["flagged"]}
     assert ill <= flagged and len(flagged - ill) <= 3                # the illness is caught; false alarms stay rare
     assert len(fit["days"]) == build_demo.DAYS and max(fit["days"]) == data["end"]
+    weekly = data["docs"]["meta/report"]
+    assert weekly["to"] == (build_demo.END - timedelta(days=7)).isoformat()      # the last complete week
+    assert weekly["training"]["days"] >= 3 and weekly["weight"]["n"] >= 5 and "Gelecek hafta" in weekly["sections"]
 
 
 def test_demo_data_is_deterministic_and_self_consistent():

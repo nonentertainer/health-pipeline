@@ -15,8 +15,9 @@ Incremental ETL and analysis for wearable health data. It extracts Fitbit metric
 - **No infrastructure to run.** GitHub Actions is the scheduler and git is the audit log: every data change is a reviewable diff.
 - **Privacy split.** Public code, private data repository; logs carry counts and dates, never metric values or credentials.
 - **Analysis that refuses to over-claim.** An [insights step](#insights) asks whether bedtime, sleep length, steps or training go together with a better night, using detrended outcomes, rank correlation, permutation p-values and a false-discovery correction across every question asked. When the data cannot answer yet, it says so and estimates how many more nights it needs.
+- **A weekly report with fixed rules.** `health-pipeline report` turns one ISO week into a few numbers and sentences (training days counted from the log *and* the watch, weight averages, sleep timing, recovery against the previous four weeks) plus at most three suggestions from fixed rules. See [Weekly report](#weekly-report).
 - **A dashboard you can try.** The [live demo](https://nonentertainer.github.io/health-pipeline/) is the production page, unchanged, running against an in-memory database filled with synthetic data that went through the real pipeline code. See [Dashboard and live demo](#dashboard-and-live-demo).
-- **Tested.** 78 tests on synthetic fixtures, including a fake HTTP layer for the API client, planted-effect data for the statistics, and a check that the published demo matches its generator.
+- **Tested.** 84 tests on synthetic fixtures, including a fake HTTP layer for the API client, planted-effect data for the statistics, and a check that the published demo matches its generator.
 
 In my deployment the private data repository also builds `data/insights.json` and `data/tracker.json` after every run, and a Claude scheduled task loads them into a training-log dashboard used for coaching. An iOS Shortcut source and a Drive-export source are implemented as alternative inputs into the same tables.
 
@@ -95,6 +96,18 @@ Note the last row: p = 0.061 on its own would tempt a headline; after correction
 
 Limits, stated plainly: this is observational data from one person, so a `clear` verdict means "unlikely to be chance", not "causes". Neighbouring nights are not fully independent, which makes the p-values somewhat optimistic. Habits are tested one at a time, so two habits that travel together cannot be told apart.
 
+## Weekly report
+
+```bash
+health-pipeline report --data-dir data --log days/ --week 2026-W45 --out reports/2026-W45.md --json report.json [--lang en]
+```
+
+The tables know what the watch saw; the person's own log (one JSON document per day, as the dashboard stores them) knows weigh-ins and lifted weights. The report reads both. A training day counts once per kind whether it was logged or only detected (strength: a logged session or a 15+ minute weights workout; cardio: a logged run/ride or a 15+ minute run, ride or cross-trainer workout); walks count as minutes. "Next week" suggestions come from fixed rules in priority order (an illness alert, missed training days, irregular bedtime, short nights, rising weekly average), at most three, and state what the numbers say rather than guessing causes. Markdown and JSON, Turkish or English.
+
+In my deployment a Claude scheduled task runs it every Monday morning: it exports the dashboard's day documents, runs the report, commits `reports/<week>.md` to the private data repository (where a coaching chat reads it) and loads the JSON into the dashboard's "last week" card.
+
+**When data stops.** The dashboard compares the sync's last data change with the clock: more than 6 hours of silence after 11:00, or 20 hours at any time, shows a warning that names the usual cause (an expired Google login) and the fix. A rejected token also fails the GitHub job, so GitHub's failure e-mail arrives too.
+
 ## Dashboard and live demo
 
 [![The dashboard on a phone: recovery and weight journey, weight trend and sleep week, findings](docs/demo.png)](https://nonentertainer.github.io/health-pipeline/)
@@ -144,7 +157,8 @@ src/health_pipeline/
   store.py                  keyed CSV upserts with a change report
   sync.py                   one run: API + file sources -> parse -> store -> state
   insights.py               habit/recovery associations (permutation tests, FDR) + illness-rule backtest
-  cli.py                    `health-pipeline sync`, `health-pipeline insights`
+  report.py                 one ISO week: numbers, sentences (tr/en) and rule-based suggestions
+  cli.py                    `health-pipeline sync`, `insights`, `report`
 dashboard/index.html        the dashboard: single file, no build step
 dashboard/demo-shim.js      in-memory database for the public demo
 docs/                       GitHub Pages: the built demo (generated), README images

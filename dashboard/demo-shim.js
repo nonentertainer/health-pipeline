@@ -21,6 +21,14 @@
   const move = s => { const d = parse(s); d.setDate(d.getDate() + weeks * 7); return iso(d); };
   const D = JSON.parse(JSON.stringify(RAW).replace(/\d{4}-\d{2}-\d{2}/g, move));
 
+  // the report's ISO week label is not a date, so it is recomputed from the moved dates
+  const isoWeek = s => {
+    const t = parse(s); t.setDate(t.getDate() + 3 - (t.getDay() + 6) % 7);
+    const w1 = new Date(t.getFullYear(), 0, 4);
+    return `${t.getFullYear()}-W${pad(1 + Math.round(((t - w1) / 864e5 - 3 + (w1.getDay() + 6) % 7) / 7))}`;
+  };
+  if (D.docs["meta/report"] && D.docs["meta/report"].from) D.docs["meta/report"].week = isoWeek(D.docs["meta/report"].from);
+
   // ---- cut the future off ----
   const fit = D.docs["fitbit/daily"];
   Object.keys(fit.days).forEach(d => { if (d > today) delete fit.days[d]; });

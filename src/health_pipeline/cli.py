@@ -5,6 +5,7 @@
         [--inbox inbox] [--drive-folder FOLDER_ID]   # key from $GDRIVE_SA_KEY
 
     health-pipeline insights --data-dir data --out data/insights.json [--md data/insights.md]
+    health-pipeline report --data-dir data [--log LOG] [--week 2026-W45] [--out reports/2026-W45.md] [--json F]
 
 Logs only counts and dates, never metric values, so CI logs stay clean even if
 someone runs this from a public repository.
@@ -37,7 +38,27 @@ def main(argv: list[str] | None = None) -> int:
     i.add_argument("--data-dir", default="data")
     i.add_argument("--out", default="data/insights.json")
     i.add_argument("--md", default=None, help="also write a readable Markdown summary here")
+    r = sub.add_parser("report", help="one ISO week in numbers and sentences (Markdown, optional JSON)")
+    r.add_argument("--data-dir", default="data")
+    r.add_argument("--log", default=None, help="the person's day documents: a JSON list/object or a folder of JSON files")
+    r.add_argument("--week", default=None, help="ISO week like 2026-W45 (default: the last complete week)")
+    r.add_argument("--out", default=None, help="Markdown file (default: reports/<week>.md)")
+    r.add_argument("--json", default=None, help="also write the numbers and sentences as JSON here")
+    r.add_argument("--lang", default="tr", choices=["tr", "en"])
+    r.add_argument("--target", type=int, default=5, help="planned training days per week")
     args = p.parse_args(argv)
+
+    if args.cmd == "report":
+        from datetime import date
+        from . import report
+        week = args.week or report.last_full_week(date.today())
+        rep = report.build(args.data_dir, week, report.read_log(args.log), args.target)
+        out = args.out or os.path.join("reports", f"{week}.md")
+        report.write(rep, out, args.json, args.lang)
+        print(f"report {week}: {rep['training']['days']} training days, "
+              f"{rep['sleep']['nights'] if rep['sleep'] else 0} nights, "
+              f"{rep['weight']['n'] if rep['weight'] else 0} weigh-ins -> {out}")
+        return 0
 
     if args.cmd == "insights":
         from . import insights

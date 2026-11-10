@@ -9,6 +9,9 @@ pipeline's own schema; those tables then go through the same code the real deplo
 in-memory database shim (dashboard/demo-shim.js). The page itself, dashboard/index.html,
 is copied byte for byte apart from one added <script> tag.
 
+The weekly report card is filled the same way: ``report.build`` over the synthetic tables
+and log, for the last complete week.
+
 Two things are planted on purpose so the analysis has something to find:
 a later bedtime lowers that night's HRV, and one week has a feverish illness.
 Steps and training are generated independently of recovery and should stay "unclear".
@@ -31,7 +34,7 @@ sys.path.insert(0, os.path.join(ROOT, "src"))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import tracker_docs  # noqa: E402
-from health_pipeline import insights  # noqa: E402
+from health_pipeline import insights, report  # noqa: E402
 from health_pipeline.model import DAILY_COLUMNS, ROUNDING, WORKOUT_COLUMNS  # noqa: E402
 
 END = date(2026, 3, 1)          # a Sunday; the shim moves everything forward in whole weeks
@@ -180,8 +183,12 @@ def _demo_json(seed: int) -> str:
         _write_csv(os.path.join(tmp, "workouts.csv"), WORKOUT_COLUMNS, s["workouts"])
         insights.write(insights.build(tmp), os.path.join(tmp, "insights.json"))
         fit = tracker_docs.build(tmp, days=120)
+        # last week's report, as the weekly task would write it on Monday morning
+        week = report.week_of(END - timedelta(days=7))
+        rep = report.build(tmp, week, {d["date"]: d for d in s["days"]})
+        weekly = {**rep, "lang": "tr", "sections": report.sections(rep, "tr")}
     fit["updated"] = END.isoformat() + "T12:00:00+00:00"       # the shim replaces this with "a few minutes ago"
-    return json.dumps({"end": END.isoformat(), "docs": {"fitbit/daily": fit, "meta/config": s["config"]},
+    return json.dumps({"end": END.isoformat(), "docs": {"fitbit/daily": fit, "meta/config": s["config"], "meta/report": weekly},
                        "collections": {"days": s["days"], "posture": s["posture"]}}, ensure_ascii=False)
 
 

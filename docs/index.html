@@ -269,6 +269,29 @@
   .falert{background:var(--field);border-radius:16px;padding:12px;font-size:13px;color:var(--ink-2);line-height:1.5}
   .falert b{color:var(--ink);font-weight:600}
 
+  /* last week's report (meta/report, written by the weekly task) */
+  .weekc{display:flex;flex-direction:column;gap:12px;padding:16px}
+  .wtiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .wt{background:var(--field);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+  .wt span{font-size:12px;font-weight:600;color:var(--ink-3)}
+  .wt b{font-family:var(--sg);font-size:24px;font-weight:700;letter-spacing:-.02em;white-space:nowrap}
+  .wt b em{font-family:"Inter",sans-serif;font-style:normal;font-size:12px;font-weight:500;color:var(--ink-3);margin-left:2px}
+  .wt small{font-size:12px;color:var(--ink-3)}
+  .wfocus{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+  .wfocus li{display:flex;gap:10px;font-size:14px;line-height:1.45;color:var(--ink-2)}
+  .wfocus li::before{content:"";flex:none;width:8px;height:8px;border-radius:3px;background:var(--lime);box-shadow:0 0 0 1px #9DB816;margin-top:7px}
+  .weekc details summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--ink-2);list-style:none}
+  .weekc details summary::-webkit-details-marker{display:none}
+  .weekc details summary::after{content:" +"}
+  .weekc details[open] summary::after{content:" −"}
+  .weekc details p{margin:8px 0 0;font-size:13px;line-height:1.5;color:var(--ink-2)}
+  .weekc details p b{color:var(--ink)}
+
+  /* data stopped arriving */
+  .stale{background:var(--risk-bg);color:var(--risk-ink);border-radius:24px;padding:14px 16px;font-size:14px;line-height:1.5}
+  .stale b{font-weight:700}
+  .stale code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:#FFFFFF8C;border-radius:6px;padding:1px 5px}
+
   /* calendar */
   .cgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr)) 36px;gap:5px 4px;align-items:center}
   .cgrid .dh{font-size:11px;font-weight:600;color:var(--ink-3);text-align:center}
@@ -383,6 +406,8 @@
     <div class="face" id="face" role="img" aria-label="Durum yüzü"></div>
   </div>
 
+  <div class="stale" id="staleBanner" role="alert" hidden></div>
+
   <div class="hero wait" id="hero"><div><span class="hk">Toparlanma</span><span class="hs">Fitbit verisi yükleniyor…</span></div></div>
 
   <div class="card jr" id="journey"></div>
@@ -419,6 +444,7 @@
   <div class="card pcard" id="pCard"></div>
 
   <h2 class="glabel">Gidişat</h2>
+  <div class="card weekc" id="weekCard" hidden></div>
   <div class="card trend" id="trend"></div>
   <div class="card sleepw" id="sleepWeek"></div>
   <div class="card find" id="findings"></div>
@@ -1392,8 +1418,46 @@
     box.innerHTML = html;
   }
 
+  /* ---------- last week (meta/report): numbers computed by `health-pipeline report`, shown as they are ---------- */
+  let weekRep = null;
+  function renderWeek(){
+    const box = $("weekCard"), r = weekRep;
+    if (!r || typeof r!=="object" || !r.from || !r.to || !r.training){ box.hidden = true; return; }
+    const a = parse(r.from), b = parse(r.to);
+    const span = a.getMonth()===b.getMonth() ? `${a.getDate()}–${b.getDate()} ${MON[b.getMonth()].slice(0,3)}` : `${shortDate(r.from)} – ${shortDate(r.to)}`;
+    const ago = daysBetween(r.to, TODAY), label = ago <= 7 ? "Geçen hafta" : "Son haftalık rapor";
+    const tr = r.training, w = r.weight, sl = r.sleep, rc = r.recovery || {};
+    const tile = (k, v, sub) => `<div class="wt"><span>${k}</span><b class="num">${v}</b>${sub ? `<small>${sub}</small>` : ""}</div>`;
+    const d = (x, nd, u) => x==null ? "" : `${x>0?"+":x<0?"−":""}${Math.abs(x).toFixed(nd)}${u}`;
+    let tiles = tile("Antrenman", `${mnum(tr.days) ?? "—"}<em>/ ${mnum(r.target) ?? 5} gün</em>`, `${mnum(tr.gym)||0} ağırlık · ${mnum(tr.cardio)||0} kardiyo`);
+    tiles += tile("Kilo", w && mnum(w.change)!=null ? `${d(mnum(w.change),2,"")}<em>kg</em>` : w && mnum(w.avg)!=null ? `${fmt(w.avg)}<em>kg</em>` : "—",
+      w && mnum(w.avg)!=null ? `ort. ${fmt(w.avg)} · ${mnum(w.n)} tartı` : "tartı yok");
+    tiles += tile("Uyku", sl && mnum(sl.avgMin)!=null ? `${hm(mnum(sl.avgMin))}<em>sa</em>` : "—", sl && sl.onset ? `dalış ort. ${esc(sl.onset)}` : "");
+    tiles += tile("HRV", mnum(rc.hrv)!=null ? `${mnum(rc.hrv).toFixed(1)}<em>ms</em>` : "—", mnum(rc.hrv)!=null && mnum(rc.hrvPrev)!=null ? `önceki 4 haftaya göre ${d(mnum(rc.hrv)-mnum(rc.hrvPrev),1," ms")}` : "");
+    const sec = r.sections && typeof r.sections==="object" ? r.sections : {}, keys = Object.keys(sec);
+    const next = keys.length && Array.isArray(sec[keys[keys.length-1]]) ? sec[keys[keys.length-1]] : [];
+    const rest = keys.slice(0,-1).map(k => Array.isArray(sec[k]) ? `<p><b>${esc(k)}.</b> ${esc(sec[k].join(" "))}</p>` : "").join("");
+    box.innerHTML = `<div class="chd"><span class="lbl">${label} · ${esc(span)}</span><span class="lr">${esc(String(r.week||""))}</span></div>
+      <div class="wtiles">${tiles}</div>
+      ${next.length ? `<div class="chd"><span class="lbl">${esc(keys[keys.length-1])}</span></div><ul class="wfocus">${next.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+      ${rest ? `<details><summary>Raporun tamamı</summary>${rest}</details>` : ""}`;
+    box.hidden = false;
+  }
+
+  // the sync runs every 3 h during the day; if nothing new arrived for much longer, say so and say what usually fixes it
+  function renderStale(){
+    const el = $("staleBanner");
+    const u = fit && fit.updated ? Date.parse(fit.updated) : NaN, now = Date.now(), h = new Date().getHours();
+    const late = !isNaN(u) && ((now - u > 6*3600e3 && h >= 11) || now - u > 20*3600e3);
+    if (!late || cur !== TODAY){ el.hidden = true; return; }
+    const hrs = Math.floor((now - u)/3600e3);
+    el.innerHTML = `<b>Fitbit verisi ${hrs} saattir gelmiyor.</b> En olası sebep Google girişinin düşmesi. Bilgisayarında <code>tools/google_login.py</code> ile yeniden giriş yap ve çıkan anahtarı GitHub'daki <code>GOOGLE_HEALTH_CREDS</code> secret'ına koy. Saat ya da telefon senkronu durduysa Fitbit uygulamasını açman da yeter.`;
+    el.hidden = false;
+  }
+
   function renderMetrics(){
     const rows = mRows(), B = mBaseline(rows);
+    renderStale();
     renderDash(rows, B);
     renderSleepWeek();
     renderFindings();
@@ -1411,6 +1475,7 @@
       "Kilo trendi: son 3 haftanın tartılarına çizilen doğru. 1 kg yağ ≈ 7.700 kcal sayılır; açık tahmini buradan gelir. Su yüzünden günlük ±0.5 kg oynama normal.",
       "Yediğin kcal tahmini: Fitbit'in aynı günlerde yaktığını söylediği ortalamadan bu açık çıkarılır. Bileklikler harcamayı çoğu zaman fazla yazar; saydığın rakam belirgin düşükse fark oradan gelir.",
       "Bulgular: her gecenin HRV'si önceki 14 gecenin ortancasına göre ölçülür, böylece formunun yavaş yavaş artması sonucu bozmaz. Alışkanlıkla ilişki sıra korelasyonu ve 10.000 karıştırmalı permütasyon testiyle sınanır; on test birlikte düzeltilir. Fark, yüksek yarı ile düşük yarının ortalaması arasındadır.",
+      "Geçen hafta kartı: her pazartesi sabahı önceki haftanın raporu hazırlanır (antrenman günleri, kilo ortalaması, uyku, HRV). Öneriler sabit kurallardan gelir; en fazla üç tane.",
       "Kilo, bel, not ve antrenmanlar sen yazdıkça kendiliğinden kaydolur."
     ];
     $("howBody").innerHTML = items.map(x => `<li>${esc(x)}</li>`).join("");
@@ -1442,6 +1507,7 @@
     db.collection("metrics").orderBy("date","desc").limit(60).onSnapshot(qs => {
       met.clear(); qs.docs.forEach(d => { const v = d.data(); if (v && v.date) met.set(v.date, v); }); renderMetrics();
     }, () => {});
+    db.doc("meta/report").onSnapshot(snap => { weekRep = snap.exists ? snap.data() : null; renderWeek(); }, () => {});
     db.doc("meta/baseline").onSnapshot(snap => { mBase = snap.exists ? snap.data() : null; renderMetrics(); }, () => {});
     db.doc("fitbit/daily").onSnapshot(snap => { fit = snap.exists ? snap.data() : null; fitSeen = true; safeRenderSessions(); renderTrend(); }, () => { fitSeen = true; safeRenderSessions(); });
     db.collection("days").orderBy("date","desc").limit(150).onSnapshot(qs => {
