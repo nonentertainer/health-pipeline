@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="color-scheme" content="light only">
+<title>Antrenman Defteri</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+  /* Bento language, light only: warm grey ground, flat white tiles, one lime hero, indigo for data,
+     Space Grotesk for big numbers. One hue per session type. Everything saves itself. */
+  :root{
+    --bg:#F2F2EE; --surface:#FFFFFF; --field:#F4F4F0; --track:#ECECE6; --line:#E6E5DF;
+    --ink:#111318; --ink-2:#3F434A; --ink-3:#5F636B;
+    --shadow:0 1px 2px rgba(17,19,24,.04);
+    --lime:#C8EA21; --data:#3B3FE4; --data-2:#8F92F2; --data-3:#D9DAF8; --risk-bg:#FFD8CA; --risk-ink:#4A1B0C;
+    --sg:"Space Grotesk","Inter",system-ui,sans-serif;
+    --gym:#3B3FE4; --gym-2:#8F92F2; --gym-soft:#E6E7FC;
+    --run:#E8590C; --run-2:#F59A62; --run-soft:#FDEBDD;
+    --bike:#0E7C86; --bike-2:#5EB8BF; --bike-soft:#DDF1F2;
+    --rest:#1F7A4D; --rest-2:#7CC49B; --rest-soft:#E2F2E8;
+    --ok:#1F7A4D; --low:#3B3FE4; --high:#E8590C; --warn:#C2410C;
+    --btn:#111318; --on-btn:#FFFFFF; --on-kind:#FFFFFF;
+    color-scheme:light;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.4;
+    -webkit-font-smoothing:antialiased;
+    padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+    padding-top:calc(14px + env(safe-area-inset-top,0px));padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+  [hidden]{display:none!important}
+  .wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+  section{margin-top:6px}
+  h1,h2,h3{margin:0;letter-spacing:-.02em;text-wrap:balance}
+  button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
+  button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--bike);outline-offset:2px}
+  .num{font-variant-numeric:tabular-nums}
+  svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+  .k-gym,.k-full,.k-lower,.k-upper{--k:var(--gym);--k2:var(--gym-2);--ks:var(--gym-soft)}
+  .k-run,.k-cardio{--k:var(--run);--k2:var(--run-2);--ks:var(--run-soft)}
+  .k-bike{--k:var(--bike);--k2:var(--bike-2);--ks:var(--bike-soft)}
+  .k-rest,.k-walk{--k:var(--rest);--k2:var(--rest-2);--ks:var(--rest-soft)}
+
+  .card{background:var(--surface);border-radius:24px;box-shadow:var(--shadow);padding:18px}
+
+  /* top */
+  .top{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:54px}
+  .navpill{display:flex;gap:4px;background:var(--surface);border-radius:999px;box-shadow:var(--shadow);padding:5px;margin-left:auto}
+  .navpill button{width:44px;height:44px;border-radius:50%;border:0;background:none;cursor:pointer;display:grid;place-items:center}
+  .navpill button:active{background:var(--field)}
+  .todaybtn{border:0;background:var(--btn);color:var(--on-btn);border-radius:999px;padding:0 16px;height:44px;font-weight:600;font-size:14px;cursor:pointer}
+  .cta{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .cta button{flex:1 1 0;white-space:nowrap;min-height:50px;border-radius:999px;border:0;background:var(--btn);color:var(--on-btn);font-weight:600;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 16px}
+  .cta button.alt{background:var(--field);color:var(--ink)}
+
+  /* bento dashboard */
+  .dhead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding:0 4px 2px}
+  .dhead>div{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .dhead small{font-size:13px;font-weight:500;color:var(--ink-3)}
+  .dhead h1{font-family:var(--sg);font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1.05}
+  .face{flex:none;width:56px;height:56px}
+  .face svg{width:56px;height:56px;display:block}
+  .hero{border-radius:24px;padding:18px 20px;min-height:150px;display:flex;flex-direction:column;justify-content:space-between;gap:12px;background:var(--lime);color:#0E0E0E}
+  .hero.risk{background:var(--risk-bg);color:var(--risk-ink)}
+  .hero.wait{background:var(--surface);color:var(--ink)}
+  .hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .hero .hk{display:block;font-size:13px;font-weight:600}
+  .hero .hs{display:block;font-size:12px;color:#2E3300;margin-top:2px}
+  .hero-top>div:first-child{min-width:0}
+  .hero.risk .hs,.hero.wait .hs{color:inherit}
+  .hero .hv{display:flex;align-items:baseline;gap:4px}
+  .hero .hv b{font-family:var(--sg);font-size:clamp(44px,13vw,56px);font-weight:700;letter-spacing:-.03em;line-height:1}
+  .hero .hv span{font-size:14px;font-weight:600}
+  .hero h3{font-family:var(--sg);font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+  .hero svg.rg{width:100%;height:18px;display:block}
+  .hf{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:12px;color:#2E3300}
+  .hero.risk .hf{color:inherit}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{font-size:12px;font-weight:600;background:#FFFFFF;border-radius:999px;padding:6px 10px}
+  .jr{display:flex;flex-direction:column;gap:8px;padding:16px}
+  .jtop{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .jtop b.k{display:block;font-size:13px;font-weight:600}
+  .jtop small{display:block;font-size:12px;color:var(--ink-3);margin-top:2px}
+  .jtop .w{font-family:var(--sg);font-size:26px;font-weight:700;letter-spacing:-.02em;white-space:nowrap}
+  .jtop .w em{font-family:"Inter",sans-serif;font-style:normal;font-size:12px;font-weight:500;color:var(--ink-3);margin-left:3px}
+  .jr svg{width:100%;height:auto;display:block}
+  .duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .mini{min-height:140px;display:flex;flex-direction:column;justify-content:space-between;gap:8px;padding:16px;min-width:0}
+  .mini .k{font-size:13px;font-weight:600}
+  .mini .big{font-family:var(--sg);font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1;white-space:nowrap}
+  .mini .big em{font-family:"Inter",sans-serif;font-style:normal;font-size:13px;font-weight:500;color:var(--ink-3);margin-left:3px}
+  .mini .sub{font-size:12px;color:var(--ink-3)}
+  .stg{display:flex;height:10px;border-radius:5px;overflow:hidden;gap:2px}
+  .stg i{display:block;height:100%}
+  .pbar{height:10px;border-radius:5px;background:#ECECF6;overflow:hidden}
+  .pbar i{display:block;height:100%;background:var(--data);border-radius:5px}
+  .hrvw{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px}
+  .hrvw b{display:block;font-size:13px;font-weight:600}
+  .hrvw small{display:block;font-size:12px;color:var(--ink-3);margin-top:4px}
+  .hrvw svg{width:168px;height:56px;flex:none}
+  .plancard{background:#111318;color:#FFFFFF;display:flex;flex-direction:column;gap:12px;padding:16px}
+  .plancard .ph{display:flex;align-items:center;gap:12px}
+  .plancard .ph .ico{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--k);color:#fff;flex:none}
+  .plancard .ph div{flex:1;min-width:0}
+  .plancard .ph b{display:block;font-size:17px;font-weight:700}
+  .plancard .ph small{display:block;font-size:13px;color:#B5B8BF}
+  .plancard p{margin:0;font-size:15px;line-height:1.45;color:#D9DBE0}
+  .plancard .cta{margin-top:0}
+  .plancard .cta button{background:var(--lime);color:#111318}
+  .plancard .cta button.alt{background:#24272E;color:#FFFFFF}
+
+  input,select,textarea{font:inherit;color:var(--ink);background:var(--field);border:0;border-radius:14px;padding:10px 12px;width:100%;min-width:0;min-height:46px;font-size:17px;font-weight:600}
+  input::placeholder,textarea::placeholder{color:var(--ink-3);font-weight:400}
+  .ts{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:600;color:var(--ink-3);min-height:22px;min-width:0}
+  .ts .b{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;color:#fff;flex:none}
+  .ts .b svg.i{width:12px;height:12px;stroke-width:3}
+  .ts.ok{color:var(--ok)} .ts.ok .b{background:var(--ok)}
+  .ts.low{color:var(--low)} .ts.low .b{background:var(--low)}
+  .ts.high{color:var(--high)} .ts.high .b{background:var(--high)}
+  .empty{color:var(--ink-3);font-size:15px}
+  .banner{border-radius:22px;padding:14px 16px;font-size:15px;background:var(--surface);box-shadow:var(--shadow);color:var(--warn);font-weight:500}
+
+  /* ---------- lower half: same bento language ---------- */
+  .lbl,.notecard .k{font-size:13px;font-weight:600;color:var(--ink)}
+  .lr{font-size:12px;color:var(--ink-3);text-align:right}
+  .chd{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap}
+  .glabel{font-family:var(--sg);font-size:20px;font-weight:700;padding:16px 4px 0}
+  .big{font-family:var(--sg);font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1;white-space:nowrap}
+  .big em{font-family:"Inter",sans-serif;font-style:normal;font-size:13px;font-weight:500;color:var(--ink-3);margin-left:3px;letter-spacing:0}
+  .mempty{font-size:13px;color:var(--ink-3);line-height:1.45}
+  .foot{font-size:12px;color:var(--ink-3);line-height:1.45}
+  .ico.sm{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--k);color:#FFFFFF;flex:none}
+  .ico.sm svg.i{width:18px;height:18px}
+  .dch{font-size:11.5px;font-weight:700;border-radius:999px;padding:3px 8px;white-space:nowrap;flex:none;background:#FFFFFF;color:var(--ink-2)}
+  .dch.up{background:var(--lime);color:#111318}
+  .dch.dn{background:var(--run-soft);color:var(--warn)}
+
+  /* check-in tiles */
+  .ci{cursor:text}
+  .civ{display:flex;align-items:baseline;gap:3px;min-width:0}
+  .civ input{background:none;padding:0;min-height:0;border-radius:6px;font-family:var(--sg);font-size:34px;font-weight:700;letter-spacing:-.02em;flex:none;max-width:100%}
+  .civ input::placeholder{color:#C9CBD1;font-weight:700}
+  .civ em{font-style:normal;font-size:13px;font-weight:500;color:var(--ink-3)}
+  .ci .ts{font-size:12px;min-height:18px;line-height:1.3}
+  .ci .ts .b{width:16px;height:16px}
+  .ci.need{box-shadow:inset 0 0 0 2px var(--lime)}
+
+  /* strength session */
+  #gymBox{display:flex;flex-direction:column;gap:10px}
+  #gymBox:empty{display:none}
+  .gym{display:flex;flex-direction:column;gap:12px;padding:16px;scroll-margin-top:12px}
+  .gh{display:flex;align-items:center;gap:12px}
+  .gh .ico{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--k);color:#FFFFFF;flex:none}
+  .gh>div{flex:1;min-width:0}
+  .gh b{display:block;font-family:var(--sg);font-size:19px;font-weight:700;letter-spacing:-.02em}
+  .gh small{display:block;font-size:12px;color:var(--ink-3)}
+  .ghost{border:0;background:var(--field);color:var(--ink);font-size:13px;font-weight:600;border-radius:999px;min-height:36px;padding:0 14px;cursor:pointer;flex:none}
+  .ghost.on{background:#111318;color:#FFFFFF}
+  .exg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .ext{background:var(--field);border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+  .et{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;min-height:34px}
+  .et b.en{font-size:13px;font-weight:600;line-height:1.3;min-width:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .et input.en{background:#FFFFFF;min-height:34px;padding:6px 8px;font-size:13px;border-radius:10px;flex:1}
+  .exdel{border:0;background:#FFFFFF;color:var(--ink-2);width:34px;height:34px;border-radius:10px;font-size:18px;line-height:1;cursor:pointer;flex:none}
+  .ev{display:flex;align-items:baseline;gap:3px;cursor:text;min-width:0}
+  .ev input{background:none;padding:0;min-height:0;border-radius:6px;font-family:var(--sg);font-size:30px;font-weight:700;letter-spacing:-.02em;flex:none;max-width:100%}
+  .ev input::placeholder{color:#C9CBD1;font-weight:700}
+  .ev em{font-style:normal;font-size:12px;font-weight:500;color:var(--ink-3)}
+  .el{font-size:12px;color:var(--ink-3);min-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .es{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .step{border:0;background:#FFFFFF;color:var(--ink);border-radius:12px;height:44px;font-size:22px;font-weight:600;cursor:pointer;padding:0}
+  .step:active{transform:scale(.95)}
+  .ext.on{background:#ECEEFD}
+  .ext.add{border:2px dashed #C9CBD1;background:none;color:var(--ink-2);font-weight:600;font-size:14px;align-items:center;justify-content:center;gap:6px;min-height:150px;cursor:pointer;flex-direction:row}
+  .gnote{font-size:12px;color:var(--ink-3)}
+  .gfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px;color:var(--ink-3)}
+  .danger{border:0;background:var(--run-soft);color:var(--warn);font-weight:600;font-size:13px;border-radius:999px;min-height:36px;padding:0 14px;cursor:pointer;flex:none}
+
+  /* movement: Fitbit workouts + hand-logged cardio */
+  .move{display:flex;flex-direction:column;gap:8px;padding:16px}
+  .fw{display:flex;align-items:center;gap:12px;padding:10px 12px 10px 10px;border-radius:18px;background:var(--field)}
+  .fw>div{flex:1;min-width:0}
+  .fw b{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:600}
+  .fw small{display:block;font-size:12px;color:var(--ink-3)}
+  .src{font-size:10.5px;font-weight:600;color:var(--ink-3);background:#FFFFFF;border-radius:999px;padding:2px 7px}
+  .fv{font-family:var(--sg);font-size:20px;font-weight:700;white-space:nowrap}
+  .fv em{font-family:"Inter",sans-serif;font-style:normal;font-size:11px;font-weight:500;color:var(--ink-3);margin-left:2px}
+  .ms{background:var(--field);border-radius:18px;padding:10px;display:flex;flex-direction:column;gap:10px}
+  .msh{display:flex;align-items:center;gap:12px}
+  .msh>div{flex:1;min-width:0}
+  .msh b{display:block;font-size:15px;font-weight:600}
+  .msh small{display:block;font-size:12px;color:var(--ink-3)}
+  .x{border:0;background:#FFFFFF;color:var(--ink-2);font-size:13px;font-weight:600;cursor:pointer;border-radius:999px;padding:0 14px;min-height:36px;flex:none}
+  .fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .fields.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .fld{background:#FFFFFF;border-radius:12px;padding:8px 10px;display:flex;flex-direction:column;gap:2px;cursor:text;min-width:0}
+  .fld span{font-size:11.5px;font-weight:600;color:var(--ink-3);white-space:nowrap}
+  .fld input{background:none;padding:0;min-height:28px;border-radius:4px;font-family:var(--sg);font-size:20px;font-weight:700}
+  .fld input::placeholder{color:#C9CBD1}
+  .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .seg button{border:0;background:#FFFFFF;border-radius:10px;min-height:36px;font-weight:600;font-size:13px;cursor:pointer}
+  .seg button[aria-pressed="true"]{background:#111318;color:#FFFFFF}
+  .adds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding-top:4px}
+  .adds>span{grid-column:1/-1;font-size:12px;color:var(--ink-3)}
+  .addc{border:0;background:var(--field);border-radius:14px;min-height:42px;padding:0 10px;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;min-width:0}
+  @media (min-width:420px){.adds{grid-template-columns:repeat(4,minmax(0,1fr))}}
+  .addc::before{content:"";width:8px;height:8px;border-radius:3px;background:var(--k)}
+
+  /* note */
+  .notecard{display:flex;flex-direction:column;gap:8px;padding:16px}
+  .notecard textarea{min-height:96px;resize:none;font-weight:500;font-size:16px;line-height:1.5;overflow:hidden;background:var(--field);border-radius:16px}
+
+  /* posture */
+  .pcard{display:flex;flex-direction:column;gap:12px;padding:16px}
+  .ptop{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .ptop>div{display:flex;flex-direction:column;gap:6px;min-width:0}
+  .ptop small{font-size:12px;color:var(--ink-3)}
+  .pnow{border:0;background:var(--lime);color:#111318;border-radius:999px;min-height:46px;padding:0 16px;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap;flex:none}
+  .pslots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .pslot{background:var(--field);border-radius:16px;height:52px;display:flex;align-items:center;justify-content:center;gap:5px;font-size:13px;font-weight:600;color:var(--ink-3)}
+  .pslot.on{background:var(--lime);color:#111318;font-family:var(--sg);font-size:15px}
+  .pslot svg.i{width:16px;height:16px;stroke-width:3}
+  .pfoot{display:flex;gap:6px 16px;font-size:12px;color:var(--ink-3);flex-wrap:wrap}
+  .pfoot b{font-family:var(--sg);font-size:15px;color:var(--ink);margin:0 1px}
+  .pfoot .lie b{color:var(--warn)}
+
+  /* trends */
+  .trend,.sleepw,.strc,.cal{display:flex;flex-direction:column;gap:10px;padding:16px}
+  .tstat{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap}
+  .tstat .tsub{font-size:12px;color:var(--ink-3);line-height:1.45}
+  .tstat .tsub b{color:var(--ink);font-weight:600}
+  .chart{width:100%;height:auto;display:block}
+  .sleepw svg{width:100%;height:auto;display:block}
+  .legend{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:12px;color:var(--ink-3)}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+  .legend i.ol{box-shadow:inset 0 0 0 2px var(--ink-3)}
+  .legend i.dash{width:14px;height:2px;border-radius:0;vertical-align:3px;background:repeating-linear-gradient(90deg,#111318 0 4px,transparent 4px 7px)}
+  .srow{display:grid;grid-template-columns:minmax(0,1fr) 72px auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+  .srow b{display:block;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .srow small{font-size:12px;color:var(--ink-3)}
+  .srow svg{width:72px;height:30px;overflow:visible}
+  .srow .sv{display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:64px}
+  .srow .sv strong{font-family:var(--sg);font-size:20px;font-weight:700;letter-spacing:-.02em;white-space:nowrap}
+  .srow .sv strong em{font-family:"Inter",sans-serif;font-style:normal;font-size:12px;font-weight:500;color:var(--ink-3);margin-left:2px}
+  .srow .dch{background:var(--field)}
+  .srow .dch.up{background:var(--lime)}
+  .srow .dch.dn{background:var(--run-soft)}
+
+  /* findings: what the pipeline's statistics say */
+  .find{display:flex;flex-direction:column;gap:10px;padding:16px}
+  .find h3{font-family:var(--sg);font-size:22px;font-weight:700;letter-spacing:-.02em;line-height:1.15}
+  .find .lead{font-size:13px;color:var(--ink-2);line-height:1.5}
+  .find .lead b{color:var(--ink);font-weight:600}
+  .frow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center;padding:10px 0 2px;border-top:1px solid var(--line)}
+  .frow b{display:block;font-size:15px;font-weight:600}
+  .frow small{display:block;font-size:12px;color:var(--ink-3);line-height:1.4}
+  .frow .fr{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+  .frow .fr strong{font-family:var(--sg);font-size:20px;font-weight:700;letter-spacing:-.02em;white-space:nowrap}
+  .frow .fr strong em{font-family:"Inter",sans-serif;font-style:normal;font-size:12px;font-weight:500;color:var(--ink-3);margin-left:2px}
+  .frow .dch{background:var(--field)}
+  .frow .dch.up{background:var(--lime)}
+  .frow .dch.mid{background:var(--data-3);color:#1B1D8C}
+  .fbar{grid-column:1/-1;position:relative;height:6px;border-radius:3px;background:var(--field);margin-top:4px}
+  .fbar::after{content:"";position:absolute;left:50%;top:-3px;width:2px;height:12px;margin-left:-1px;border-radius:1px;background:var(--ink-3)}
+  .fbar i{position:absolute;top:0;height:6px;border-radius:3px;background:#B9BBC2}
+  .fbar i.s{background:var(--data)}
+  .falert{background:var(--field);border-radius:16px;padding:12px;font-size:13px;color:var(--ink-2);line-height:1.5}
+  .falert b{color:var(--ink);font-weight:600}
+
+  /* calendar */
+  .cgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr)) 36px;gap:5px 4px;align-items:center}
+  .cgrid .dh{font-size:11px;font-weight:600;color:var(--ink-3);text-align:center}
+  .cd{position:relative;border:0;aspect-ratio:1;min-height:32px;border-radius:10px;background:none;font-family:var(--sg);font-size:14px;font-weight:700;color:var(--ink-2);cursor:pointer;display:grid;place-items:center;padding:0}
+  .cd.miss{background:var(--field);color:var(--ink-3)}
+  .cd.plan{box-shadow:inset 0 0 0 2px var(--k);color:var(--ink)}
+  .cd.d-gym{background:var(--gym);color:#FFFFFF}
+  .cd.d-run{background:var(--run);color:#FFFFFF}
+  .cd.d-bike{background:var(--bike);color:#FFFFFF}
+  .cd.d-walk{background:var(--rest-soft);color:var(--rest)}
+  .cd.pre{opacity:.35}
+  .cd.today::after{content:"";position:absolute;bottom:3px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:2px;background:currentColor}
+  .cd.sel{outline:2.5px solid #111318;outline-offset:1px}
+  .cs{font-size:12px;font-weight:600;color:var(--ink-3);text-align:center;border-radius:8px;padding:3px 0}
+  .cs.hit{color:#111318;background:var(--lime)}
+
+  /* how it works */
+  .how{padding:0}
+  .how summary{list-style:none;cursor:pointer;padding:16px;font-size:13px;font-weight:600;display:flex;justify-content:space-between;align-items:center;min-height:52px}
+  .how summary::-webkit-details-marker{display:none}
+  .how summary::after{content:"+";font-family:var(--sg);font-size:22px;font-weight:600;line-height:1}
+  .how[open] summary::after{content:"−"}
+  .how ul{margin:0;padding:0 18px 18px 34px;font-size:13px;color:var(--ink-2);line-height:1.5;display:flex;flex-direction:column;gap:8px}
+
+  /* save toast: shows only while saving, after a save, or when a save failed */
+  .savepill{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:10;display:flex;align-items:center;gap:8px;
+    background:#111318;color:#FFFFFF;border-radius:999px;padding:0 16px 0 12px;height:40px;font-size:13px;font-weight:600;border:0;box-shadow:0 8px 24px rgba(17,19,24,.18);
+    cursor:default;transition:opacity .3s,transform .3s;white-space:nowrap}
+  .savepill i{width:8px;height:8px;border-radius:50%;background:var(--lime)}
+  .savepill.saving i{background:#F59A62;animation:blink .8s steps(2) infinite}
+  .savepill.bad{background:var(--risk-bg);color:var(--risk-ink);cursor:pointer}
+  .savepill.bad i{background:var(--warn)}
+  .savepill.idle{opacity:0;pointer-events:none;transform:translate(-50%,8px)}
+
+  /* posture alarm overlay */
+  .pa{position:fixed;inset:0;z-index:50;display:flex;color:#fff;overflow-y:auto;isolation:isolate;background:#C8102E;transition:background .5s;
+    padding:calc(22px + env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) calc(22px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px))}
+  .pa::before{content:"";position:fixed;inset:-25%;z-index:-1;pointer-events:none}
+  .pa.red::before{background:radial-gradient(circle at 50% 38%,#FF5A67 0%,#D3132F 42%,#6E0016 100%);animation:paPulse 1.4s ease-in-out infinite}
+  .pa.liar::before{background:radial-gradient(circle at 50% 38%,#FF2D3D 0%,#A3001B 45%,#2A0007 100%);animation:paPulse .8s ease-in-out infinite}
+  .pa.dark{background:#09090D}
+  .pa.dark::before{background:radial-gradient(circle at 50% 30%,#2B2B3A 0%,#09090D 60%)}
+  .pa.amber{background:#B45309}
+  .pa.amber::before{background:radial-gradient(circle at 50% 35%,#F59E0B 0%,#B45309 55%,#5A2A04 100%)}
+  .pa.green{background:#15803D}
+  .pa.green::before{background:radial-gradient(circle at 50% 35%,#4ADE80 0%,#16A34A 45%,#0B4D25 100%)}
+  .pa.guide{background:#17153F}
+  .pa.guide.holding{background:#0E4E33}
+  @keyframes paPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.72;transform:scale(1.08)}}
+  @keyframes blink{50%{opacity:.35}}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+  .pa-in{max-width:520px;width:100%;margin:auto;display:flex;flex-direction:column;gap:16px;text-align:center}
+  .pa .badge{align-self:center;display:inline-flex;gap:8px;align-items:center;background:rgba(255,255,255,.16);border:2px solid rgba(255,255,255,.55);border-radius:999px;padding:8px 16px;font-weight:800;letter-spacing:.12em;font-size:13px;text-transform:uppercase}
+  .pa.red .badge,.pa.liar .badge{animation:blink 1s steps(2) infinite}
+  .pa .badge svg.i{width:18px;height:18px;stroke-width:2.5}
+  .pa h1{font-size:clamp(42px,13vw,84px);font-weight:900;line-height:1.02;padding-top:.06em;letter-spacing:-.045em;text-transform:uppercase;margin:0;text-wrap:balance}
+  .pa.liar h1{animation:shake .5s ease-in-out 2}
+  .pa.amber h1{font-size:clamp(36px,10.5vw,68px)}
+  .pa button:focus-visible{outline:3px solid #fff;outline-offset:3px}
+  .pa .sub{font-size:18px;font-weight:500;line-height:1.42;margin:0;opacity:.95;text-wrap:pretty}
+  .pa .meta{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+  .pa .meta span{background:rgba(0,0,0,.22);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:600}
+  .pa .acts{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+  .pa .btn-main{min-height:72px;border-radius:999px;border:0;background:#fff;color:#B00E28;font-size:21px;font-weight:800;cursor:pointer;box-shadow:0 14px 34px rgba(0,0,0,.28)}
+  .pa.amber .btn-main{color:#92400E} .pa.green .btn-main{color:#15803D}
+  .pa .btn-sec{min-height:58px;border-radius:999px;border:2px solid rgba(255,255,255,.7);background:transparent;color:#fff;font-size:17px;font-weight:700;cursor:pointer}
+  .pa .btn-lie{min-height:58px;border-radius:999px;border:2px solid #FF5A5F;background:rgba(255,90,95,.08);color:#FF8F93;font-size:17px;font-weight:800;cursor:pointer}
+  .pa .hold{position:relative;overflow:hidden;min-height:76px;border-radius:999px;border:0;background:rgba(255,255,255,.12);color:#fff;font-size:20px;font-weight:800;cursor:pointer;
+    user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:none;box-shadow:inset 0 0 0 2px rgba(255,255,255,.5)}
+  .pa .hold .fill{position:absolute;inset:0;width:0;background:#22C55E;transition:width .15s}
+  .pa .hold.on .fill{width:100%;transition:width 1.6s linear}
+  .pa .hold .lbl{position:relative}
+  .pa .hold small{display:block;font-size:12px;font-weight:600;opacity:.8;letter-spacing:.04em}
+  .pa .bigcheck{width:min(30vw,130px);height:min(30vw,130px);border-radius:50%;background:#fff;color:#16A34A;display:grid;place-items:center;align-self:center;box-shadow:0 14px 34px rgba(0,0,0,.25)}
+  .pa .bigcheck svg.i{width:58%;height:58%;stroke-width:3}
+
+  .head{width:min(44vw,180px);height:auto;align-self:center;color:#fff;overflow:visible}
+  .head .nk,.head .hd{transform-box:view-box;transition:transform .9s cubic-bezier(.4,0,.2,1)}
+  .head .nk{transform-origin:100px 170px}
+  .head.fwd .nk{transform:rotate(26deg)}
+  .head.fwd .hd{transform:translate(25px,6px)}
+  .head.loop .nk{animation:nkLoop 3s ease-in-out infinite}
+  .head.loop .hd{animation:hdLoop 3s ease-in-out infinite}
+  @keyframes nkLoop{0%,20%,100%{transform:rotate(26deg)}46%,80%{transform:rotate(0)}}
+  @keyframes hdLoop{0%,20%,100%{transform:translate(25px,6px)}46%,80%{transform:translate(0,0)}}
+
+  .gbar{height:6px;border-radius:999px;background:rgba(255,255,255,.18);overflow:hidden}
+  .gbar i{display:block;height:100%;width:0;background:#fff;border-radius:inherit}
+  .gring{position:relative;width:min(56vw,230px);aspect-ratio:1;align-self:center}
+  .gring svg{width:100%;height:100%;transform:rotate(-90deg)}
+  .gring .gnum{position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(64px,20vw,96px);font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+  .gwrap{display:grid;grid-template-columns:1fr;gap:6px;justify-items:center}
+
+  @media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <button class="todaybtn" id="toToday" hidden>Bugüne dön</button>
+    <div class="navpill">
+      <button id="prev" aria-label="Önceki gün"></button>
+      <button id="next" aria-label="Sonraki gün"></button>
+    </div>
+  </div>
+  <div class="dhead">
+    <div>
+      <small><span id="dateLabel">—</span><span id="fitTime"></span></small>
+      <h1 id="headline">Hazırsın.</h1>
+      <span id="dowLabel" hidden></span>
+    </div>
+    <div class="face" id="face" role="img" aria-label="Durum yüzü"></div>
+  </div>
+
+  <div class="hero wait" id="hero"><div><span class="hk">Toparlanma</span><span class="hs">Fitbit verisi yükleniyor…</span></div></div>
+
+  <div class="card jr" id="journey"></div>
+
+  <div class="duo">
+    <div class="card mini" id="sleepCard"></div>
+    <div class="card mini" id="stepsCard"></div>
+  </div>
+
+  <div class="card hrvw" id="hrvWeek"></div>
+
+  <div class="card plancard" id="planPill">
+    <div class="ph"><span class="ico" id="planIco"></span><div><b id="planTitle">—</b><small id="planSub">—</small></div></div>
+    <p id="planText">—</p>
+    <div class="cta" id="cta"></div>
+  </div>
+
+  <div class="banner" id="dbBanner" hidden></div>
+
+  <div id="gymBox"></div>
+
+  <div class="duo">
+    <label class="card mini ci" id="ciW" for="weight"><span class="k">Sabah tartı</span><span class="civ"><input id="weight" class="num" type="text" inputmode="decimal" autocomplete="off" placeholder="—"><em>kg</em></span><span class="ts" id="tsW"></span></label>
+    <label class="card mini ci" for="waist"><span class="k">Bel · haftada bir</span><span class="civ"><input id="waist" class="num" type="text" inputmode="decimal" autocomplete="off" placeholder="—"><em>cm</em></span><span class="ts" id="tsB"></span></label>
+  </div>
+
+  <div class="card move" id="move"></div>
+
+  <div class="card notecard">
+    <label for="notes" class="k">Not</label>
+    <textarea id="notes" rows="3" placeholder="Ne yedin, nasıl hissettin, uyku…"></textarea>
+  </div>
+
+  <div class="card pcard" id="pCard"></div>
+
+  <h2 class="glabel">Gidişat</h2>
+  <div class="card trend" id="trend"></div>
+  <div class="card sleepw" id="sleepWeek"></div>
+  <div class="card find" id="findings"></div>
+  <div class="card strc" id="strength"></div>
+
+  <h2 class="glabel">Takvim</h2>
+  <div class="card cal" id="cal"></div>
+
+  <details class="card how"><summary>Bu sayfa nasıl çalışır</summary><ul id="howBody"></ul></details>
+</div>
+
+<div class="pa" id="pa" role="alertdialog" aria-modal="true" aria-label="Postür alarmı" hidden></div>
+<button class="savepill idle" id="savePill" type="button"><i></i><span id="saveTxt"></span></button>
+
+<script>
+(function(){
+  const DOW = ["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"];
+  const DOW_S = ["Paz","Pzt","Sal","Çar","Per","Cum","Cmt"];
+  const MON = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+
+  // Personal targets and the exercise list live in the database (meta/config), not in the code:
+  // the same page serves any person, and the public demo runs it against synthetic data.
+  // These are only the fallbacks until that document arrives.
+  const WEEK_TARGET = 5;
+  let GOAL = 80, START_W = 90, MILESTONE = 85, DIET_START = null, cfgSeen = false;
+  let GYM_EX = ["Bench","Pull","Face pull","Triceps","Biceps","Leg press"];
+  // machine stacks move in bigger jumps than dumbbells
+  let STEP = {"pull":10, "leg press":10, "face pull":5};
+  const stepFor = name => STEP[norm(name)] || 2.5;
+  const gymText = () => `${GYM_EX.length > 1 ? GYM_EX.slice(0,-1).join(", ") + " ve " + GYM_EX[GYM_EX.length-1] : GYM_EX.join("")}. Geçen seferin kilosu her hareketin altında; temiz çıktıysa + ile bir adım artır.`;
+  const GYM_P = {kind:"gym", short:"Ağırlık", title:"Ağırlık günü", text:gymText()};
+  // Turkish dative after a number: 80'e, 82'ye, 90'a
+  const DAT1 = ["","'e","'ye","'e","'e","'e","'ya","'ye","'e","'a"], DAT10 = ["'e","'a","'ye","'a","'a","'ye","'a","'e","'e","'a"];
+  const dat = n => { const r = Math.round(n); return fmt(n) + (r % 10 ? DAT1[r % 10] : DAT10[Math.floor(r/10) % 10]); };
+  function applyConfig(v){
+    v = v && typeof v==="object" ? v : {};
+    const n = (x, d) => typeof x==="number" && isFinite(x) && x > 0 ? x : d;
+    GOAL = n(v.goal, GOAL); START_W = n(v.startW, START_W); MILESTONE = n(v.milestone, MILESTONE);
+    if (START_W <= GOAL) START_W = GOAL + 10;
+    if (!(MILESTONE < START_W && MILESTONE > GOAL)) MILESTONE = (START_W + GOAL) / 2;
+    if (typeof v.dietStart==="string" && /^\d{4}-\d{2}-\d{2}$/.test(v.dietStart)) DIET_START = v.dietStart;
+    if (Array.isArray(v.gymEx) && v.gymEx.length){ const ex = v.gymEx.filter(x => typeof x==="string" && x.trim()).map(x => x.trim()).slice(0, 12); if (ex.length) GYM_EX = ex; }
+    if (v.steps && typeof v.steps==="object"){ const st = {}; Object.keys(v.steps).forEach(k => { const x = v.steps[k]; if (typeof x==="number" && x > 0) st[norm(k)] = x; }); STEP = st; }
+    GYM_P.text = gymText();
+    cfgSeen = true;
+  }
+  const CAR_P = {kind:"cardio", short:"Kardiyo", title:"Kardiyo", text:"Bisiklet ya da koşu, sen seç. Konuşabileceğin ama şarkı söyleyemeyeceğin tempo: bisiklette nabız 120–135, koşuda 150 altı. 40 dakika ve üstünü hedefle; öncesinde bir muz."};
+  const RST_P = {kind:"rest", short:"Dinlen", title:"Dinlenme", text:"Bugün antrenman yok. Proteini tamamla, postür turlarını kaçırma. Yürüyüş yaptıysan ekle."};
+  const PLAN = {0:RST_P, 1:CAR_P, 2:GYM_P, 3:CAR_P, 4:GYM_P, 5:RST_P, 6:GYM_P};
+  const KIND_LABEL = {gym:"Ağırlık", full:"Full body", lower:"Alt gün", upper:"Üst gün", run:"Koşu", bike:"Bisiklet", walk:"Yürüyüş"};
+  const isStrength = k => k==="gym"||k==="full"||k==="lower"||k==="upper";
+
+  const P = {
+    gym:'<path d="M6.5 7v10M3.5 9.5v5M17.5 7v10M20.5 9.5v5M6.5 12h11"/>',
+    run:'<circle cx="14.5" cy="4.5" r="1.8"/><path d="M7 21l3.2-5.5 3 2.2V21M5.5 11.5l3-2.5 4 .8 2.2 3 3.3 1M10.2 15.5l2-6"/>',
+    bike:'<circle cx="6" cy="16" r="3.6"/><circle cx="18" cy="16" r="3.6"/><path d="M6 16l4.5-7.5H15l3 7.5M10.5 8.5l3.5 7.5M9 6h3"/>',
+    walk:'<circle cx="12.5" cy="4.5" r="1.8"/><path d="M9.5 21l2.3-6 2.4 2.3V21M8.5 11l3.3-2.6 2.7 2.9 2.5 1.2M11.8 15l.5-6.5"/>',
+    rest:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+    scale:'<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><path d="M8.5 10a4.5 4.5 0 0 1 7 0M12 10l1.4-2"/>',
+    ruler:'<rect x="2.5" y="8" width="19" height="8" rx="2.5"/><path d="M7 8v3M11 8v4M15 8v3M19 8v2"/>',
+    note:'<path d="M6 3.5h8.5l4 4V20.5H6zM9.5 12.5h6M9.5 16.5h4"/>',
+    bolt:'<path d="M13 2.5L4.5 13.5h6.5l-1 8 8.5-11h-6.5z"/>',
+    flame:'<path d="M12 21.5c-3.9 0-6.5-2.6-6.5-6.2 0-3.3 2.3-5.2 3.6-7.6.5 1.7 1.4 2.8 2.6 3.5-.2-3.4 1-6.2 3.3-8.2.3 3.3 1.6 5.3 2.9 7.1 1 1.4 1.6 3 1.6 5.2 0 3.6-3.6 6.2-7.5 6.2z"/>',
+    neck:'<circle cx="12" cy="7" r="4"/><path d="M12 11v5M7 21c1.2-2.6 3-4 5-4s3.8 1.4 5 4M3 7h3"/>',
+    l:'<path d="M15 5l-7 7 7 7"/>', r:'<path d="M9 5l7 7-7 7"/>',
+    plus:'<path d="M12 5v14M5 12h14"/>',
+    up:'<path d="M12 18V6M6.5 11.5L12 6l5.5 5.5"/>', down:'<path d="M12 6v12M6.5 12.5L12 18l5.5-5.5"/>',
+    check:'<path d="M5.5 12.5l4 4 9-9"/>'
+  };
+  const ico = n => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${P[n]||P.gym}</svg>`;
+  const kindIco = k => ico(isStrength(k) ? "gym" : k==="cardio" ? "run" : k);
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  const parse = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y,m-1,d); };
+  const addDays = (s,n) => { const d = parse(s); d.setDate(d.getDate()+n); return iso(d); };
+  const daysBetween = (a,b) => Math.round((parse(b)-parse(a))/86400000);
+  const num = v => { const n = parseFloat(String(v ?? "").replace(",", ".")); return isFinite(n) ? n : null; };
+  const fmt = n => n==null || n==="" ? "" : String(Math.round(Number(n)*100)/100);
+  const norm = s => String(s||"").trim().toLocaleLowerCase("tr");
+  const shortDate = s => { const d = parse(s); return `${d.getDate()} ${MON[d.getMonth()].slice(0,3)}`; };
+  const sign = v => (v>0?"+":v<0?"−":"±") + fmt(Math.abs(v));
+
+  document.querySelectorAll("[data-icon]").forEach(el => el.insertAdjacentHTML("afterbegin", ico(el.dataset.icon)));
+  $("prev").innerHTML = ico("l"); $("next").innerHTML = ico("r");
+
+  let TODAY = iso(new Date());
+  let cur = TODAY, day = emptyDay(cur), dirty = false, db = null, unsubDay = null, saveT = null, lastWrite = null, pendingSess = false;
+  const hist = new Map();
+  const editing = new Set();   // strength sessions whose exercise names are being edited
+
+  function emptyDay(date){ return {date, weight:null, waist:null, notes:"", sessions:[], legacy:{}}; }
+
+  // last logged weight on this exercise before `date`
+  function lastFor(name, date){
+    const key = norm(name); if (!key) return null;
+    const dates = [...hist.keys()].filter(d => d < date).sort().reverse();
+    for (const d of dates){
+      for (const s of (hist.get(d).sessions||[])){
+        if (!isStrength(s.kind)) continue;
+        const e = (s.ex||[]).find(x => norm(x.name)===key && x.kg!=null);
+        if (e) return {date:d, kg:Number(e.kg)};
+      }
+    }
+    return null;
+  }
+
+  function newSession(kind){
+    if (isStrength(kind)) return {kind:"gym", ex: GYM_EX.map(n => { const l = lastFor(n, cur); return {name:n, kg: l ? fmt(l.kg) : "", sets:"", reps:""}; })};
+    if (kind==="run") return {kind, min:"", km:"", hr:""};
+    if (kind==="bike") return {kind, type:"Z2", min:"", hr:""};
+    return {kind:"walk", min:"", km:""};
+  }
+
+  const sessionsOf = ds => ds===cur ? day.sessions : ((hist.get(ds)||{}).sessions||[]);
+  const weights = () => [...hist.values()].filter(d => d.weight!=null).sort((a,b)=>a.date.localeCompare(b.date));
+  function avg7(upTo){
+    const pts = weights().filter(p => p.date <= upTo && p.date >= addDays(upTo,-6));
+    return pts.length ? pts.reduce((a,p)=>a+Number(p.weight),0)/pts.length : null;
+  }
+
+  /* ---------- Fitbit: one day's numbers and detected workouts (fitbit/daily, read only) ---------- */
+  const fitDay = ds => fit && fit.days && fit.days[ds] && typeof fit.days[ds]==="object" ? fit.days[ds] : null;
+  const WK = [
+    [/treadmill/i, "run", "Koşu bandı"], [/run|jog/i, "run", "Koşu"],
+    [/ellip/i, "bike", "Eliptik"], [/bike|cycl|spin/i, "bike", "Bisiklet"],
+    [/weight|strength|lift/i, "gym", "Ağırlık"], [/hike/i, "walk", "Doğa yürüyüşü"], [/walk/i, "walk", "Yürüyüş"],
+    [/swim/i, "bike", "Yüzme"]
+  ];
+  function fitWk(ds){
+    const list = fit && Array.isArray(fit.workouts) ? fit.workouts : [];
+    return list.filter(w => w && w.date===ds && mnum(w.min)!=null && mnum(w.min) >= 3).map(w => {
+      const m = WK.find(([re]) => re.test(String(w.name||""))) || [null, "walk", String(w.name||"Antrenman")];
+      return {kind:m[1], label:m[2], min:mnum(w.min), km:mnum(w.km), hr:mnum(w.hr), kcal:mnum(w.kcal), start:String(w.start||"")};
+    }).sort((a,b) => a.start.localeCompare(b.start));
+  }
+  // what got done on a day: hand-logged sessions plus Fitbit workouts long enough to count
+  function doneKinds(ds){
+    const out = new Set();
+    sessionsOf(ds).forEach(s => out.add(isStrength(s.kind) ? "gym" : s.kind));
+    fitWk(ds).forEach(w => { if (w.min >= (w.kind==="walk" ? 20 : 15)) out.add(w.kind); });
+    return out;
+  }
+
+  /* ---------- render ---------- */
+  function renderHeader(){
+    const d = parse(cur), p = PLAN[d.getDay()];
+    const rel = cur===TODAY ? "Bugün" : cur===addDays(TODAY,-1) ? "Dün" : cur===addDays(TODAY,1) ? "Yarın" : DOW[d.getDay()];
+    $("dateLabel").textContent = `${rel}, ${d.getDate()} ${MON[d.getMonth()]}`;
+    $("dowLabel").textContent = rel===DOW[d.getDay()] ? `${d.getFullYear()}` : DOW[d.getDay()];
+    $("toToday").hidden = cur===TODAY;
+    $("planPill").className = "card plancard k-" + p.kind;
+    $("planIco").innerHTML = kindIco(p.kind);
+    $("planTitle").textContent = p.title;
+    const dk = doneKinds(cur), manualGym = day.sessions.some(s => isStrength(s.kind)), cardio = dk.has("run") || dk.has("bike");
+    const notYet = cur > TODAY ? "Planlı" : cur < TODAY ? "Yapılmadı" : "Bekliyor";
+    $("planSub").textContent = p.kind==="rest" ? "Serbest gün"
+      : p.kind==="gym" ? (manualGym ? "Tamamlandı ✓" : dk.has("gym") ? "Fitbit gördü · kiloları gir" : notYet)
+      : (cardio ? "Tamamlandı ✓" : notYet);
+    $("planText").textContent = p.text;
+    let cta = "";
+    if (p.kind==="gym") cta = manualGym ? "" : `<button data-add="gym">${ico("gym")}Ağırlığı başlat</button>`;
+    else if (p.kind==="cardio") cta = cardio ? "" : `<button data-add="bike">${ico("bike")}Bisiklet yaptım</button><button class="alt" data-add="run">${ico("run")}Koşu yaptım</button>`;
+    else cta = dk.has("walk") ? "" : `<button class="alt" data-add="walk">${ico("walk")}Yürüyüş ekle</button>`;
+    $("cta").innerHTML = cta; $("cta").hidden = !cta;
+    renderCalendar();
+    dashSafe();
+  }
+
+  function badge(cls, icon, text){ return {cls, html:`<span class="b">${ico(icon)}</span>${esc(text)}`}; }
+  function setTs(id, r){ const el = $(id); el.className = "ts" + (r && r.cls ? " "+r.cls : ""); el.innerHTML = r ? r.html : ""; }
+
+  function renderTiles(){
+    const prev = weights().filter(p => p.date < cur && p.date >= addDays(cur,-7));
+    const a = prev.length ? prev.reduce((s,p)=>s+Number(p.weight),0)/prev.length : null;
+    if (day.weight==null) setTs("tsW", {cls:"", html: cur > TODAY ? "bu gün henüz gelmedi" : "aç karnına, tuvaletten sonra"});
+    else if (a==null) setTs("tsW", badge("ok","check","Kaydedildi"));
+    else { const df = day.weight - a;
+      setTs("tsW", df <= -0.2 ? badge("low","down",`Ort. altı ${Math.abs(df).toFixed(1)}`) : df >= 0.2 ? badge("high","up",`Ort. üstü ${df.toFixed(1)}`) : badge("ok","check","Ortalamada")); }
+    const pw = [...hist.values()].filter(d => d.waist!=null && d.date < cur).sort((x,y)=>y.date.localeCompare(x.date))[0];
+    if (day.waist!=null){
+      if (!pw) setTs("tsB", badge("ok","check","Başlangıç"));
+      else { const df = day.waist - Number(pw.waist);
+        setTs("tsB", df < 0 ? badge("low","down",`${Math.abs(df).toFixed(1)} cm`) : df > 0 ? badge("high","up",`${df.toFixed(1)} cm`) : badge("ok","check","Aynı")); }
+    } else if (pw){
+      const ago = daysBetween(pw.date, cur);
+      setTs("tsB", ago >= 7 ? badge("high","ruler","Ölçme günü") : {cls:"", html:`son ${fmt(pw.waist)} · ${ago} gün önce`});
+    } else setTs("tsB", {cls:"", html:"göbek hizasından"});
+    $("ciW").classList.toggle("need", cur===TODAY && day.weight==null);
+    dashSafe();
+  }
+
+  // number inputs only as wide as their value, so the unit sits right after it
+  const meas = document.createElement("span");
+  meas.setAttribute("aria-hidden", "true");
+  meas.style.cssText = "position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre";
+  document.body.appendChild(meas);
+  function fitIn(el){
+    if (!el) return;
+    const cs = getComputedStyle(el);
+    for (const k of ["fontFamily","fontSize","fontWeight","letterSpacing","fontVariantNumeric"]) meas.style[k] = cs[k];
+    meas.textContent = el.value || el.placeholder || "—";
+    el.style.width = Math.ceil(meas.getBoundingClientRect().width + 4) + "px";
+  }
+  const fitAll = () => document.querySelectorAll(".civ input,.ev input").forEach(fitIn);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitAll);
+  function autosize(){ const t = $("notes"); t.style.height = "auto"; t.style.height = Math.max(96, t.scrollHeight) + "px"; }
+
+  function renderForm(){
+    $("weight").value = day.weight ?? "";
+    $("waist").value = day.waist ?? "";
+    $("notes").value = day.notes || "";
+    autosize();
+    renderTiles();
+    renderSessions();
+    fitAll();
+  }
+
+  /* ---------- strength session: one tile per exercise ---------- */
+  function exMeta(i, j){
+    const e = day.sessions[i].ex[j], l = lastFor(e.name, cur), kg = num(e.kg);
+    if (!l) return {chip: kg!=null ? `<span class="dch">ilk</span>` : "", last: "ilk kayıt"};
+    let chip = "";
+    if (kg!=null){ const df = kg - l.kg; chip = df>0 ? `<span class="dch up">+${fmt(df)}</span>` : df<0 ? `<span class="dch dn">−${fmt(-df)}</span>` : `<span class="dch">aynı</span>`; }
+    return {chip, last: `geçen ${fmt(l.kg)} · ${shortDate(l.date)}`};
+  }
+  function gymSub(i){
+    const s = day.sessions[i], filled = s.ex.filter(e => num(e.kg)!=null).length;
+    const fw = fitWk(cur).find(w => w.kind==="gym");
+    return `${filled}/${s.ex.length} hareket${fw ? ` · Fitbit ${Math.round(fw.min)} dk${fw.kcal!=null ? `, ${fw.kcal} kcal` : ""}` : ""}`;
+  }
+  function refreshEx(i, j){
+    const m = exMeta(i, j), c = $(`s${i}-c${j}`), l = $(`s${i}-l${j}`), t = $(`s${i}-t${j}`), h = $(`s${i}-h`);
+    if (c) c.innerHTML = m.chip;
+    if (l) l.textContent = m.last;
+    if (t) t.classList.toggle("on", num(day.sessions[i].ex[j].kg)!=null);
+    if (h) h.textContent = gymSub(i);
+  }
+  function gymCard(s, i){
+    const ed = editing.has(i);
+    const tiles = s.ex.map((e, j) => { const m = exMeta(i, j), on = num(e.kg)!=null, nm = esc(e.name || "Hareket");
+      return `<div class="ext${on?" on":""}" id="s${i}-t${j}">
+        <div class="et">${ed ? `<input class="en" id="s${i}-n${j}" data-s="${i}" data-e="${j}" data-k="name" value="${esc(e.name)}" aria-label="Hareket adı" placeholder="Hareket adı"><button class="exdel" data-delex="${i}-${j}" aria-label="${nm} kaldır">×</button>`
+          : `<b class="en">${esc(e.name || "Adsız hareket")}</b><span id="s${i}-c${j}">${m.chip}</span>`}</div>
+        <label class="ev"><input id="s${i}-kg${j}" class="num" data-s="${i}" data-e="${j}" data-k="kg" value="${esc(e.kg)}" inputmode="decimal" autocomplete="off" placeholder="—" aria-label="${nm} kilo"><em>kg</em></label>
+        <span class="el" id="s${i}-l${j}">${esc(m.last)}</span>
+        <div class="es"><button class="step" data-step="${i}-${j}-1" aria-label="${nm} azalt">−</button><button class="step" data-step="${i}-${j}+1" aria-label="${nm} artır">+</button></div>
+      </div>`; }).join("");
+    return `<div class="card gym k-gym" id="sess${i}">
+      <div class="gh"><span class="ico">${kindIco(s.kind)}</span><div><b>${esc(KIND_LABEL[s.kind]||"Ağırlık")}</b><small id="s${i}-h">${esc(gymSub(i))}</small></div><button class="ghost${ed?" on":""}" data-edit="${i}">${ed ? "Bitti" : "Düzenle"}</button></div>
+      <div class="exg">${tiles}<button class="ext add" data-addex="${i}">${ico("plus")}Hareket</button></div>
+      ${ed ? `<div class="gfoot"><span>İsimleri değiştir, fazlasını sil.</span><button class="danger" data-del="${i}">Seansı sil</button></div>`
+           : `<span class="gnote">Geçen seferki kilo her karonun altında. Temiz çıktıysa + ile bir adım artır; kilosu boş kalan hareket kaydedilmez.</span>`}
+    </div>`;
+  }
+
+  /* ---------- movement card: Fitbit workouts land here by themselves; hand-logged cardio sits beside them ---------- */
+  const CARDIO_SUB = {run:"kolay tempo, nabız 150 altı", bike:"Z2: nabız 120–135", walk:""};
+  function cardioCard(s, i){
+    const f = (k, lab, mode) => `<label class="fld"><span>${lab}</span><input id="s${i}-${k}" class="num" data-s="${i}" data-k="${k}" value="${esc(s[k]??"")}" inputmode="${mode}" autocomplete="off" placeholder="—"></label>`;
+    let body;
+    if (s.kind==="run") body = `<div class="fields">${f("min","dk","numeric")}${f("km","km","decimal")}${f("hr","ort. nabız","numeric")}</div>`;
+    else if (s.kind==="bike") body = `<div class="seg" role="group" aria-label="Bisiklet türü">${["Z2","4x4","6x6"].map(o => `<button data-btype="${i}" data-v="${o}" aria-pressed="${(s.type||"Z2")===o}">${o}</button>`).join("")}</div><div class="fields two">${f("min","dk","numeric")}${f("hr","ort. nabız","numeric")}</div>`;
+    else body = `<div class="fields two">${f("min","dk","numeric")}${f("km","km","decimal")}</div>`;
+    return `<div class="ms k-${s.kind}" id="sess${i}"><div class="msh"><span class="ico sm">${kindIco(s.kind)}</span><div><b>${esc(KIND_LABEL[s.kind]||s.kind)}<span class="src" style="margin-left:6px">elle</span></b>${CARDIO_SUB[s.kind] ? `<small>${CARDIO_SUB[s.kind]}</small>` : ""}</div><button class="x" data-del="${i}">Sil</button></div>${body}</div>`;
+  }
+  function renderMove(){
+    const box = $("move");
+    const hasGym = day.sessions.some(s => isStrength(s.kind));
+    const fw = fitWk(cur).filter(w => !(hasGym && w.kind==="gym"));
+    const fd = fitDay(cur), steps = fd ? mnum(fd.steps) : null, ak = fd ? mnum(fd.activeKcal) : null;
+    const right = [steps!=null ? `${trNum(steps)} adım` : "", ak!=null ? `${trNum(ak)} aktif kcal` : ""].filter(Boolean).join(" · ");
+    const rows = fw.map(w => `<div class="fw k-${w.kind}"><span class="ico sm">${kindIco(w.kind)}</span><div><b>${esc(w.label)}<span class="src">Fitbit</span></b><small>${esc(w.start.slice(11,16))} · ${Math.round(w.min)} dk${w.km!=null && w.km >= 0.3 ? ` · ${w.km.toFixed(1)} km` : ""}${w.kcal!=null ? ` · ${w.kcal} kcal` : ""}</small></div>${w.hr!=null ? `<span class="fv num">${Math.round(w.hr)}<em>bpm</em></span>` : ""}</div>`).join("");
+    const manual = day.sessions.map((s,i) => isStrength(s.kind) ? "" : cardioCard(s,i)).join("");
+    let empty = "";
+    if (!rows && !manual) empty = `<span class="mempty">${cur > TODAY ? "Bu gün henüz gelmedi."
+      : !fitSeen ? "Fitbit yükleniyor…"
+      : daysBetween(cur, TODAY) > 30 ? "Fitbit antrenmanları son 30 günü kapsar."
+      : cur===TODAY ? "Fitbit bugün henüz antrenman görmedi. Yaptığında buraya kendiliğinden düşer."
+      : "Fitbit bu gün antrenman görmedi."}</span>`;
+    box.innerHTML = `<div class="chd"><span class="lbl">Hareket</span><span class="lr">${esc(right)}</span></div>${rows}${manual}${empty}
+      <div class="adds"><span>Elle ekle</span>${[["gym","Ağırlık"],["bike","Bisiklet"],["run","Koşu"],["walk","Yürüyüş"]].map(([k,l]) => `<button class="addc k-${k}" data-add="${k}">${l}</button>`).join("")}</div>`;
+  }
+
+  function renderSessions(){
+    $("gymBox").innerHTML = day.sessions.map((s,i) => isStrength(s.kind) ? gymCard(s,i) : "").join("");
+    document.querySelectorAll("#gymBox .ev input").forEach(fitIn);
+    renderMove();
+    pendingSess = false;
+    renderHeader();
+  }
+  // re-render sessions without yanking focus out of a field being typed in
+  const inSess = el => !!el && ($("gymBox").contains(el) || $("move").contains(el));
+  function safeRenderSessions(){ if (inSess(document.activeElement)) { pendingSess = true; renderHeader(); } else renderSessions(); }
+  ["gymBox","move"].forEach(id => $(id).addEventListener("focusout", () => setTimeout(() => { if (pendingSess && !inSess(document.activeElement)) renderSessions(); }, 50)));
+
+  /* ---------- trends ---------- */
+  const shortDateY = s => shortDate(s) + (parse(s).getFullYear() !== parse(TODAY).getFullYear() ? " " + parse(s).getFullYear() : "");
+  // least-squares line through the last 3 weeks of weigh-ins: kg per day, and where the line sits today
+  function trendFit(ref){
+    const pts = weights().filter(p => p.date <= ref && p.date > addDays(ref,-21));
+    if (pts.length < 5) return null;
+    const xs = pts.map(p => daysBetween(ref, p.date)), ys = pts.map(p => Number(p.weight));
+    if (Math.max(...xs) - Math.min(...xs) < 7) return null;
+    const mx = mAvg(xs), my = mAvg(ys), sxx = xs.reduce((a,x) => a+(x-mx)**2, 0);
+    if (!sxx) return null;
+    const b = xs.reduce((a,x,k) => a+(x-mx)*(ys[k]-my), 0) / sxx;
+    return {b, now: my - b*mx, n: pts.length, from: pts[0].date};
+  }
+  function renderTrend(){
+    const box = $("trend"), head = r => `<div class="chd"><span class="lbl">Kilo trendi</span><span class="lr">${r||""}</span></div>`;
+    const all = weights().filter(p => p.date <= (cur > TODAY ? TODAY : cur));
+    if (!all.length){ box.innerHTML = head() + `<span class="mempty">${daysSeen ? "İlk tartıyı girince trend başlar." : "Yükleniyor…"}</span>`; return; }
+    const ref = all[all.length-1].date, a7 = avg7(ref), tf = trendFit(ref);
+    let stat;
+    if (!tf) stat = `<div class="tstat"><span class="big num">${a7.toFixed(1)}<em>kg</em></span><span class="tsub">7 gün ortalaması.<br>Hız için son 3 haftada en az 5 tartı lazım.</span></div>`;
+    else {
+      const wk = tf.b*7, perDay = -tf.b*7700;
+      let proj;
+      if (tf.b < -0.005){ const left = (tf.now - GOAL) / -tf.b;
+        proj = left <= 0 ? "Hedef çizgisindesin." : left > 365 ? `Bu hızla ${fmt(GOAL)} bir yıldan uzun sürer.` : `Bu hızla ${dat(GOAL)} ≈ <b>${esc(shortDateY(addDays(ref, Math.round(left))))}</b>`; }
+      else proj = "Son 3 haftada düşüş yok.";
+      // cross-check against Fitbit: what it says was burned over the same days, minus the deficit the scale implies
+      const burn = []; for (let ds = tf.from; ds <= ref && ds < TODAY; ds = addDays(ds,1)){ const fv = fitDay(ds), k = fv ? mnum(fv.kcal) : null; if (k!=null) burn.push(k); }
+      const eat = perDay > 0 && burn.length >= 7 ? `<br>Fitbit'e göre harcaman ≈ ${trNum(mAvg(burn))} kcal/gün; bu açıkla yediğin ≈ <b>${trNum(mAvg(burn) - perDay)} kcal/gün</b> çıkıyor` : "";
+      stat = `<div class="tstat"><span class="big num">${wk<0?"−":"+"}${Math.abs(wk).toFixed(1)}<em>kg/hafta</em></span><span class="tsub">${perDay > 0 ? `≈ haftada <b>${trNum(perDay*7)} kcal</b> açık (günde ${trNum(perDay)})<br>` : ""}${proj}${eat}</span></div>`;
+    }
+    const PP = all.slice(-45), W=320, H=140, L=30, R=12, T=14, B=24, FF="Inter, system-ui, sans-serif";
+    const showGoal = Math.min(...PP.map(p => Number(p.weight))) - GOAL <= 2;
+    const fy = d => tf.now + tf.b*daysBetween(ref, d);
+    const vals = PP.map(p => Number(p.weight)).concat(showGoal ? [GOAL] : [], tf ? [fy(tf.from), tf.now] : []);
+    let lo = Math.floor(Math.min(...vals)-0.3), hi = Math.ceil(Math.max(...vals)+0.3);
+    if (hi-lo < 3) hi = lo+3;
+    const t0 = parse(PP[0].date).getTime(), t1 = Math.max(parse(PP[PP.length-1].date).getTime(), t0+86400000);
+    const x = d => L + (parse(d).getTime()-t0)/(t1-t0)*(W-L-R), y = v => T + (hi-v)/(hi-lo)*(H-T-B);
+    let g = "";
+    const stp = Math.max(1, Math.round((hi-lo)/4));
+    for (let v=lo; v<=hi; v+=stp) g += `<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="1"/><text x="${L-7}" y="${y(v)+4}" text-anchor="end" font-size="11" fill="#5F636B" font-family="${FF}">${v}</text>`;
+    if (showGoal) g += `<line x1="${L}" x2="${W-R}" y1="${y(GOAL)}" y2="${y(GOAL)}" stroke="#111318" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/><text x="${W-R}" y="${y(GOAL)-6}" text-anchor="end" font-size="11" font-weight="600" fill="#111318" font-family="${FF}">hedef ${GOAL}</text>`;
+    const ra = PP.map(p => ({date:p.date, v:avg7(p.date)}));
+    const aline = ra.map(p => `${x(p.date).toFixed(1)},${y(p.v).toFixed(1)}`).join(" ");
+    if (PP.length > 1) g += `<polygon points="${x(PP[0].date).toFixed(1)},${H-B} ${aline} ${x(PP[PP.length-1].date).toFixed(1)},${H-B}" fill="#3B3FE4" fill-opacity=".07"/>`;
+    if (tf) g += `<line x1="${x(tf.from).toFixed(1)}" y1="${y(fy(tf.from)).toFixed(1)}" x2="${x(ref).toFixed(1)}" y2="${y(tf.now).toFixed(1)}" stroke="#111318" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>`;
+    PP.forEach(p => { g += `<circle cx="${x(p.date).toFixed(1)}" cy="${y(Number(p.weight)).toFixed(1)}" r="2.6" fill="#8F92F2"/>`; });
+    g += `<polyline points="${aline}" fill="none" stroke="#3B3FE4" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`;
+    const la = ra[ra.length-1];
+    g += `<circle cx="${x(la.date).toFixed(1)}" cy="${y(la.v).toFixed(1)}" r="5" fill="var(--lime)" stroke="#111318" stroke-width="2.5"/>`;
+    g += `<text x="${L}" y="${H-6}" font-size="11" fill="#5F636B" font-family="${FF}">${shortDate(PP[0].date)}</text>`;
+    if (PP.length > 1) g += `<text x="${W-R}" y="${H-6}" text-anchor="end" font-size="11" fill="#5F636B" font-family="${FF}">${shortDate(PP[PP.length-1].date)}</text>`;
+    box.innerHTML = head(`7 gün ort. ${a7.toFixed(1)} kg`) + stat
+      + `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Kilo grafiği: noktalar tartılar, mavi çizgi 7 günlük ortalama${tf ? ", kesikli çizgi son 3 haftanın trendi" : ""}">${g}</svg>`
+      + `<div class="legend"><span><i style="background:#8F92F2;border-radius:5px"></i>tartı</span><span><i style="background:#3B3FE4"></i>7 gün ort.</span>${tf ? `<span><i class="dash"></i>trend</span>` : ""}${showGoal ? "" : `<span>hedef ${GOAL} grafiğin altında</span>`}</div>`;
+  }
+
+  const toMs = s => { const m = /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/.exec(String(s||"")); return m ? new Date(+m[1], +m[2]-1, +m[3], +m[4], +m[5]).getTime() : null; };
+  function renderSleepWeek(){
+    const box = $("sleepWeek");
+    // minutes after 18:00 of the evening before each night's end date
+    const N = [...Array(7)].map((_,i) => {
+      const ds = addDays(cur, i-6), v = fitDay(ds), o = {ds};
+      if (v){ const s = toMs(v.sleepStart), e = toMs(v.sleepEnd), base = parse(ds).getTime() - 6*3600e3;
+        if (s!=null && e!=null && e > s){ o.s = Math.max(0, (s-base)/60000); o.e = Math.min(1440, (e-base)/60000); o.min = mnum(v.sleepMin) ?? Math.round(o.e-o.s); } }
+      return o; });
+    const K = N.filter(o => o.s!=null);
+    const head = `<div class="chd"><span class="lbl">Uyku · 7 gece</span><span class="lr">${K.length ? "ort. " + hm(mAvg(K.map(o => o.min))) + " sa" : ""}</span></div>`;
+    if (!K.length){ box.innerHTML = head + `<span class="mempty">${fitSeen ? "Bu haftaya ait uyku verisi yok." : "Yükleniyor…"}</span>`; return; }
+    let lo = Math.floor(Math.min(...K.map(o => o.s))/60)*60, hi = Math.ceil(Math.max(...K.map(o => o.e))/60)*60;
+    if (hi - lo < 480) hi = Math.min(1440, lo + 480);
+    const X0 = 34, X1 = 276, X = t => X0 + (t-lo)/(hi-lo)*(X1-X0), RH = 24, H = 7*RH + 18, SG = "Space Grotesk, Inter, sans-serif", FF = "Inter, sans-serif";
+    const clock = t => { const m = Math.round((18*60 + t) % 1440); return `${String(Math.floor(m/60)).padStart(2,"0")}:${String(m%60).padStart(2,"0")}`; };
+    let g = "";
+    const stp = hi - lo > 720 ? 180 : 120;
+    for (let t = Math.ceil(lo/stp)*stp; t <= hi; t += stp)
+      g += `<line x1="${X(t).toFixed(1)}" x2="${X(t).toFixed(1)}" y1="2" y2="${7*RH}" stroke="var(--line)" stroke-width="1"/><text x="${X(t).toFixed(1)}" y="${H-4}" text-anchor="middle" font-family="${FF}" font-size="11" fill="#5F636B">${clock(t).slice(0,2)}</text>`;
+    N.forEach((o,i) => {
+      const y = i*RH, last = i===6;
+      g += `<text x="0" y="${y+16}" font-family="${FF}" font-size="11" font-weight="${last?700:500}" fill="${last?"#111318":"#5F636B"}">${DOW_S[parse(o.ds).getDay()]}</text>`;
+      if (o.s==null){ g += `<text x="${X0}" y="${y+16}" font-family="${FF}" font-size="11" fill="#5F636B">veri yok</text>`; return; }
+      const col = o.min >= 420 ? "#3B3FE4" : o.min >= 360 ? "#8F92F2" : "#E8590C";
+      g += `<rect x="${X(o.s).toFixed(1)}" y="${y+5}" width="${Math.max(4, X(o.e)-X(o.s)).toFixed(1)}" height="14" rx="7" fill="${col}"/>`;
+      g += `<text x="320" y="${y+16}" text-anchor="end" font-family="${SG}" font-size="12" font-weight="700" fill="#111318">${hm(o.min)}</text>`;
+    });
+    const ms = mAvg(K.map(o => o.s)), sd = Math.sqrt(mAvg(K.map(o => (o.s-ms)**2)));
+    box.innerHTML = head
+      + `<span class="foot">Uykuya dalış ort. <b style="color:var(--ink)">${clock(ms)}</b>${K.length > 2 ? ` · gece gece ±${Math.round(sd)} dk oynuyor` : ""}</span>`
+      + `<svg viewBox="0 0 320 ${H}" role="img" aria-label="Son 7 gecenin uyku saatleri">${g}</svg>`
+      + `<div class="legend"><span><i style="background:#3B3FE4"></i>7 sa üstü</span><span><i style="background:#8F92F2"></i>6–7 sa</span><span><i style="background:#E8590C"></i>6 sa altı</span></div>`;
+  }
+
+  function renderStrength(){
+    const box = $("strength"), m = new Map(), dates = new Set();
+    [...hist.values()].sort((a,b)=>a.date.localeCompare(b.date)).forEach(d => (d.sessions||[]).forEach(s => {
+      if (!isStrength(s.kind)) return;
+      (s.ex||[]).forEach(e => {
+        if (e.kg==null || !norm(e.name)) return;
+        dates.add(d.date);
+        const k = norm(e.name); if (!m.has(k)) m.set(k, {name:e.name.trim(), pts:[]});
+        const it = m.get(k), kg = Number(e.kg), same = it.pts.find(p => p.date===d.date);
+        if (same) same.kg = Math.max(same.kg, kg); else it.pts.push({date:d.date, kg});
+      });
+    }));
+    const head = `<div class="chd"><span class="lbl">Güç · ilk kayıttan bugüne</span><span class="lr">${dates.size ? `${dates.size} ağırlık seansı` : ""}</span></div>`;
+    const order = GYM_EX.map(norm);
+    const list = [...m.entries()].sort((a,b) => { const ia = order.indexOf(a[0]), ib = order.indexOf(b[0]);
+      return (ia<0?99:ia) - (ib<0?99:ib) || a[0].localeCompare(b[0], "tr"); });
+    if (!list.length){ box.innerHTML = head + `<span class="mempty">${daysSeen ? "İlk ağırlık kaydından sonra her hareketin gelişimi burada görünür." : "Yükleniyor…"}</span>`; return; }
+    box.innerHTML = head + `<div>` + list.map(([k, it]) => {
+      const pts = it.pts, first = pts[0].kg, last = pts[pts.length-1].kg, df = last - first;
+      const lo = Math.min(...pts.map(p=>p.kg)), hi = Math.max(...pts.map(p=>p.kg)), W = 72, H = 30;
+      const X = i => pts.length>1 ? i/(pts.length-1)*W : W/2, Y = v => hi===lo ? H/2 : H - (v-lo)/(hi-lo)*(H-6) - 3;
+      const line = pts.map((p,i) => `${X(i).toFixed(1)},${Y(p.kg).toFixed(1)}`).join(" ");
+      const svg = `<svg viewBox="0 0 ${W} ${H}" aria-hidden="true">${pts.length>1 ? `<polyline points="${line}" fill="none" stroke="#3B3FE4" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>` : ""}<circle cx="${X(pts.length-1).toFixed(1)}" cy="${Y(last).toFixed(1)}" r="4" fill="#3B3FE4"/></svg>`;
+      const chip = pts.length < 2 ? `<span class="dch">ilk</span>` : df>0 ? `<span class="dch up">+${fmt(df)}</span>` : df<0 ? `<span class="dch dn">−${fmt(-df)}</span>` : `<span class="dch">aynı</span>`;
+      return `<div class="srow"><div><b>${esc(it.name)}</b><small>${pts.length} seans · ilk ${fmt(first)} kg</small></div>${svg}<div class="sv"><strong class="num">${fmt(last)}<em>kg</em></strong>${chip}</div></div>`;
+    }).join("") + `</div>`;
+  }
+
+  /* ---------- calendar: what got done each day since the diet started; tap a day to open it ---------- */
+  function renderCalendar(){
+    const box = $("cal");
+    const mon = ds => addDays(ds, -((parse(ds).getDay()+6)%7));
+    const anchor = cur > TODAY || cur < addDays(TODAY,-35) ? cur : TODAY;
+    const end = addDays(mon(anchor), 6);
+    const D0 = DIET_START || addDays(TODAY,-28);
+    let start = mon(D0);
+    if (start < addDays(end, -41)) start = addDays(mon(end), -35);
+    let html = `<div class="cgrid">` + ["Pzt","Sal","Çar","Per","Cum","Cmt","Paz"].map(x => `<span class="dh">${x}</span>`).join("") + `<span class="dh">hafta</span>`;
+    let thisWeek = 0;
+    for (let w = start; w <= end; w = addDays(w, 7)){
+      let n = 0;
+      for (let k=0; k<7; k++){
+        const ds = addDays(w,k), wd = parse(ds).getDay(), pk = PLAN[wd].kind, dk = doneKinds(ds);
+        const main = dk.has("gym") ? "gym" : dk.has("run") ? "run" : dk.has("bike") ? "bike" : dk.has("walk") ? "walk" : null;
+        if (main && main!=="walk") n++;
+        let cls = "cd";
+        if (main) cls += " d-" + main;
+        else if (ds >= TODAY && pk!=="rest") cls += " plan k-" + pk;
+        else if (ds < TODAY && ds >= D0 && pk!=="rest") cls += " miss";
+        if (ds < D0) cls += " pre";
+        if (ds===TODAY) cls += " today";
+        if (ds===cur) cls += " sel";
+        const dd = parse(ds), what = main ? `${KIND_LABEL[main]||main} yapıldı` : ds >= TODAY ? `plan: ${PLAN[wd].title}` : pk==="rest" ? "dinlenme" : `${PLAN[wd].title} yapılmadı`;
+        html += `<button class="${cls}" data-date="${ds}" aria-label="${esc(`${dd.getDate()} ${MON[dd.getMonth()]} ${DOW[wd]}, ${what}`)}">${dd.getDate()}</button>`;
+      }
+      if (w <= TODAY && TODAY <= addDays(w,6)) thisWeek = n;
+      html += `<span class="cs${n >= WEEK_TARGET ? " hit" : ""}">${n}/${WEEK_TARGET}</span>`;
+    }
+    html += `</div>`;
+    box.innerHTML = `<div class="chd"><span class="lbl">Antrenman günleri</span><span class="lr">Bu hafta ${thisWeek}/${WEEK_TARGET} · güne gitmek için dokun</span></div>${html}
+      <div class="legend"><span><i style="background:var(--gym)"></i>Ağırlık</span><span><i style="background:var(--run)"></i>Koşu</span><span><i style="background:var(--bike)"></i>Bisiklet</span><span><i style="background:var(--rest-soft);box-shadow:inset 0 0 0 1px var(--rest-2)"></i>Yürüyüş</span><span><i class="ol"></i>Plan</span></div>`;
+  }
+
+  /* ---------- form state + autosave ---------- */
+  function readForm(){
+    day.weight = num($("weight").value); day.waist = num($("waist").value);
+    day.notes = $("notes").value.trim();
+  }
+  function setSave(state, text){
+    const p = $("savePill"); p.className = "savepill " + state; $("saveTxt").textContent = text;
+    clearTimeout(setSave.t);
+    if (state==="ok") setSave.t = setTimeout(() => { p.className = "savepill idle"; }, 1800);
+  }
+  function markDirty(){ dirty = true; setSave("saving", "Kaydediliyor…"); clearTimeout(saveT); saveT = setTimeout(save, 900); }
+
+  document.addEventListener("input", e => {
+    const t = e.target;
+    if (t.closest("#pa")) return;
+    if (t.closest(".civ,.ev")) fitIn(t);
+    if (t.dataset.s !== undefined){
+      const s = day.sessions[+t.dataset.s];
+      if (t.dataset.e !== undefined){ s.ex[+t.dataset.e][t.dataset.k] = t.value; refreshEx(+t.dataset.s, +t.dataset.e); }
+      else s[t.dataset.k] = t.value;
+    } else if (t.id==="weight" || t.id==="waist"){ readForm(); renderTiles(); }
+    else if (t.id==="notes") autosize();
+    if (t.closest(".wrap")) markDirty();
+  });
+
+  document.addEventListener("click", e => {
+    const t = e.target.closest("button");
+    if (!t || t.closest("#pa")) return;
+    if (t.id==="savePill"){ if (t.classList.contains("bad")) save(); return; }
+    if (t.hasAttribute("data-pnow")){ openGuided("card"); return; }
+    if (t.dataset.add){ readForm(); day.sessions.push(newSession(t.dataset.add)); const i = day.sessions.length-1; renderSessions(); markDirty();
+      requestAnimationFrame(() => { const el = $("sess"+i); if (el) el.scrollIntoView({block: el.classList.contains("gym") ? "start" : "center", behavior:"smooth"}); }); return; }
+    if (t.dataset.edit !== undefined){ const i = +t.dataset.edit; if (editing.has(i)) editing.delete(i); else editing.add(i); renderSessions(); return; }
+    if (t.dataset.del !== undefined){ readForm(); day.sessions.splice(+t.dataset.del,1); editing.clear(); renderSessions(); markDirty(); return; }
+    if (t.dataset.delex){ const [i,j] = t.dataset.delex.split("-").map(Number); readForm(); day.sessions[i].ex.splice(j,1); renderSessions(); markDirty(); return; }
+    if (t.dataset.addex !== undefined){ readForm(); const i = +t.dataset.addex; day.sessions[i].ex.push({name:"", kg:"", sets:"", reps:""}); editing.add(i); renderSessions(); markDirty();
+      requestAnimationFrame(() => { const el = $(`s${i}-n${day.sessions[i].ex.length-1}`); if (el) el.focus(); }); return; }
+    if (t.dataset.btype !== undefined){ day.sessions[+t.dataset.btype].type = t.dataset.v; renderSessions(); markDirty(); return; }
+    if (t.dataset.step){
+      const m = t.dataset.step.match(/^(\d+)-(\d+)([+-])1$/); if (!m) return;
+      const e2 = day.sessions[+m[1]].ex[+m[2]], st = stepFor(e2.name);
+      let v = num(e2.kg); if (v==null){ const l = lastFor(e2.name, cur); if (!l && m[3]==="-") return; v = l ? l.kg : 0; }
+      v = Math.max(0, Math.round((v + (m[3]==="+" ? st : -st))*100)/100);
+      e2.kg = fmt(v); $(`s${m[1]}-kg${m[2]}`).value = e2.kg; fitIn($(`s${m[1]}-kg${m[2]}`)); refreshEx(+m[1], +m[2]); markDirty(); return;
+    }
+    if (t.dataset.date){ go(t.dataset.date); window.scrollTo({top:0, behavior:"smooth"}); return; }
+  });
+  $("prev").onclick = () => go(addDays(cur,-1));
+  $("next").onclick = () => go(addDays(cur,1));
+  $("toToday").onclick = () => go(TODAY);
+
+  /* ---------- data ---------- */
+  function cleanForSave(date){
+    readForm();
+    const sessions = day.sessions.map(s => {
+      if (isStrength(s.kind)) return {kind:s.kind, ex: s.ex.filter(e => e.name.trim() && String(e.kg).trim()!=="").map(e => ({name:e.name.trim(), kg:num(e.kg), sets:num(e.sets), reps:num(e.reps)}))};
+      const o = {kind:s.kind};
+      for (const k of ["min","km","hr","calf"]) if (k in s) o[k] = num(s[k]);
+      if (s.place) o.place = s.place; if (s.type) o.type = s.type;
+      return o;
+    });
+    return {...day.legacy, date, weight:day.weight, waist:day.waist, notes:day.notes, sessions, updatedAt:new Date().toISOString()};
+  }
+
+  async function save(){
+    clearTimeout(saveT); saveT = null;
+    if (!db){ setSave("bad", "Kayıt kapalı"); return; }
+    const date = cur, data = cleanForSave(date);
+    lastWrite = data.updatedAt;
+    setSave("saving", "Kaydediliyor…");
+    const ok = () => { if (cur===date && !saveT){ dirty = false; setSave("ok", "Kaydedildi"); } };
+    try{ await db.doc("days/"+date).set(data); ok(); }
+    catch(err){
+      if (err && err.code==="unavailable"){
+        await new Promise(r=>setTimeout(r, 600+Math.random()*600));
+        try{ await db.doc("days/"+date).set(data); ok(); } catch(e2){ setSave("bad", "Kaydedilemedi · tekrar dene"); }
+      } else if (err && err.code==="quota_exceeded") setSave("bad", "Depo dolu");
+      else setSave("bad", "Kaydedilemedi · tekrar dene");
+    }
+  }
+
+  const KNOWN = ["date","weight","waist","notes","sessions","updatedAt"];
+  function loadDayFrom(data){
+    if (data){
+      const legacy = {}; Object.keys(data).forEach(k => { if (!KNOWN.includes(k)) legacy[k] = data[k]; });
+      day = {date:cur, weight:data.weight??null, waist:data.waist??null, notes:data.notes||"", legacy,
+        sessions:(data.sessions||[]).map(s => {
+          if (isStrength(s.kind)) return {kind:s.kind, ex:(s.ex||[]).map(e=>({name:e.name||"", kg:fmt(e.kg), sets:fmt(e.sets), reps:fmt(e.reps)}))};
+          const o = {...s}; for (const k of ["min","km","hr","calf"]) if (k in o) o[k] = o[k]??""; return o;
+        })};
+    } else day = emptyDay(cur);
+    renderForm();
+  }
+
+  function go(date){
+    if (dirty) save();
+    TODAY = iso(new Date());
+    cur = date; dirty = false; editing.clear(); setSave("idle", "");
+    if (hist.has(date)) loadDayFrom(hist.get(date)); else { day = emptyDay(cur); renderForm(); }
+    renderHeader();
+    if (db) subscribeDay();
+  }
+
+  function subscribeDay(){
+    if (unsubDay) unsubDay();
+    unsubDay = db.doc("days/"+cur).onSnapshot(snap => {
+      if (dirty) return;
+      const v = snap.exists ? snap.data() : null;
+      if (v && v.updatedAt && v.updatedAt === lastWrite) return; // our own write echoing back
+      loadDayFrom(v);
+    }, () => {});
+  }
+  /* ---------- posture alarm ---------- */
+  const PT_TARGET = 3, PT_COOL = 2*3600e3, PT_GRACE = 2*60e3, PT_REPS = 8, PT_HOLD = 5, PT_REST = 2, PT_READY = 3;
+  const ROUTINE = [
+    {k:"chin",  t:"Çene geri çekme",                d:"3 × 10 · her tekrarda 5 sn tut"},
+    {k:"pec",   t:"Kapı pervazında göğüs esnetme",  d:"2 × 30 sn"},
+    {k:"thor",  t:"Göğüs omurgası açma",            d:"10 tekrar · sandalye arkalığı ya da köpük silindir"},
+    {k:"angel", t:"Duvar meleği",                   d:"2 × 10 · kollar duvara değsin"},
+    {k:"neck",  t:"Ense esnetme",                   d:"30 sn · çene göğse"}
+  ];
+  P.warn = '<path d="M12 3.5L2.5 20h19z"/><path d="M12 10v4.5M12 17.2v.3"/>';
+  const ptEmpty = date => ({date, rounds:[], lies:[], routine:{}});
+  const ptClone = v => ({date:v.date, rounds:[...(v.rounds||[])], lies:[...(v.lies||[])], routine:{...(v.routine||{})}});
+  const todayIso = () => iso(new Date());
+  const hhmm = ms => { const d = new Date(ms); return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`; };
+  const pHist = new Map();
+  let pt = ptEmpty(todayIso()), pUnsub = null, pReady = false, paOpen = false, guide = null, autoClose = null;
+  const pa = $("pa");
+
+  function ptLast(){
+    const r = pt.rounds.map(x => Date.parse(x.t)), l = pt.lies.map(x => Date.parse(x));
+    return {r: r.length ? Math.max(...r) : 0, l: l.length ? Math.max(...l) : 0};
+  }
+  // null = stay quiet; "normal" = time for a round; "liar" = last answer was a confessed lie
+  function alarmMode(now){
+    const {r, l} = ptLast();
+    if (l > r) return now - l >= PT_GRACE ? "liar" : null;
+    if (pt.rounds.length >= PT_TARGET) return null;
+    return (!r || now - r >= PT_COOL) ? "normal" : null;
+  }
+  async function ptSave(){
+    pHist.set(pt.date, ptClone(pt)); renderPosture();
+    if (!db) return;
+    const data = {...ptClone(pt), updatedAt:new Date().toISOString()};
+    try{ await db.doc("posture/"+pt.date).set(data); }
+    catch(e){ try{ await new Promise(r=>setTimeout(r,900)); await db.doc("posture/"+pt.date).set(data); }catch(e2){} }
+  }
+  function subscribePosture(){
+    if (pUnsub) pUnsub();
+    let first = true;
+    const done = () => { if (first){ first = false; pReady = true; maybeAlarm(); } };
+    pUnsub = db.doc("posture/"+pt.date).onSnapshot(snap => {
+      if (snap.exists){ const v = snap.data(); if (v && v.date===pt.date){ pt = ptClone(v); pHist.set(pt.date, ptClone(pt)); } }
+      renderPosture(); done();
+    }, done);
+  }
+  function rollDay(){
+    const t = todayIso(); if (pt.date === t) return false;
+    pt = pHist.has(t) ? ptClone(pHist.get(t)) : ptEmpty(t);
+    if (db){ pReady = false; subscribePosture(); }
+    renderPosture(); return !!db;
+  }
+  function maybeAlarm(){
+    if (paOpen || !pReady || document.visibilityState !== "visible") return;
+    if (rollDay()) return;
+    const m = alarmMode(Date.now());
+    if (m) showAlarm(m);
+  }
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") maybeAlarm(); });
+
+  function ptStreak(){
+    const ok = ds => ((pHist.get(ds)||{}).rounds||[]).length >= PT_TARGET;
+    let d = todayIso(), n = 0;
+    if (!ok(d)) d = addDays(d,-1);
+    while (ok(d)){ n++; d = addDays(d,-1); }
+    return n;
+  }
+  function ptWeek(){
+    const t = todayIso(), mon = addDays(t, -((parse(t).getDay()+6)%7));
+    let sum = 0; for (let i=0;i<7;i++) sum += Math.min(PT_TARGET, ((pHist.get(addDays(mon,i))||{}).rounds||[]).length);
+    return sum;
+  }
+
+  function renderPosture(){
+    const box = $("pCard"), n = pt.rounds.length, {r, l} = ptLast(), now = Date.now();
+    let sub;
+    if (l > r) sub = "Yalan söyledin · sayfaya dönünce alarm çalacak";
+    else if (n >= PT_TARGET) sub = "Bugünlük tamam · yarın sabah yeni tur";
+    else if (!r || now - r >= PT_COOL) sub = "Şimdi zamanı";
+    else sub = `Sonraki tur ${hhmm(r + PT_COOL)} sonrası`;
+    let slots = "";
+    for (let i=0; i<PT_TARGET; i++){ const x = pt.rounds[i];
+      slots += `<div class="pslot${x?" on":""}">${x ? ico("check") + hhmm(Date.parse(x.t)) : ["Sabah","Öğle","Akşam"][i]}</div>`; }
+    const st = ptStreak(), lies = pt.lies.length;
+    box.innerHTML = `<div class="ptop"><div><span class="lbl">Postür${cur!==pt.date ? " · bugün" : ""}</span><span class="big num">${n}<em>/ ${PT_TARGET} tur</em></span><small>${esc(sub)}</small></div>${n < PT_TARGET || l > r ? `<button class="pnow" data-pnow>Şimdi yap · 1 dk</button>` : ""}</div>
+      <div class="pslots">${slots}</div>
+      <div class="pfoot"><span>Seri <b class="num">${st}</b> gün</span><span>Bu hafta <b class="num">${ptWeek()}</b>/21</span><span${lies ? ' class="lie"' : ""}>Bugün yalan <b class="num">${lies}</b></span></div>`;
+  }
+
+  function headSvg(cls){
+    return `<svg class="head ${cls}" viewBox="0 0 200 200" aria-hidden="true">
+      <line x1="100" y1="6" x2="100" y2="194" stroke="currentColor" stroke-width="3" stroke-dasharray="1 8" stroke-linecap="round" opacity=".75"/>
+      <path d="M48 180 Q100 162 152 180" fill="none" stroke="currentColor" stroke-width="11" stroke-linecap="round"/>
+      <line class="nk" x1="100" y1="170" x2="100" y2="112" stroke="currentColor" stroke-width="13" stroke-linecap="round"/>
+      <g class="hd"><circle cx="100" cy="76" r="36" fill="currentColor" fill-opacity=".16" stroke="currentColor" stroke-width="7"/>
+        <circle cx="117" cy="69" r="4.5" fill="currentColor"/><path d="M135 74l9 9-9 3" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>
+    </svg>`;
+  }
+
+  function openPA(){ paOpen = true; pa.hidden = false; document.documentElement.style.overflow = "hidden"; }
+  function closePA(){ stopGuide(); clearTimeout(autoClose); paOpen = false; pa.hidden = true; pa.innerHTML = ""; pa.className = "pa"; document.documentElement.style.overflow = ""; }
+  function paRender(cls, html){ pa.className = "pa " + cls; pa.innerHTML = `<div class="pa-in">${html}</div>`; pa.scrollTop = 0;
+    requestAnimationFrame(() => { const f = pa.querySelector("button"); if (f) f.focus({preventScroll:true}); }); }
+  const buzz = p => { try{ navigator.vibrate && navigator.vibrate(p); }catch(e){} };
+
+  function showAlarm(mode){
+    openPA();
+    const n = pt.rounds.length, lies = pt.lies.length, liar = mode === "liar";
+    let h1, sub;
+    if (!liar){ h1 = "Boynunu<br>geri çek"; sub = "Başın büyük ihtimalle şu an öne kaymış. Çeneni düz geriye çek, tepeni tavana uzat. Sadece 1 dakika."; }
+    else if (lies < 2){ h1 = "Bu sefer<br>gerçekten"; sub = "Az önce yapmadığını itiraf ettin. Telefonu bırakmana gerek yok, sadece başını geriye yasla. 1 dakika."; }
+    else { h1 = `${lies}. yalan.<br>Yeter.`; sub = `Bugün ${lies} kez “sonra” dedin. Keskin bir çene hattı 1 dakikalık işleri ertelemeyen adamın olur. Şimdi.`; }
+    paRender(liar ? "red liar" : "red", `
+      <span class="badge">${ico("warn")}${liar ? "Yalan tespit edildi" : "Postür alarmı"}</span>
+      ${headSvg("loop")}
+      <h1>${h1}</h1>
+      <p class="sub">${sub}</p>
+      <div class="meta"><span>Bugün ${n}/${PT_TARGET}</span>${lies?`<span>Yalan: ${lies}</span>`:""}${ptStreak()?`<span>Seri: ${ptStreak()} gün</span>`:""}</div>
+      <div class="acts">
+        <button class="btn-main" data-pa="start">Şimdi yap · 1 dk</button>
+        <button class="btn-sec" data-pa="claim">Yaptım</button>
+      </div>`);
+    buzz(liar ? [300,120,300,120,300] : [250,120,250]);
+  }
+
+  function showInterrogation(){
+    paRender("dark", `
+      <span class="badge">${ico("warn")}Kontrol</span>
+      <h1>Gerçekten<br>yaptın mı?</h1>
+      <p class="sub">8 tekrar, her birinde çeneyi 5 saniye geride tutarak. Yapmadıysan kandırdığın tek kişi aynadaki.</p>
+      <div class="acts">
+        <button class="hold" data-hold><span class="fill"></span><span class="lbl">Basılı tut · yaptım<small>emin olmak için 1,5 saniye</small></span></button>
+        <button class="btn-lie" data-pa="lie">Yalan söylüyorum</button>
+      </div>`);
+  }
+
+  function showConfession(){
+    const lies = pt.lies.length;
+    paRender("amber", `
+      <span class="badge">İtiraf kaydedildi</span>
+      <h1>Dürüstsün.<br>Ama boynun<br>hâlâ önde.</h1>
+      <p class="sub">Bugünün yalan sayacı: <b>${lies}</b>. Sayfaya bir dahaki girişinde alarm tekrar çalacak, bu sefer daha sert. Ya da şimdi 1 dakikada bitir.</p>
+      <div class="acts">
+        <button class="btn-main" data-pa="start">Tamam, şimdi yapıyorum</button>
+        <button class="btn-sec" data-pa="close">Sonra hatırlat</button>
+      </div>`);
+  }
+
+  function showSuccess(how){
+    const n = pt.rounds.length, st = ptStreak(), all = n >= PT_TARGET;
+    paRender("green", `
+      <span class="badge">${how==="guided" ? "Süreyle yapıldı" : "Kaydedildi"}</span>
+      <div class="bigcheck">${ico("check")}</div>
+      <h1>${all ? "Bugünlük<br>tamam" : "Aferin"}</h1>
+      <p class="sub">${all ? `3/3 tur bitti${st?`, seri ${st} gün`:""}. Yarın sabah tekrar görüşürüz.` : `Bugün ${n}/${PT_TARGET}. Sonraki alarm ${hhmm(Date.now()+PT_COOL)} sonrasında, sayfayı açtığında çalar.`}</p>
+      <div class="acts"><button class="btn-main" data-pa="close">Kapat</button></div>`);
+    buzz(60);
+    clearTimeout(autoClose); autoClose = setTimeout(() => { if (paOpen && pa.classList.contains("green")) closePA(); }, 6000);
+  }
+
+  function openGuided(origin){
+    if (!paOpen) openPA();
+    stopGuide();
+    paRender("guide", `
+      <div class="gbar"><i id="gBar"></i></div>
+      <span class="badge" id="gRep">8 tekrar · 5 sn tut</span>
+      <div class="gwrap">
+        <div class="gring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="9"/><circle id="gArc" cx="60" cy="60" r="52" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-dasharray="0 327"/></svg><div class="gnum" id="gNum">3</div></div>
+      </div>
+      <h1 id="gCue">Hazır ol</h1>
+      <p class="sub" id="gTip"></p>
+      ${headSvg("fwd")}
+      <div class="acts"><button class="btn-sec" data-pa="stop">Vazgeç</button></div>`);
+    const phases = [{k:"ready", d:PT_READY}];
+    for (let i=1;i<=PT_REPS;i++){ phases.push({k:"hold", d:PT_HOLD, i}); if (i<PT_REPS) phases.push({k:"rest", d:PT_REST, i}); }
+    const total = phases.reduce((a,p)=>a+p.d, 0), C = 2*Math.PI*52, t0 = performance.now();
+    let lastKey = "";
+    const tick = () => {
+      const el = (performance.now() - t0) / 1000;
+      if (el >= total){ stopGuide(); pt.rounds.push({t:new Date().toISOString(), how:"guided"}); ptSave(); showSuccess("guided"); return; }
+      let acc = 0, ph = phases[0];
+      for (const p of phases){ if (el < acc + p.d){ ph = p; break; } acc += p.d; }
+      const left = acc + ph.d - el, frac = (el - acc) / ph.d, key = ph.k + (ph.i||0);
+      if (key !== lastKey){
+        lastKey = key; buzz(ph.k==="hold" ? 90 : 30);
+        $("gCue").textContent = ph.k==="ready" ? "Hazır ol" : ph.k==="hold" ? "Çek · tut" : "Bırak";
+        $("gTip").textContent = ph.k==="hold" ? "Çeneni düz geriye çek, çift çene yap. Başını eğme; tepeni tavana doğru uzat. Omuzlar aşağıda."
+          : ph.k==="rest" ? "Gevşe, nefes al. Sıradaki geliyor."
+          : "Dik otur ya da ayakta dur. Omuzlarını geriye ve aşağıya bırak.";
+        $("gRep").textContent = ph.k==="ready" ? "8 tekrar · 5 sn tut" : `Tekrar ${ph.i} / ${PT_REPS}`;
+        pa.querySelector(".head").classList.toggle("fwd", ph.k !== "hold");
+        pa.classList.toggle("holding", ph.k === "hold");
+      }
+      $("gNum").textContent = Math.max(1, Math.ceil(left - 1e-6));
+      $("gArc").setAttribute("stroke-dasharray", `${(frac*C).toFixed(1)} ${C.toFixed(1)}`);
+      $("gBar").style.width = `${(el/total*100).toFixed(1)}%`;
+    };
+    guide = {origin, timer:setInterval(tick, 100)}; tick();
+  }
+  function stopGuide(){ if (guide){ clearInterval(guide.timer); guide = null; } }
+
+  // hold-to-confirm: 1.6 s press records the round
+  let holdT = null;
+  const holdStart = btn => { btn.classList.add("on"); clearTimeout(holdT);
+    holdT = setTimeout(() => { btn.classList.remove("on"); pt.rounds.push({t:new Date().toISOString(), how:"claimed"}); ptSave(); showSuccess("claimed"); }, 1600); };
+  const holdEnd = () => { clearTimeout(holdT); holdT = null; const b = pa.querySelector(".hold"); if (b) b.classList.remove("on"); };
+  pa.addEventListener("pointerdown", e => { const b = e.target.closest("[data-hold]"); if (!b) return; e.preventDefault(); try{ b.setPointerCapture(e.pointerId); }catch(_){} holdStart(b); });
+  ["pointerup","pointercancel","lostpointercapture"].forEach(ev => pa.addEventListener(ev, holdEnd));
+  pa.addEventListener("contextmenu", e => { if (e.target.closest("[data-hold]")) e.preventDefault(); });
+  pa.addEventListener("keydown", e => { const b = e.target.closest && e.target.closest("[data-hold]"); if (b && (e.key===" "||e.key==="Enter") && !e.repeat){ e.preventDefault(); holdStart(b); } });
+  pa.addEventListener("keyup", e => { if (e.target.closest && e.target.closest("[data-hold]") && (e.key===" "||e.key==="Enter")) holdEnd(); });
+
+  pa.addEventListener("click", e => {
+    const b = e.target.closest("[data-pa]"); if (!b) return;
+    const a = b.dataset.pa;
+    if (a==="start") openGuided(guide ? guide.origin : "alarm");
+    else if (a==="claim") showInterrogation();
+    else if (a==="lie"){ pt.lies.push(new Date().toISOString()); ptSave(); showConfession(); }
+    else if (a==="close") closePA();
+    else if (a==="stop"){ const o = guide && guide.origin; stopGuide(); const m = alarmMode(Date.now() + PT_GRACE);
+      if (o === "alarm" && m) showAlarm(m); else closePA(); }
+  });
+
+  /* ---------- dashboard + body metrics: Fitbit numbers (fitbit/daily, written by the sync) + notes / Bevel (metrics/<date>) ---------- */
+  const met = new Map(); let mBase = null, fit = null, fitSeen = false, daysSeen = false;
+  const mAvg = a => a.length ? a.reduce((x,y)=>x+y,0)/a.length : null;
+  const hm = m => m==null ? "—" : `${Math.floor(m/60)}:${String(Math.round(m%60)).padStart(2,"0")}`;
+  const mnum = x => x==null || x==="" || isNaN(Number(x)) ? null : Number(x);
+  const sgn = x => Math.abs(x) < 0.05 ? "0.0" : (x>0?"+":"−") + Math.abs(x).toFixed(1);
+  const trNum = n => Math.round(n).toLocaleString("tr-TR");
+  function dashSafe(){ try { renderMetrics(); } catch(e) { /* data not loaded yet */ } }
+  function mRows(){
+    const all = new Map();
+    met.forEach((v,d) => all.set(d, {...v}));
+    const fd = fit && fit.days && typeof fit.days === "object" ? fit.days : {};
+    Object.keys(fd).forEach(d => {
+      if (/^\d{4}-\d{2}-\d{2}$/.test(d) && fd[d] && typeof fd[d] === "object") all.set(d, {...(all.get(d)||{}), ...fd[d], date:d, src:"Fitbit"});
+    });
+    return [...all.values()].sort((a,b)=>b.date.localeCompare(a.date));
+  }
+  function mBaseline(rows){
+    // own 30-day normal (mean ± 1 sd) once there are 7+ days; the stored Bevel range is only the fallback
+    const t = todayIso(), last30 = rows.filter(v => v.date > addDays(t,-30));
+    const calc = k => { const xs = last30.map(v=>mnum(v[k])).filter(x=>x!=null); if (xs.length < 7) return null;
+      const m = mAvg(xs), sd = Math.sqrt(mAvg(xs.map(x=>(x-m)**2))); return {avg:m, lo:m-sd, hi:m+sd}; };
+    const b = mBase || {};
+    const stored = (a,l,h) => b[a]!=null ? {avg:b[a], lo:b[l], hi:b[h]} : null;
+    return { hrv: calc("hrv") || stored("hrvAvg","hrvLo","hrvHi"), rhr: calc("rhr") || stored("rhrAvg","rhrLo","rhrHi") };
+  }
+
+  // Illness watch: two of three night signals, or a clear temperature jump on its own.
+  function riskOf(v, B){
+    const sig = [];
+    if (!v) return {risk:false, sig};
+    const t = mnum(v.tempDelta), r = mnum(v.rhr), h = mnum(v.hrv);
+    if (t!=null && t >= 0.5) sig.push(`Isı ${sgn(t)}°`);
+    if (r!=null && B.rhr && r > B.rhr.hi) sig.push(`Uyku nabzı ${Math.round(r)}`);
+    if (h!=null && B.hrv && h < B.hrv.lo) sig.push(`HRV ${h.toFixed(1)}`);
+    return {risk: sig.length >= 2 || (t!=null && t >= 1), sig};
+  }
+
+  const FACE_OK = `<svg viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="26" fill="var(--lime)"/><circle cx="20" cy="23" r="3" fill="#111318"/><circle cx="36" cy="23" r="3" fill="#111318"/><path d="M17 32 Q28 43 39 32" fill="none" stroke="#111318" stroke-width="3" stroke-linecap="round"/></svg>`;
+  const FACE_RISK = `<svg viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="26" fill="#FFB49C"/><path d="M16 22 L24 24" fill="none" stroke="#4A1B0C" stroke-width="3" stroke-linecap="round"/><path d="M40 22 L32 24" fill="none" stroke="#4A1B0C" stroke-width="3" stroke-linecap="round"/><path d="M18 37 Q23 33 28 37 Q33 41 38 37" fill="none" stroke="#4A1B0C" stroke-width="3" stroke-linecap="round"/><path d="M44 10 Q47 15 44 18 Q41 15 44 10 Z" fill="#4A1B0C"/></svg>`;
+  const FACE_WAIT = `<svg viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="26" fill="#E6E5DF"/><circle cx="20" cy="24" r="3" fill="#5F636B"/><circle cx="36" cy="24" r="3" fill="#5F636B"/><path d="M19 35 L37 35" fill="none" stroke="#5F636B" stroke-width="3" stroke-linecap="round"/></svg>`;
+
+  function renderDash(rows, B){
+    const byDate = new Map(rows.map(v => [v.date, v]));
+    const v = rows.find(x => x.date <= cur && (mnum(x.hrv)!=null || mnum(x.sleepMin)!=null)) || null;
+    const fresh = v && v.date === cur;
+    const R = riskOf(fresh ? v : null, B);
+
+    let up = "";
+    if (fit && fit.updated){ const u = new Date(fit.updated); if (!isNaN(u)) up = ` · Fitbit ${String(u.getHours()).padStart(2,"0")}:${String(u.getMinutes()).padStart(2,"0")}`; }
+    $("fitTime").textContent = cur===TODAY ? up : "";
+    // today speaks in the present; other days get a neutral title
+    $("headline").textContent = cur > TODAY ? "Plan." : cur < TODAY ? "Günün özeti." : !fitSeen ? "Günaydın." : !fresh ? "Günaydın." : R.risk ? "Yavaşla bugün." : "Hazırsın.";
+    $("face").innerHTML = !fresh ? FACE_WAIT : R.risk ? FACE_RISK : FACE_OK;
+    $("face").setAttribute("aria-label", !fresh ? "Veri bekleniyor" : R.risk ? "Halsiz yüz: hastalık riski" : "Gülümseyen yüz: her şey yolunda");
+
+    // hero
+    const hero = $("hero");
+    if (!v){
+      hero.className = "hero wait";
+      hero.innerHTML = `<div><span class="hk">Toparlanma</span><span class="hs">${!fitSeen ? "Fitbit verisi yükleniyor…" : cur > TODAY ? "Bu gün henüz gelmedi." : "Bu gün için Fitbit verisi yok."}</span></div>`;
+    } else if (R.risk){
+      hero.className = "hero risk";
+      hero.innerHTML = `<div><span class="hk">Hey, dikkat</span><h3>Birkaç güne hastalanabilirsin</h3></div>
+        <div class="chips">${R.sig.map(x => `<span class="chip">${esc(x)}</span>`).join("")}</div>
+        <span class="hs">Bugün ağırlığı ertele: hafif yürüyüş, bol su, erken yat.</span>`;
+    } else {
+      const h = mnum(v.hrv), r = mnum(v.rhr);
+      hero.className = "hero";
+      if (h==null){
+        hero.innerHTML = `<div><span class="hk">Toparlanma</span><span class="hs">Bu gece için HRV yok.</span></div>`;
+      } else {
+        const hb = B.hrv;
+        const diff = !hb ? "normal henüz yok" : h > hb.hi ? `normalinin ${(h-hb.avg).toFixed(1)} ms üstü` : h < hb.lo ? `normalinin ${(hb.avg-h).toFixed(1)} ms altı` : "normal aralıkta";
+        let bar = "";
+        if (hb){
+          const mn = Math.min(hb.lo-6, h-3), mx = Math.max(hb.hi+6, h+3), X = x => ((x-mn)/(mx-mn)*318).toFixed(1);
+          bar = `<svg class="rg" viewBox="0 0 318 18" role="img" aria-label="HRV ${h}, normal aralık ${hb.lo.toFixed(1)}–${hb.hi.toFixed(1)}"><rect x="0" y="7" width="318" height="4" rx="2" fill="#111318" fill-opacity=".15"/><rect x="${X(hb.lo)}" y="5" width="${(X(hb.hi)-X(hb.lo)).toFixed(1)}" height="8" rx="4" fill="#111318" fill-opacity=".35"/><circle cx="${X(h)}" cy="9" r="7" fill="#111318"/></svg>`;
+        }
+        const rb = B.rhr, rTxt = r==null ? "" : !rb ? `Uyku nabzı ${Math.round(r)}` : `Uyku nabzı ${Math.round(r)} · ${r < rb.lo ? "normalin altında" : r > rb.hi ? "normalin üstünde" : "normal"}`;
+        hero.innerHTML = `<div class="hero-top"><div><span class="hk">Toparlanma${fresh ? "" : " · " + esc(shortDate(v.date))}</span><span class="hs">HRV · ${diff}</span></div><div class="hv"><b class="num">${h.toFixed(1)}</b><span>ms</span></div></div>
+          <div>${bar}<div class="hf">${hb ? `<span>Normal ${hb.lo.toFixed(1)}–${hb.hi.toFixed(1)}</span>` : "<span></span>"}<span>${esc(rTxt)}</span></div></div>`;
+      }
+    }
+
+    // diet journey: a runner on the road from the start weight to the goal
+    const wCur = cur && day && day.date===cur && day.weight!=null ? Number(day.weight) : null;
+    const wPrev = weights().filter(p => p.date <= cur);
+    const w = wCur!=null ? wCur : (wPrev.length ? Number(wPrev[wPrev.length-1].weight) : null);
+    if (!cfgSeen){ $("journey").innerHTML = `<div class="jtop"><div><b class="k">Kilo yolculuğu</b><small>Yükleniyor…</small></div></div>`; }
+    else {
+    const dn = DIET_START ? daysBetween(DIET_START, cur) + 1 : null;
+    const span = START_W - GOAL, p = w==null ? 0 : Math.max(0, Math.min(1, (START_W - w) / span));
+    const T0 = 8, TL = 310, px = T0 + p*TL, mpx = T0 + (START_W-MILESTONE)/span*TL;
+    $("journey").innerHTML = `<div class="jtop"><div><b class="k">${dn==null ? "Kilo yolculuğu" : dn>0 ? `Diyetin ${dn}. günü` : "Diyet başlamadı"}</b><small>${w==null ? (daysSeen ? "İlk kiloyu gir" : "Yükleniyor…") : `${fmt(START_W-w)} kg gitti · ${dat(GOAL)} ${fmt(Math.max(0,w-GOAL))} kaldı`}</small></div>${w==null ? "" : `<span class="w num">${fmt(w)}<em>kg</em></span>`}</div>
+      <svg viewBox="0 0 326 60" role="img" aria-label="Kilo yolculuğu: ${START_W} kilodan ${GOAL} kiloya giden yolun yüzde ${Math.round(p*100)}'indesin">
+        <line x1="${T0}" y1="36" x2="${T0+TL}" y2="36" stroke="#C9CBD1" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 8"/>
+        ${p > 0.01 ? `<line x1="${T0}" y1="36" x2="${px.toFixed(1)}" y2="36" stroke="var(--data)" stroke-width="8" stroke-linecap="round"/>` : ""}
+        <circle cx="${mpx.toFixed(1)}" cy="36" r="5" fill="${w!=null && w<=MILESTONE ? "var(--data)" : "#FFFFFF"}" stroke="#111318" stroke-width="2"/>
+        <line x1="316" y1="14" x2="316" y2="40" stroke="#111318" stroke-width="2" stroke-linecap="round"/><path d="M316 14 L304 18.5 L316 23 Z" fill="#111318"/>
+        <g transform="translate(${(px-14).toFixed(1)} 3)" fill="none" stroke="#111318" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="17" cy="4" r="3.2" fill="#111318" stroke="none"/><path d="M15 9 L12 18"/><path d="M8 11 L14 10 L19 14"/><path d="M12 18 L18 22 L17 28"/><path d="M12 18 L8 23 L3 23"/></g>
+        <text x="${T0}" y="56" font-family="Inter, sans-serif" font-size="11" fill="#5F636B">${START_W}${DIET_START ? " · " + esc(shortDate(DIET_START)) : ""}</text>
+        <text x="${mpx.toFixed(1)}" y="56" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#5F636B">${MILESTONE}</text>
+        <text x="318" y="56" text-anchor="end" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#111318">${GOAL}</text>
+      </svg>`;
+    }
+
+    // sleep (night ending on this day) and steps (the day before)
+    const sv = fresh ? v : null, sm = sv ? mnum(sv.sleepMin) : null;
+    const de = sv ? mnum(sv.deepMin) : null, re = sv ? mnum(sv.remMin) : null, li = sv ? mnum(sv.lightMin) : null;
+    $("sleepCard").innerHTML = `<span class="k">Uyku</span><span class="big num">${sm==null ? "—" : `${hm(sm)}<em>sa</em>`}</span>
+      <div style="display:flex;flex-direction:column;gap:6px">${de!=null && re!=null ? `<div class="stg"><i style="flex:${de};background:var(--data)"></i><i style="flex:${re};background:var(--data-2)"></i><i style="flex:${li!=null ? li : Math.max(0,(sm||0)-de-re)};background:var(--data-3)"></i></div><span class="sub">Derin ${hm(de)} · REM ${hm(re)}</span>` : `<span class="sub">${!fitSeen ? "Yükleniyor…" : sm==null ? "Bu gece için veri yok" : "Evre verisi yok"}</span>`}</div>`;
+    // the selected day's own steps; today's count runs up to the last Fitbit sync
+    const sd = byDate.get(cur), st = cur > TODAY || !sd ? null : mnum(sd.steps);
+    const yd = byDate.get(addDays(cur,-1)), ys = yd ? mnum(yd.steps) : null;
+    const st7 = mAvg([...Array(7)].map((_,i) => byDate.get(addDays(cur,-1-i))).filter(Boolean).map(x => mnum(x.steps)).filter(x => x!=null));
+    let stSub;
+    if (cur > TODAY) stSub = "Bu gün henüz gelmedi";
+    else if (cur===TODAY) stSub = [up ? `${up.replace(" · Fitbit ", "")} itibarıyla` : "", ys!=null ? `dün ${trNum(ys)}` : ""].filter(Boolean).join(" · ") || "Hedef 10 bin";
+    else stSub = `Hedef 10 bin${st7==null ? "" : ` · 7 gün ort. ${trNum(st7)}`}`;
+    $("stepsCard").innerHTML = `<span class="k">Adım${cur===TODAY ? " · bugün" : ""}</span><span class="big num">${st==null ? "—" : trNum(st)}</span>
+      <div style="display:flex;flex-direction:column;gap:6px"><div class="pbar"><i style="width:${st==null ? 0 : Math.min(100, st/100).toFixed(1)}%"></i></div><span class="sub">${stSub}</span></div>`;
+
+    // HRV, last 7 nights up to this day
+    const hv = [...Array(7)].map((_,i) => { const x = byDate.get(addDays(cur, i-6)); return x ? mnum(x.hrv) : null; });
+    const known = hv.filter(x => x!=null);
+    let svg = "", note = fitSeen ? "Veri yok" : "Yükleniyor…";
+    if (known.length){
+      const hb = B.hrv, mn = Math.min(20, ...known.map(x=>x-2), hb ? hb.lo-2 : 99), mx = Math.max(40, ...known.map(x=>x+2), hb ? hb.hi+2 : 0);
+      const Y = x => 56 - (x-mn)/(mx-mn)*52;
+      if (hb) svg += `<rect x="0" y="${Y(hb.hi).toFixed(1)}" width="168" height="${(Y(hb.lo)-Y(hb.hi)).toFixed(1)}" fill="#ECECF6"/>`;
+      hv.forEach((x,i) => { if (x==null) return; const y = Y(x), last = i===6, low = hb && x < hb.lo;
+        svg += `<rect x="${4+i*24}" y="${y.toFixed(1)}" width="16" height="${(56-y).toFixed(1)}" rx="4" fill="${low ? "#E8590C" : last ? "var(--data)" : "#C8C9F4"}"/>`; });
+      const lastV = hv[6], mxV = Math.max(...known);
+      note = lastV==null ? "Bu gecenin verisi yok" : lastV===mxV && known.length > 2 ? "Bu sabah haftanın zirvesi" : hb && lastV < hb.lo ? "Normalin altında" : "Haftalık seyir";
+    }
+    $("hrvWeek").innerHTML = `<div><b>HRV · 7 gün</b><small>${esc(note)}</small></div><svg viewBox="0 0 168 56" role="img" aria-label="Son 7 gecenin HRV değerleri">${svg}</svg>`;
+  }
+
+  /* ---------- findings: computed by the pipeline (fitbit/daily.insights), only displayed here ---------- */
+  const FX = {
+    bedtime:  f => ["Geç yatış", `${f.cut} sonrası yatılan geceler`],
+    sleep:    f => ["Uzun uyku", `${hm(mnum(f.cut))} saatten uzun uyunan geceler`],
+    steps:    f => ["Önceki gün çok adım", `${trNum(mnum(f.cut) || 0)} adımın üstü`],
+    training: f => ["Önceki gün antrenman", "yürüyüş hariç, 15 dk üstü"],
+    shift:    f => ["Düzensiz yatış", `alışılmış saatten ${Math.round(mnum(f.cut) || 0)} dk'dan fazla sapma`]
+  };
+  const VERD = {clear:["up","net"], likely:["mid","olası"], unclear:["","belirsiz"]};
+  function renderFindings(){
+    const box = $("findings"), ins = fit && fit.insights && typeof fit.insights==="object" ? fit.insights : null;
+    const head = r => `<div class="chd"><span class="lbl">Bulgular · HRV'ni ne oynatıyor</span><span class="lr">${r||""}</span></div>`;
+    if (!ins){ box.innerHTML = head() + `<span class="mempty">${fitSeen ? "Bulgular bir sonraki Fitbit güncellemesiyle gelir." : "Yükleniyor…"}</span>`; return; }
+    const all = (Array.isArray(ins.drivers) ? ins.drivers : []).filter(f => f && FX[f.x] && mnum(f.effect)!=null && VERD[f.verdict]);
+    const list = all.filter(f => f.y==="hrv" || f.verdict!=="unclear");
+    const nights = mnum(ins.nights);
+    let html = head(nights!=null ? `${nights} gece` : "");
+    if (!list.length) html += `<span class="mempty">Test için hareket başına en az 20 gece lazım. Veri biriktikçe burası dolar.</span>`;
+    else {
+      const sure = list.filter(f => f.verdict==="clear"), maybe = list.filter(f => f.verdict==="likely");
+      const say = f => `${FX[f.x](f)[0].toLocaleLowerCase("tr-TR")} (${f.y==="hrv" ? "HRV" : "uyku nabzı"} ${sgn(f.effect)} ${f.y==="hrv" ? "ms" : "bpm"})`;
+      let h, lead;
+      if (sure.length){ h = "Net bir örüntü var."; lead = `Tesadüf olma ihtimali düşük: <b>${esc(sure.map(say).join(", "))}</b>.`; }
+      else if (maybe.length){ h = "Bir şey beliriyor."; lead = `Henüz kesin değil ama işaret var: <b>${esc(maybe.map(say).join(", "))}</b>.`; }
+      else {
+        h = "Henüz kanıtlanmış bir şey yok.";
+        const c = list.filter(f => f.y==="hrv" && mnum(f.needN)!=null).sort((a,b) => mnum(a.p) - mnum(b.p))[0];
+        lead = c ? `En güçlü aday <b>${esc(say(c))}</b>, ama bu kadar fark ${mnum(c.n)} gecede tesadüfen de çıkar. Gerçekse yaklaşık <b>${mnum(c.needN)} gecede</b> netleşir.`
+                 : "Şimdiye kadarki farkların hepsi tesadüfle açıklanabilir.";
+      }
+      html += `<h3>${h}</h3><span class="lead">${lead}</span>`;
+      const mx = Math.max(...list.map(f => Math.abs(f.effect)), 1);
+      html += `<div>` + list.map(f => { const [t, sub] = FX[f.x](f), [vc, vt] = VERD[f.verdict], w = Math.abs(f.effect)/mx*50, hrv = f.y==="hrv";
+        return `<div class="frow"><div><b>${esc(t)}${hrv ? "" : " · uyku nabzı"}</b><small>${esc(sub)} · ${mnum(f.nHi)} / ${mnum(f.nLo)} gece</small></div>
+          <div class="fr"><strong class="num">${sgn(f.effect)}<em>${hrv ? "ms" : "bpm"}</em></strong><span class="dch ${vc}">${vt}</span></div>
+          <div class="fbar" aria-hidden="true"><i class="${f.verdict==="unclear" ? "" : "s"}" style="${f.effect < 0 ? `right:50%;width:${w.toFixed(1)}%` : `left:50%;width:${w.toFixed(1)}%`}"></i></div></div>`; }).join("") + `</div>`;
+    }
+    const a = ins.alerts && typeof ins.alerts==="object" ? ins.alerts : null, fl = a && Array.isArray(a.flagged) ? a.flagged.filter(x => x && /^\d{4}-\d{2}-\d{2}$/.test(x.date)) : [];
+    if (a && mnum(a.nights)){
+      const when = fl.slice(-5).map(x => shortDate(x.date)).join(", ");
+      html += `<div class="falert"><b>Hastalık uyarısı geçmişte kaç kez çalardı?</b><br>${mnum(a.nights)} gecede ${fl.length ? `<b>${fl.length} kez</b>: ${fl.length > 5 ? "son beşi " : ""}${esc(when)}.` : "hiç çalmadı."}</div>`;
+    }
+    html += `<span class="foot">Gözlem verisi: birlikte görülmeyi gösterir, neden-sonucu kanıtlamaz. On soru birden sorulduğu için "net" demenin eşiği sıkı. Her güncellemede yeniden hesaplanır.</span>`;
+    box.innerHTML = html;
+  }
+
+  function renderMetrics(){
+    const rows = mRows(), B = mBaseline(rows);
+    renderDash(rows, B);
+    renderSleepWeek();
+    renderFindings();
+    renderHow(B);
+  }
+
+  function renderHow(B){
+    let up = "henüz yok";
+    if (fit && fit.updated){ const u = new Date(fit.updated); if (!isNaN(u)) up = `${shortDate(iso(u))} ${hhmm(u.getTime())}`; }
+    const items = [
+      `Fitbit verisi kendiliğinden gelir: her gün 07:40'tan 22:40'a kadar 3 saatte bir. Son güncelleme ${up}. Bugünün adımı o saate kadar sayılır.`,
+      B.hrv && B.rhr ? `Senin normalin, son 30 günün ortalaması ± 1 sapma: HRV ${B.hrv.lo.toFixed(1)}–${B.hrv.hi.toFixed(1)} ms, uyku nabzı ${B.rhr.lo.toFixed(1)}–${B.rhr.hi.toFixed(1)} bpm.` : "Normal aralık için en az 7 günlük veri lazım.",
+      "Hastalık uyarısı: aynı gece cilt ısısı +0.5° üstü, uyku nabzı normalin üstü, HRV normalin altı. Bunlardan ikisi bir aradaysa ya da ısı tek başına +1°'yi geçerse yüz değişir.",
+      "Hareket kartı: Fitbit'in tanıdığı antrenmanlar kendiliğinden düşer. 15 dakikayı geçen kardiyo, kardiyo gününü tamamlar. Kaçırdığını elle ekleyebilirsin.",
+      "Kilo trendi: son 3 haftanın tartılarına çizilen doğru. 1 kg yağ ≈ 7.700 kcal sayılır; açık tahmini buradan gelir. Su yüzünden günlük ±0.5 kg oynama normal.",
+      "Yediğin kcal tahmini: Fitbit'in aynı günlerde yaktığını söylediği ortalamadan bu açık çıkarılır. Bileklikler harcamayı çoğu zaman fazla yazar; saydığın rakam belirgin düşükse fark oradan gelir.",
+      "Bulgular: her gecenin HRV'si önceki 14 gecenin ortancasına göre ölçülür, böylece formunun yavaş yavaş artması sonucu bozmaz. Alışkanlıkla ilişki sıra korelasyonu ve 10.000 karıştırmalı permütasyon testiyle sınanır; on test birlikte düzeltilir. Fark, yüksek yarı ile düşük yarının ortalaması arasındadır.",
+      "Kilo, bel, not ve antrenmanlar sen yazdıkça kendiliğinden kaydolur."
+    ];
+    $("howBody").innerHTML = items.map(x => `<li>${esc(x)}</li>`).join("");
+  }
+
+  setSave("idle", "");
+  renderHeader(); renderForm(); renderTrend(); renderStrength(); renderPosture(); renderMetrics();
+
+  (async () => {
+    try{ db = window.claude && window.claude.use ? await window.claude.use("db") : null; }catch(e){ db = null; }
+    if (!db){
+      const b = $("dbBanner"); b.hidden = false;
+      b.textContent = "Kayıt şu an kullanılamıyor. Plan görünüyor ama girdiklerin kaydedilmez. Sayfayı Claude hesabın açıkken aç.";
+      daysSeen = true; fitSeen = true; cfgSeen = true;
+      renderTrend(); renderStrength(); renderSessions();
+      pReady = true; maybeAlarm();
+      return;
+    }
+    const cfgDone = v => { applyConfig(v); renderTrend(); renderStrength(); safeRenderSessions(); };
+    db.doc("meta/config").onSnapshot(snap => cfgDone(snap.exists ? snap.data() : null), () => cfgDone(null));
+    subscribeDay();
+    subscribePosture();
+    db.collection("posture").orderBy("date","desc").limit(90).onSnapshot(qs => {
+      pHist.clear();
+      qs.docs.forEach(d => { const v = d.data(); if (v && v.date) pHist.set(v.date, ptClone(v)); });
+      pHist.set(pt.date, ptClone(pt));
+      renderPosture();
+    }, () => {});
+    db.collection("metrics").orderBy("date","desc").limit(60).onSnapshot(qs => {
+      met.clear(); qs.docs.forEach(d => { const v = d.data(); if (v && v.date) met.set(v.date, v); }); renderMetrics();
+    }, () => {});
+    db.doc("meta/baseline").onSnapshot(snap => { mBase = snap.exists ? snap.data() : null; renderMetrics(); }, () => {});
+    db.doc("fitbit/daily").onSnapshot(snap => { fit = snap.exists ? snap.data() : null; fitSeen = true; safeRenderSessions(); renderTrend(); }, () => { fitSeen = true; safeRenderSessions(); });
+    db.collection("days").orderBy("date","desc").limit(150).onSnapshot(qs => {
+      daysSeen = true;
+      hist.clear();
+      qs.docs.forEach(d => { const v = d.data(); if (v && v.date) hist.set(v.date, v); });
+      renderTrend(); renderStrength();
+      if (!dirty){ renderTiles(); safeRenderSessions(); } else renderHeader();
+    }, () => { daysSeen = true; renderTrend(); renderStrength(); });
+  })();
+})();
+</script>
+</body>
+</html>

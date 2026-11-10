@@ -2,6 +2,8 @@
 
 Incremental ETL and analysis for wearable health data. It extracts Fitbit metrics from the Google Health API, normalises them into a typed daily schema, maintains versioned CSV tables through idempotent upserts on a GitHub Actions schedule, and then tests which habits actually move overnight recovery.
 
+**[Live demo of the dashboard](https://nonentertainer.github.io/health-pipeline/)** · synthetic data, runs in the browser, nothing to install.
+
 ![health-pipeline architecture: Fitbit → Google Health → GitHub Actions ETL → CSV → daily Claude task → training-log dashboard](docs/architecture.svg)
 
 ## Highlights
@@ -13,7 +15,8 @@ Incremental ETL and analysis for wearable health data. It extracts Fitbit metric
 - **No infrastructure to run.** GitHub Actions is the scheduler and git is the audit log: every data change is a reviewable diff.
 - **Privacy split.** Public code, private data repository; logs carry counts and dates, never metric values or credentials.
 - **Analysis that refuses to over-claim.** An [insights step](#insights) asks whether bedtime, sleep length, steps or training go together with a better night, using detrended outcomes, rank correlation, permutation p-values and a false-discovery correction across every question asked. When the data cannot answer yet, it says so and estimates how many more nights it needs.
-- **Tested.** 74 tests on synthetic fixtures, including a fake HTTP layer for the API client and planted-effect data for the statistics.
+- **A dashboard you can try.** The [live demo](https://nonentertainer.github.io/health-pipeline/) is the production page, unchanged, running against an in-memory database filled with synthetic data that went through the real pipeline code. See [Dashboard and live demo](#dashboard-and-live-demo).
+- **Tested.** 78 tests on synthetic fixtures, including a fake HTTP layer for the API client, planted-effect data for the statistics, and a check that the published demo matches its generator.
 
 In my deployment the private data repository also builds `data/insights.json` and `data/tracker.json` after every run, and a Claude scheduled task loads them into a training-log dashboard used for coaching. An iOS Shortcut source and a Drive-export source are implemented as alternative inputs into the same tables.
 
@@ -92,6 +95,24 @@ Note the last row: p = 0.061 on its own would tempt a headline; after correction
 
 Limits, stated plainly: this is observational data from one person, so a `clear` verdict means "unlikely to be chance", not "causes". Neighbouring nights are not fully independent, which makes the p-values somewhat optimistic. Habits are tested one at a time, so two habits that travel together cannot be told apart.
 
+## Dashboard and live demo
+
+[![The dashboard on a phone: recovery and weight journey, weight trend and sleep week, findings](docs/demo.png)](https://nonentertainer.github.io/health-pipeline/)
+
+[`dashboard/index.html`](dashboard/index.html) is the training log the pipeline feeds: one file, vanilla JavaScript, no build step, designed for a phone. The interface is in Turkish. From top to bottom it shows overnight recovery against a personal range, progress toward a weight goal, sleep and steps, the day's plan, a logging area (strength session, weigh-in, Fitbit-detected workouts, notes, a posture routine), then trends: weight rate with the implied calorie deficit, the week's sleep timing, the pipeline's findings, strength progress and a training calendar.
+
+It is deliberately ignorant of where its data lives. It asks for a database handle, subscribes to a handful of documents and writes the day's entries back. Personal targets (goal weight, start date, exercise list) are a document too, not constants in the code. That is what makes the demo honest:
+
+| Piece | What it is |
+|---|---|
+| The page | `docs/index.html` is `dashboard/index.html` byte for byte, plus one `<script>` tag. A test enforces it. |
+| The database | [`dashboard/demo-shim.js`](dashboard/demo-shim.js): an in-memory stand-in with the same document/collection/subscribe interface. Entries you make work and update every card; they disappear with the tab. |
+| The data | [`tools/build_demo.py`](tools/build_demo.py) invents one person's 97 days in the pipeline's CSV schema with a seeded generator, then runs the same `insights` and document-building code as the real deployment. No real data is involved anywhere. |
+| The proof | The generator plants two things: a later bedtime lowers that night's HRV, and one week has a feverish illness. Steps and training are generated independently of recovery. Tests assert that the pipeline calls the bedtime effect `clear`, leaves the unrelated habits `unclear`, and that the illness rule fires on the planted nights. |
+| Staying current | The data is built for a fixed week and moved forward in whole weeks in the browser, so "today" is always today and weekdays keep matching the training plan; anything after the current time is cut off. A static page never goes stale. |
+
+In my own deployment the same page runs as a private Claude artifact against a small document database, refreshed every three hours by a scheduled task that starts the sync and loads the result.
+
 ## Alternative routes
 
 **iOS Shortcut → `repository_dispatch`.** A Shortcut reads Apple Health and POSTs the last 3 days to `https://api.github.com/repos/<owner>/<data-repo>/dispatches` with a fine-grained token (Contents: read/write on the data repo only). Payload format: [`parse_shortcut.py`](src/health_pipeline/parse_shortcut.py). [`tools/build_shortcut.py`](tools/build_shortcut.py) generates the whole Shortcut (128 actions) by cloning a small hand-built reference, so parameter shapes match what the Shortcuts app writes; sign it on a Mac with `shortcuts sign`. Platform constraints worth knowing: Health type names must be Apple's internal identifiers, *Find Health Samples* aborts the Shortcut on an empty result (no try/catch), and Health data is unreadable while the phone is locked.
@@ -124,6 +145,11 @@ src/health_pipeline/
   sync.py                   one run: API + file sources -> parse -> store -> state
   insights.py               habit/recovery associations (permutation tests, FDR) + illness-rule backtest
   cli.py                    `health-pipeline sync`, `health-pipeline insights`
+dashboard/index.html        the dashboard: single file, no build step
+dashboard/demo-shim.js      in-memory database for the public demo
+docs/                       GitHub Pages: the built demo (generated), README images
+tools/build_demo.py         synthetic data -> real pipeline code -> docs/ (`--check` verifies it is current)
+tools/tracker_docs.py       data/*.csv + insights.json -> the one document the dashboard reads
 tools/google_login.py       one-time OAuth login + data probe (stdlib, runs on macOS system python)
 tools/build_shortcut.py     generates the iOS Shortcut from a hand-built reference
 tests/                      synthetic fixtures for every source; fake HTTP server for the API client;
