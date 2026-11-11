@@ -535,7 +535,8 @@
   let TODAY = iso(new Date());
   let cur = TODAY, day = emptyDay(cur), dirty = false, db = null, unsubDay = null, saveT = null, lastWrite = null, pendingSess = false;
   const hist = new Map();
-  const editing = new Set();   // strength sessions whose exercise names are being edited
+  const editing = new Set();
+  let savedAt = null;          // when the open day was last stored, shown on the session card   // strength sessions whose exercise names are being edited
 
   function emptyDay(date){ return {date, weight:null, waist:null, notes:"", sessions:[], legacy:{}}; }
 
@@ -675,8 +676,11 @@
   function gymSub(i){
     const s = day.sessions[i], filled = s.ex.filter(e => num(e.kg)!=null).length;
     const fw = fitWk(cur).find(w => w.kind==="gym");
-    return `${filled}/${s.ex.length} hareket${fw ? ` · Fitbit ${Math.round(fw.min)} dk${fw.kcal!=null ? `, ${fw.kcal} kcal` : ""}` : ""}`;
+    // say plainly that the session is stored: there is no save button, so this line is the receipt
+    const st = !filled ? "" : dirty ? " · kaydediliyor…" : savedAt ? ` · kaydedildi ✓ ${hhmm(Date.parse(savedAt))}` : "";
+    return `${filled}/${s.ex.length} hareket${st}${fw ? ` · Fitbit ${Math.round(fw.min)} dk` : ""}`;
   }
+  function refreshGymHeads(){ day.sessions.forEach((s,i) => { const h = $(`s${i}-h`); if (h) h.textContent = gymSub(i); }); }
   function refreshEx(i, j){
     const m = exMeta(i, j), c = $(`s${i}-c${j}`), l = $(`s${i}-l${j}`), t = $(`s${i}-t${j}`), h = $(`s${i}-h`);
     if (c) c.innerHTML = m.chip;
@@ -719,14 +723,17 @@
     const fd = fitDay(cur), steps = fd ? mnum(fd.steps) : null, ak = fd ? mnum(fd.activeKcal) : null;
     const right = [steps!=null ? `${trNum(steps)} adım` : "", ak!=null ? `${trNum(ak)} aktif kcal` : ""].filter(Boolean).join(" · ");
     const rows = fw.map(w => `<div class="fw k-${w.kind}"><span class="ico sm">${kindIco(w.kind)}</span><div><b>${esc(w.label)}<span class="src">Fitbit</span></b><small>${esc(w.start.slice(11,16))} · ${Math.round(w.min)} dk${w.km!=null && w.km >= 0.3 ? ` · ${w.km.toFixed(1)} km` : ""}${w.kcal!=null ? ` · ${w.kcal} kcal` : ""}</small></div>${w.hr!=null ? `<span class="fv num">${Math.round(w.hr)}<em>bpm</em></span>` : ""}</div>`).join("");
+    const gymRows = day.sessions.map(s => { if (!isStrength(s.kind)) return "";
+      const done = s.ex.filter(e => num(e.kg)!=null);
+      return `<div class="fw k-gym"><span class="ico sm">${kindIco(s.kind)}</span><div><b>${esc(KIND_LABEL[s.kind]||"Ağırlık")}<span class="src">defter</span></b><small>${done.length ? esc(done.map(e => `${e.name} ${fmt(num(e.kg))}`).join(" · ")) : "henüz kilo girilmedi"}</small></div>${done.length ? `<span class="dch up">${done.length} hareket</span>` : ""}</div>`; }).join("");
     const manual = day.sessions.map((s,i) => isStrength(s.kind) ? "" : cardioCard(s,i)).join("");
     let empty = "";
-    if (!rows && !manual) empty = `<span class="mempty">${cur > TODAY ? "Bu gün henüz gelmedi."
+    if (!rows && !manual && !gymRows) empty = `<span class="mempty">${cur > TODAY ? "Bu gün henüz gelmedi."
       : !fitSeen ? "Fitbit yükleniyor…"
       : daysBetween(cur, TODAY) > 30 ? "Fitbit antrenmanları son 30 günü kapsar."
       : cur===TODAY ? "Fitbit bugün henüz antrenman görmedi. Yaptığında buraya kendiliğinden düşer."
       : "Fitbit bu gün antrenman görmedi."}</span>`;
-    box.innerHTML = `<div class="chd"><span class="lbl">Hareket</span><span class="lr">${esc(right)}</span></div>${rows}${manual}${empty}
+    box.innerHTML = `<div class="chd"><span class="lbl">Hareket</span><span class="lr">${esc(right)}</span></div>${gymRows}${rows}${manual}${empty}
       <div class="adds"><span>Elle ekle</span>${[["gym","Ağırlık"],["bike","Bisiklet"],["run","Koşu"],["walk","Yürüyüş"]].map(([k,l]) => `<button class="addc k-${k}" data-add="${k}">${l}</button>`).join("")}</div>`;
   }
 
@@ -908,7 +915,7 @@
     clearTimeout(setSave.t);
     if (state==="ok") setSave.t = setTimeout(() => { p.className = "savepill idle"; }, 1800);
   }
-  function markDirty(){ dirty = true; setSave("saving", "Kaydediliyor…"); clearTimeout(saveT); saveT = setTimeout(save, 900); }
+  function markDirty(){ dirty = true; setSave("saving", "Kaydediliyor…"); clearTimeout(saveT); saveT = setTimeout(save, 900); refreshGymHeads(); }
 
   document.addEventListener("input", e => {
     const t = e.target;
@@ -968,7 +975,7 @@
     const date = cur, data = cleanForSave(date);
     lastWrite = data.updatedAt;
     setSave("saving", "Kaydediliyor…");
-    const ok = () => { if (cur===date && !saveT){ dirty = false; setSave("ok", "Kaydedildi"); } };
+    const ok = () => { if (cur===date && !saveT){ dirty = false; savedAt = data.updatedAt; setSave("ok", "Kaydedildi"); refreshGymHeads(); } };
     try{ await db.doc("days/"+date).set(data); ok(); }
     catch(err){
       if (err && err.code==="unavailable"){
@@ -989,6 +996,7 @@
           const o = {...s}; for (const k of ["min","km","hr","calf"]) if (k in o) o[k] = o[k]??""; return o;
         })};
     } else day = emptyDay(cur);
+    savedAt = data && data.updatedAt ? data.updatedAt : null;
     renderForm();
   }
 
