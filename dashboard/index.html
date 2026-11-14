@@ -456,7 +456,7 @@
   <details class="card how"><summary>Bu sayfa nasıl çalışır</summary><ul id="howBody"></ul></details>
 </div>
 
-<div class="pa" id="pa" role="alertdialog" aria-modal="true" aria-label="Postür alarmı" hidden></div>
+<div class="pa" id="pa" role="alertdialog" aria-modal="true" aria-label="Postür turu" hidden></div>
 <button class="savepill idle" id="savePill" type="button"><i></i><span id="saveTxt"></span></button>
 
 <script>
@@ -1069,11 +1069,11 @@
     if (db){ pReady = false; subscribePosture(); }
     renderPosture(); return !!db;
   }
+  // The overlay no longer opens by itself (he asked for no pop-up on open): this only keeps the
+  // posture day current. A round starts only from the card's "Şimdi yap" button.
   function maybeAlarm(){
     if (paOpen || !pReady || document.visibilityState !== "visible") return;
-    if (rollDay()) return;
-    const m = alarmMode(Date.now());
-    if (m) showAlarm(m);
+    rollDay();
   }
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") maybeAlarm(); });
 
@@ -1093,17 +1093,16 @@
   function renderPosture(){
     const box = $("pCard"), n = pt.rounds.length, {r, l} = ptLast(), now = Date.now();
     let sub;
-    if (l > r) sub = "Yalan söyledin · sayfaya dönünce alarm çalacak";
-    else if (n >= PT_TARGET) sub = "Bugünlük tamam · yarın sabah yeni tur";
-    else if (!r || now - r >= PT_COOL) sub = "Şimdi zamanı";
+    if (n >= PT_TARGET) sub = "Bugünlük tamam · yarın sabah yeni tur";
+    else if (!r || now - r >= PT_COOL) sub = "Sıra sende · hazır olunca başlat";
     else sub = `Sonraki tur ${hhmm(r + PT_COOL)} sonrası`;
     let slots = "";
     for (let i=0; i<PT_TARGET; i++){ const x = pt.rounds[i];
       slots += `<div class="pslot${x?" on":""}">${x ? ico("check") + hhmm(Date.parse(x.t)) : ["Sabah","Öğle","Akşam"][i]}</div>`; }
     const st = ptStreak(), lies = pt.lies.length;
-    box.innerHTML = `<div class="ptop"><div><span class="lbl">Postür${cur!==pt.date ? " · bugün" : ""}</span><span class="big num">${n}<em>/ ${PT_TARGET} tur</em></span><small>${esc(sub)}</small></div>${n < PT_TARGET || l > r ? `<button class="pnow" data-pnow>Şimdi yap · 1 dk</button>` : ""}</div>
+    box.innerHTML = `<div class="ptop"><div><span class="lbl">Postür${cur!==pt.date ? " · bugün" : ""}</span><span class="big num">${n}<em>/ ${PT_TARGET} tur</em></span><small>${esc(sub)}</small></div>${n < PT_TARGET ? `<button class="pnow" data-pnow>Şimdi yap · 1 dk</button>` : ""}</div>
       <div class="pslots">${slots}</div>
-      <div class="pfoot"><span>Seri <b class="num">${st}</b> gün</span><span>Bu hafta <b class="num">${ptWeek()}</b>/21</span><span${lies ? ' class="lie"' : ""}>Bugün yalan <b class="num">${lies}</b></span></div>`;
+      <div class="pfoot"><span>Seri <b class="num">${st}</b> gün</span><span>Bu hafta <b class="num">${ptWeek()}</b>/21</span></div>`;
   }
 
   function headSvg(cls){
@@ -1171,7 +1170,7 @@
       <span class="badge">${how==="guided" ? "Süreyle yapıldı" : "Kaydedildi"}</span>
       <div class="bigcheck">${ico("check")}</div>
       <h1>${all ? "Bugünlük<br>tamam" : "Aferin"}</h1>
-      <p class="sub">${all ? `3/3 tur bitti${st?`, seri ${st} gün`:""}. Yarın sabah tekrar görüşürüz.` : `Bugün ${n}/${PT_TARGET}. Sonraki alarm ${hhmm(Date.now()+PT_COOL)} sonrasında, sayfayı açtığında çalar.`}</p>
+      <p class="sub">${all ? `3/3 tur bitti${st?`, seri ${st} gün`:""}. Yarın sabah tekrar görüşürüz.` : `Bugün ${n}/${PT_TARGET}. Sonraki tur ${hhmm(Date.now()+PT_COOL)} sonrası; hazır olunca karttan başlat.`}</p>
       <div class="acts"><button class="btn-main" data-pa="close">Kapat</button></div>`);
     buzz(60);
     clearTimeout(autoClose); autoClose = setTimeout(() => { if (paOpen && pa.classList.contains("green")) closePA(); }, 6000);
@@ -1236,8 +1235,7 @@
     else if (a==="claim") showInterrogation();
     else if (a==="lie"){ pt.lies.push(new Date().toISOString()); ptSave(); showConfession(); }
     else if (a==="close") closePA();
-    else if (a==="stop"){ const o = guide && guide.origin; stopGuide(); const m = alarmMode(Date.now() + PT_GRACE);
-      if (o === "alarm" && m) showAlarm(m); else closePA(); }
+    else if (a==="stop"){ stopGuide(); closePA(); }
   });
 
   /* ---------- dashboard + body metrics: Fitbit numbers (fitbit/daily, written by the sync) + notes / Bevel (metrics/<date>) ---------- */
