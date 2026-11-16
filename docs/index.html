@@ -292,6 +292,83 @@
   .stale b{font-weight:700}
   .stale code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:#FFFFFF8C;border-radius:6px;padding:1px 5px}
 
+  /* nutrition */
+  .nut{display:flex;flex-direction:column;gap:12px;padding:16px}
+  .nrows{display:flex;flex-direction:column}
+  .nr{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+  .nr:first-child{border-top:0;padding-top:2px}
+  .nk{font-size:12px;font-weight:600;color:var(--ink-3)}
+  .nv{min-width:0}
+  .nv b{display:block;font-size:15px;font-weight:600}
+  .nv b em{font-style:normal;font-size:12px;font-weight:500;color:var(--ink-3);margin-left:4px}
+  .nv small{display:block;font-size:12px;color:var(--ink-3);line-height:1.4;margin-top:1px}
+  .nr.main{background:var(--data-3);border-radius:16px;padding:10px 10px 10px 12px;margin:4px 0;border-top:0}
+  .nr.main .nk{color:#1B1D8C}
+  .nr.main.ok{background:#DDF1E5}
+  .nr.main.miss{background:var(--risk-bg)}
+  .nr.main + .nr{border-top:0}
+  .nr.sub{border-top:0;padding-top:0}
+  .nr.sub .nv b{font-size:13px;font-weight:600;color:var(--ink-2)}
+  .nr.ok .nv b::after{content:" ✓";color:var(--ok)}
+  .nr.miss .nv b{text-decoration:line-through;text-decoration-thickness:1.5px;color:var(--ink-2)}
+  .nans{display:flex;gap:4px}
+  .nab{border:0;background:var(--field);color:var(--ink-2);border-radius:10px;min-height:34px;padding:0 10px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}
+  .nr.main .nab{background:#FFFFFF}
+  .nab.on.y{background:var(--ok);color:#FFFFFF}
+  .nab.on.n{background:var(--warn);color:#FFFFFF}
+  .ncks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .nck{border:0;background:var(--field);border-radius:14px;padding:9px 10px;display:flex;align-items:center;gap:8px;text-align:left;cursor:pointer;min-width:0;color:var(--ink)}
+  .nck i{flex:none;width:22px;height:22px;border-radius:7px;background:#FFFFFF;box-shadow:inset 0 0 0 1.5px #C9CBD1;display:grid;place-items:center}
+  .nck i svg.i{width:15px;height:15px;stroke-width:3}
+  .nck.on{background:var(--lime)}
+  .nck.on i{background:#111318;box-shadow:none;color:var(--lime)}
+  .nck span{min-width:0}
+  .nck b{display:block;font-size:13px;font-weight:600}
+  .nck small{display:block;font-size:11.5px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .nck.on small{color:#3B4200}
+  .nck:disabled{cursor:default;opacity:.6}
+  .nnote{display:flex;gap:10px;align-items:flex-start;background:var(--field);border-radius:14px;padding:10px 12px;font-size:13px;line-height:1.45;color:var(--ink-2)}
+  .nnote svg.i{flex:none;width:18px;height:18px;margin-top:1px}
+  .nnote b{color:var(--ink)}
+  .nnote.thaw{background:#111318;color:#FFFFFF}
+  .nnote.thaw b{color:var(--lime)}
+  .nweek{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+  .nwd{border:0;background:var(--field);border-radius:12px;padding:6px 0 5px;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;min-width:0;color:var(--ink-2)}
+  .nwd span{font-size:10.5px;font-weight:600;color:var(--ink-3)}
+  .nwd b{font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;padding:0 2px}
+  .nwd i{font-style:normal;font-size:11px;font-weight:700;min-height:14px;color:var(--ink-3)}
+  .nwd.has{background:var(--data-3);color:#1B1D8C}
+  .nwd.moved{outline:1.5px dashed #6B6EEA;outline-offset:-3px}
+  .nwd.ok{background:#DDF1E5;color:var(--ok)}
+  .nwd.ok i{color:var(--ok)}
+  .nwd.miss{background:var(--risk-bg);color:var(--risk-ink)}
+  .nwd.miss i{color:var(--warn)}
+  .nwd.today{box-shadow:inset 0 0 0 2px var(--ink-3)}
+  .nwd.sel{box-shadow:inset 0 0 0 2.5px #111318}
+  .nprog{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+  .npg{display:flex;flex-direction:column;gap:3px;min-width:0}
+  .npg span{font-size:11px;font-weight:600;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .npg b{font-family:var(--sg);font-size:18px;font-weight:700;letter-spacing:-.02em}
+  .npg b em{font-family:"Inter",sans-serif;font-style:normal;font-size:11px;font-weight:500;color:var(--ink-3)}
+  .nbar{height:6px;border-radius:3px;background:var(--field);overflow:hidden}
+  .nbar i{display:block;height:100%;background:var(--data);border-radius:3px}
+  .npg.full .nbar i{background:var(--ok)}
+  .nsum{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:12px}
+  .nsum table{width:100%;border-collapse:collapse;font-size:13px}
+  .nsum th{text-align:left;font-size:11.5px;font-weight:600;color:var(--ink-3);padding:4px 0}
+  .nsum td{padding:6px 0;border-top:1px solid var(--line)}
+  .nsum td.num{font-family:var(--sg);font-weight:700}
+  .nsum small{font-size:12px;color:var(--ink-3)}
+  .nq{display:flex;flex-direction:column;gap:8px;padding:16px;background:#111318;color:#FFFFFF}
+  .nq .lbl{color:#FFFFFF}
+  .nq .lr{color:#B5B8BF}
+  .nqt{font-family:var(--sg);font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.15}
+  .nq small{font-size:12.5px;color:#B5B8BF}
+  .nqb{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+  .nqb button{border:0;border-radius:14px;min-height:50px;font-size:16px;font-weight:700;cursor:pointer}
+  .nqy{background:var(--lime);color:#111318}
+  .nqn{background:#24272E;color:#FFFFFF}
+
   /* calendar */
   .cgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr)) 36px;gap:5px 4px;align-items:center}
   .cgrid .dh{font-size:11px;font-weight:600;color:var(--ink-3);text-align:center}
@@ -408,6 +485,8 @@
 
   <div class="stale" id="staleBanner" role="alert" hidden></div>
 
+  <div class="card nq" id="nQ" hidden></div>
+
   <div class="hero wait" id="hero"><div><span class="hk">Toparlanma</span><span class="hs">Fitbit verisi yükleniyor…</span></div></div>
 
   <div class="card jr" id="journey"></div>
@@ -424,6 +503,8 @@
     <p id="planText">—</p>
     <div class="cta" id="cta"></div>
   </div>
+
+  <div class="card nut" id="nut"></div>
 
   <div class="banner" id="dbBanner" hidden></div>
 
@@ -615,6 +696,7 @@
     $("cta").innerHTML = cta; $("cta").hidden = !cta;
     renderCalendar();
     dashSafe();
+    nSafe();
   }
 
   function badge(cls, icon, text){ return {cls, html:`<span class="b">${ico(icon)}</span>${esc(text)}`}; }
@@ -934,6 +1016,12 @@
   document.addEventListener("click", e => {
     const t = e.target.closest("button");
     if (!t || t.closest("#pa")) return;
+    if (t.dataset.nans){
+      const [ds, kind, tt, v] = t.dataset.nans.split("|");
+      const val = kind==="daily" ? v==="true" : t.getAttribute("aria-pressed")==="true" ? null : v==="true";
+      nAnswer(ds, kind, tt, val); return;
+    }
+    if (t.dataset.ndate){ go(t.dataset.ndate); return; }
     if (t.id==="savePill"){ if (t.classList.contains("bad")) save(); return; }
     if (t.hasAttribute("data-pnow")){ openGuided("card"); return; }
     if (t.dataset.add){ readForm(); day.sessions.push(newSession(t.dataset.add)); const i = day.sessions.length-1; renderSessions(); markDirty();
@@ -1461,6 +1549,239 @@
     el.hidden = false;
   }
 
+  /* ---------- nutrition: weekly plan + daily answers (beslenme/*), replanned on every render ----------
+     beslenme/plan-<Monday>  the week's intended plan: which day gets which main/small add, targets, box stock
+     beslenme/log-<date>     what happened that day: main {type, ate, box}, small {type: bool}, daily {key: bool}
+     The shown plan is never stored. It is recomputed from those two each time, walking the week day by day:
+     a "no" puts the item back in a waiting list and the next free day takes the highest-priority waiting item.
+     Past days stay as they were answered, so recomputing never rewrites history. */
+  const NT = {
+    balik:   {label:"Balık", q:"balık", amount:"~200 g", what:"somon, uskumru, palamut, hamsi, sardalya", target:2, pri:1},
+    et:      {label:"Kırmızı et", q:"kırmızı et", amount:"~200 g", what:"köfte, kuşbaşı, ızgara", target:2, pri:2},
+    ciger:   {label:"Ciğer", q:"ciğer", amount:"100–150 g", what:"dana, kuzu ya da tavuk", target:1, pri:3},
+    baklagil:{label:"Baklagil", q:"baklagil", amount:"3–4 yk humus ya da ½ kase", what:"nohut, mercimek", target:3},
+    yesil:   {label:"Yeşil", q:"yeşil yapraklı", amount:"bir avuç", what:"roka, ıspanak, maydanoz, marul", target:5}
+  };
+  const N_MAIN = ["balik","et","ciger"], N_SMALL = ["baklagil","yesil"];
+  const N_DAILY = [["zeytin","Zeytinyağı","1 tatlı kaşığı"],["kuruyemis","Kuruyemiş","15 g"],["meyve","C meyvesi","mandalina, portakal, kivi"],["dvit","D vitamini","Kasım–Mart"]];
+  // the default week, by JS weekday (0 = Sunday); a plan document overrides any day
+  const N_TEMPLATE = {1:{main:"et", small:["baklagil","yesil"]}, 2:{small:["yesil"]}, 3:{main:"balik", small:["baklagil","yesil"]},
+    4:{main:"et", small:["yesil"]}, 5:{small:["baklagil","yesil"]}, 6:{main:"ciger", small:["yesil"]}, 0:{main:"balik", small:[], home:true}};
+  const nDocs = new Map(); let nSeen = false;
+  // the first week with a stored plan: nothing is asked or shown as a plan before it
+  const nFirst = () => { let f = null; nDocs.forEach((v,k) => { if (k.startsWith("plan-") && (!f || v.date < f)) f = v.date; }); return f; };
+  const nMon = ds => addDays(ds, -((parse(ds).getDay()+6)%7));
+  const nLog = ds => nDocs.get("log-"+ds) || null;
+  const nHour = () => new Date().getHours();
+
+  function nPlan(monday){
+    const doc = nDocs.get("plan-"+monday) || {}, days = {};
+    for (let k=0; k<7; k++){
+      const ds = addDays(monday,k), t = N_TEMPLATE[parse(ds).getDay()], d = doc.days && doc.days[ds];
+      days[ds] = d && typeof d==="object" ? {main: NT[d.main] && N_MAIN.includes(d.main) ? d.main : null,
+        small: Array.isArray(d.small) ? d.small.filter(x => N_SMALL.includes(x)) : [], home: !!d.home}
+        : {main:t.main||null, small:[...(t.small||[])], home:!!t.home};
+    }
+    const targets = {}; Object.keys(NT).forEach(k => { const v = doc.targets && doc.targets[k]; targets[k] = typeof v==="number" && v >= 0 ? v : NT[k].target; });
+    targets.ciger = Math.min(targets.ciger, 1);                         // liver: never more than once a week
+    const b = doc.boxes;
+    const boxes = b && typeof b==="object" && (b.fridge > 0 || b.freezer > 0)
+      ? {fridge: Math.max(0, b.fridge|0), freezer: Math.max(0, b.freezer|0), until: typeof b.fridgeUntil==="string" ? b.fridgeUntil : null} : null;
+    return {days, targets, boxes, dvit: doc.dvit !== false, stored: nDocs.has("plan-"+monday)};
+  }
+
+  function nSim(monday){
+    const P = nPlan(monday), T = P.targets, got = {}, yes = {}, no = {};
+    Object.keys(NT).forEach(k => { got[k] = 0; yes[k] = 0; no[k] = 0; });
+    let pendM = [], pendS = [];
+    const fridge = P.boxes ? [{n:P.boxes.fridge, until:P.boxes.until, batch:true}] : [];
+    let freezer = P.boxes ? P.boxes.freezer : 0;
+    const fN = () => fridge.reduce((a,f) => a+f.n, 0);
+    const prune = list => { const c = {}; return list.filter(t => (c[t] = (c[t]||0)+1) <= T[t] - got[t]); };
+    const byPri = (a,b) => NT[a].pri - NT[b].pri;
+    const out = [];
+    for (let k=0; k<7; k++){
+      const ds = addDays(monday,k), base = P.days[ds], L = nLog(ds) || {}, home = base.home;
+      // boxes needed today decide tonight's thaw for the day before; done below once today's need is known
+      // ---- main add: today's planned one competes with the waiting list, highest priority wins
+      const cands = [];
+      if (base.main) cands.push({t:base.main, from:"plan"});
+      pendM.forEach(t => cands.push({t, from:"moved"}));
+      const exp = fridge.find(f => f.batch && f.n > 0 && f.until);
+      let block = false;
+      if (!home && exp && ds <= exp.until){                            // rule 7: the fridge batch must be gone by its last day
+        let cap = 1; for (let d = addDays(ds,1); d <= exp.until; d = addDays(d,1)) cap += P.days[d] && P.days[d].home ? 0 : 2;
+        block = exp.n > cap;
+      }
+      let pick = null;
+      const ans = L.main && NT[L.main.type] ? L.main : null;
+      if (ans) pick = cands.find(c => c.t===ans.type) || {t:ans.type, from:"plan"};
+      else if (!block) pick = cands.filter(c => (c.from==="plan" ? yes[c.t] : got[c.t]) < T[c.t]).sort((a,b) => byPri(a.t,b.t))[0] || null;
+      pendM = cands.filter(c => c !== pick).map(c => c.t);
+      const displaced = base.main && (!pick || pick.from !== "plan") && yes[base.main] < T[base.main] ? base.main : null;
+      const ate = ans ? ans.ate : null;
+      if (pick){ if (ate === false){ pendM.push(pick.t); no[pick.t]++; } else { got[pick.t]++; if (ate === true) yes[pick.t]++; } }
+      pendM = prune(pendM).sort(byPri);
+      // ---- small adds: at most one of each a day
+      const smalls = [];
+      for (const t of N_SMALL){
+        const inBase = base.small.includes(t), inPend = pendS.includes(t), sa = L.small && typeof L.small[t]==="boolean" ? L.small[t] : null;
+        if (sa === null && !((inBase && yes[t] < T[t]) || (inPend && got[t] < T[t]))) continue;
+        if (inPend && !inBase) pendS.splice(pendS.indexOf(t), 1);
+        smalls.push({t, from: inBase ? "plan" : "moved", ate: sa});
+        if (sa === false){ pendS.push(t); no[t]++; } else { got[t]++; if (sa === true) yes[t]++; }
+      }
+      pendS = prune(pendS);
+      // ---- boxes: two meals a day, the main add takes the second one's place; the home day uses none
+      let need = home ? 0 : 2 - (pick ? 1 : 0);
+      if (pick && ate === false && ans.box === true) need += 1;      // rule 6: ate a box instead
+      const have = fN() + freezer;
+      if (k > 0 && P.boxes){                                          // last night's thaw: what today needs beyond the fridge
+        const th = Math.min(freezer, Math.max(0, Math.min(need, have) - fN()));
+        out[k-1].thaw = th; freezer -= th; if (th) fridge.push({n:th, until:null});
+      }
+      const stock = {fridge:fN(), freezer};
+      const eaten = Math.min(need, stock.fridge + stock.freezer), slots = [];
+      for (let i=0; i<eaten; i++){
+        let f = fridge.find(x => x.n > 0);
+        if (!f){ freezer--; slots.push("buzluktan"); continue; }   // nothing thawed: straight from the freezer
+        f.n--; slots.push(f.batch ? (f.n===0 ? "dolap, son" : "dolap") : "");
+      }
+      for (let i=fridge.length-1; i>=0; i--) if (fridge[i].batch && fridge[i].until && ds >= fridge[i].until && fridge[i].n > 0) fridge[i].n = 0;   // past its day: not food any more
+      out.push({ds, base, home, pick, ate, box: ans ? ans.box : undefined, displaced, smalls, need, eaten, slots, stock, thaw:0,
+        daily: L.daily || {}, hasBoxes: !!P.boxes});
+    }
+    return {P, days: out, yes, no, got, missed: [...pendM, ...pendS], cigerNoRoom: pendM.includes("ciger")};
+  }
+
+  // what to ask, in order: yesterday's unanswered items in the morning, today's from 20:00 on
+  function nQuestions(){
+    const first = nFirst(), qs = [], add = (ds, when) => {
+      if (!first || ds < first) return;
+      const W = nSim(nMon(ds)), d = W.days.find(x => x.ds===ds); if (!d) return;
+      if (d.pick && d.ate === null) qs.push({ds, kind:"main", t:d.pick.t, text:`${when} ${NT[d.pick.t].q} yiyebildin mi?`});
+      if (d.pick && d.ate === false && d.box == null && d.hasBoxes) qs.push({ds, kind:"box", t:d.pick.t, text:`${when} ${NT[d.pick.t].q} yerine kutu mu yedin?`});
+      d.smalls.forEach(s => { if (s.ate === null) qs.push({ds, kind:"small", t:s.t, text:`${when} ${NT[s.t].q} yiyebildin mi?`}); });
+    };
+    add(addDays(TODAY,-1), "Dün");
+    if (nHour() >= 20) add(TODAY, "Bugün");
+    return qs;
+  }
+
+  async function nAnswer(ds, kind, t, val){
+    const prev = nLog(ds) || {};
+    const log = {kind: "log", date: ds, main: prev.main ? {...prev.main} : null, small: {...(prev.small||{})}, daily: {...(prev.daily||{})}};
+    if (kind==="main"){
+      if (val === null) log.main = null;
+      else { log.main = {type:t, ate:val}; if (!val && prev.main && prev.main.type===t && typeof prev.main.box==="boolean") log.main.box = prev.main.box; }
+    } else if (kind==="box"){ log.main = {...(log.main || {type:t, ate:false}), box: val}; }
+    else if (kind==="small"){ if (val === null) delete log.small[t]; else log.small[t] = val; }
+    else if (kind==="daily"){ if (val) log.daily[t] = true; else delete log.daily[t]; }
+    log.updatedAt = new Date().toISOString();
+    nDocs.set("log-"+ds, log); renderNutrition();
+    if (!db) return;
+    try{ await db.doc("beslenme/log-"+ds).set(log); }
+    catch(e){ try{ await new Promise(r => setTimeout(r, 900)); await db.doc("beslenme/log-"+ds).set(log); }catch(e2){ setSave("bad", "Beslenme kaydedilemedi"); } }
+  }
+
+  const nDayName = ds => ds===TODAY ? "bugün" : ds===addDays(TODAY,1) ? "yarın" : DOW[parse(ds).getDay()].toLocaleLowerCase("tr-TR");
+  function nAnsBtns(ds, kind, t, val){
+    if (ds > TODAY) return "";
+    const b = (v, txt) => `<button class="nab${val===v ? " on " + (v ? "y" : "n") : ""}" data-nans="${ds}|${kind}|${t}|${v}" aria-pressed="${val===v}">${txt}</button>`;
+    return `<span class="nans">${b(true, kind==="box" ? "Evet" : "Yedim")}${b(false, kind==="box" ? "Hayır" : "Kaçtı")}</span>`;
+  }
+
+  function renderNutrition(){
+    const box = $("nut"), qbox = $("nQ");
+    if (!nSeen){ box.innerHTML = `<div class="chd"><span class="lbl">Beslenme</span></div><span class="mempty">Yükleniyor…</span>`; qbox.hidden = true; return; }
+    // ---- question card (top of the page, before everything else)
+    const qs = nQuestions();
+    if (qs.length && cur===TODAY){
+      const q = qs[0];
+      qbox.innerHTML = `<div class="chd"><span class="lbl">Beslenme sorusu</span><span class="lr">${qs.length > 1 ? `1 / ${qs.length}` : ""}</span></div>
+        <b class="nqt">${esc(q.text)}</b>
+        ${q.kind==="box" ? `<small>Evet dersen kutu sayacı bir düşer, kalan kutular bir gün erken biter.</small>` : q.kind==="main" ? `<small>Hayır dersen haftanın kalan boş gününe kayar.</small>` : `<small>Hayır dersen ertesi güne kayar.</small>`}
+        <div class="nqb"><button class="nqy" data-nans="${q.ds}|${q.kind}|${q.t}|true">Evet</button><button class="nqn" data-nans="${q.ds}|${q.kind}|${q.t}|false">Hayır</button></div>`;
+      qbox.hidden = false;
+    } else qbox.hidden = true;
+
+    const first = nFirst();
+    if (!first){ box.innerHTML = `<div class="chd"><span class="lbl">Beslenme</span></div><span class="mempty">Haftalık beslenme planı henüz girilmedi.</span>`; return; }
+    if (cur < first){ box.innerHTML = `<div class="chd"><span class="lbl">Beslenme</span></div><span class="mempty">Beslenme takibi ${esc(shortDate(first))} haftasında başladı.</span>`; return; }
+    // ---- the selected day
+    const W = nSim(nMon(cur)), d = W.days.find(x => x.ds===cur), P = W.P, T = P.targets;
+    const rel = cur===TODAY ? "bugün" : nDayName(cur);
+    const right = d.hasBoxes && (d.stock.fridge + d.stock.freezer > 0) ? `Kutu: dolap ${d.stock.fridge} · buzluk ${d.stock.freezer}` : "";
+    const row = (k, main, sub, extra, cls) => `<div class="nr${cls ? " " + cls : ""}"><span class="nk">${k}</span><div class="nv"><b>${main}</b>${sub ? `<small>${sub}</small>` : ""}</div>${extra||""}</div>`;
+    let rows = row("Kahvaltı", "3 yumurta + 1 muz", "");
+    const boxTxt = i => d.slots[i]!==undefined ? `Kutu${d.slots[i] ? ` <em>${d.slots[i]}</em>` : ""}` : d.hasBoxes ? "Öğün <em>kutu kalmadı</em>" : "Öğün";
+    const mainRow = () => {
+      const t = d.pick.t, n = NT[t], st = d.ate===true ? " ok" : d.ate===false ? " miss" : "";
+      const sub = `${n.amount} · ${n.what}${d.home ? "" : " · kutunun yerine"}${d.pick.from==="moved" ? " · kaydırıldı" : ""}`;
+      let extra = nAnsBtns(cur, "main", t, d.ate);
+      let h = row("Öğün 2", esc(n.label), esc(sub), extra, "main" + st);
+      if (d.ate===false && d.hasBoxes && cur <= TODAY) h += row("", "Yerine kutu yedin mi?", d.box===true ? "kutu sayacından düşüldü" : "", nAnsBtns(cur, "box", t, d.box == null ? null : d.box), "sub");
+      return h;
+    };
+    if (d.home){
+      rows += row("Öğün 1", "Ev yemeği", "");
+      rows += d.pick ? mainRow() : row("Öğün 2", "Serbest", "");
+    } else {
+      rows += row("Öğün 1", boxTxt(0), "");
+      rows += d.pick ? mainRow() : row("Öğün 2", boxTxt(1), "");
+    }
+    d.smalls.forEach(s => { const n = NT[s.t];
+      rows += row("Ek", esc(n.label), esc(`${n.amount} · ${n.what}${s.from==="moved" ? " · dünden kaydı" : ""}`), nAnsBtns(cur, "small", s.t, s.ate), s.ate===true ? "ok" : s.ate===false ? "miss" : ""); });
+    const ironMeal = (d.pick && d.pick.t!=="balik") || d.smalls.some(s => s.t==="baklagil");
+    rows += row("Ara öğün", "200 g yoğurt", ironMeal ? `${d.pick && d.pick.t!=="balik" ? NT[d.pick.t].label.toLocaleLowerCase("tr-TR") : "baklagil"} öğününden ~1 saat ayrı ye` : "");
+
+    // daily checks
+    const months = parse(cur).getMonth(), dvitSeason = months >= 10 || months <= 2;
+    const checks = N_DAILY.filter(([k]) => k!=="dvit" || (P.dvit && dvitSeason)).map(([k, lab, sub]) => {
+      const on = !!d.daily[k], dis = cur > TODAY;
+      return `<button class="nck${on ? " on" : ""}" data-nans="${cur}|daily|${k}|${!on}" aria-pressed="${on}"${dis ? " disabled" : ""}><i>${on ? ico("check") : ""}</i><span><b>${lab}</b><small>${sub}</small></span></button>`; }).join("");
+
+    // week strip: the main add of each day, as replanned
+    const strip = W.days.map(x => {
+      const lab = x.pick ? (x.pick.t==="et" ? "Et" : NT[x.pick.t].label) : x.home ? "Ev" : "Kutu";
+      const st = x.ate===true ? "ok" : x.ate===false ? "miss" : "";
+      const cls = ["nwd", st, x.ds===cur ? "sel" : "", x.ds===TODAY ? "today" : "", x.pick ? "has" : "", x.pick && x.pick.from==="moved" ? "moved" : ""].filter(Boolean).join(" ");
+      return `<button class="${cls}" data-ndate="${x.ds}" aria-label="${esc(`${DOW[parse(x.ds).getDay()]}: ${x.pick ? NT[x.pick.t].label : "ana ek yok"}${x.ate===true ? ", yendi" : x.ate===false ? ", kaçtı" : ""}`)}"><span>${DOW_S[parse(x.ds).getDay()]}</span><b>${lab}</b><i>${st==="ok" ? "✓" : st==="miss" ? "✕" : x.smalls.length ? "+" + x.smalls.length : ""}</i></button>`; }).join("");
+
+    // weekly progress (answered "yes" only)
+    const prog = Object.keys(NT).map(k => { const y = W.yes[k], t = T[k];
+      return `<div class="npg${y >= t ? " full" : ""}"><span>${NT[k].label}</span><b class="num">${y}<em>/${t}</em></b><div class="nbar"><i style="width:${t ? Math.min(100, y/t*100).toFixed(0) : 0}%"></i></div></div>`; }).join("");
+
+    // notes: tonight's thaw, moved items, liver that no longer fits
+    const notes = [];
+    if (cur===TODAY && d.thaw > 0 && nHour() >= 17) notes.push(`<div class="nnote thaw">${ico("bolt")}<span><b>Akşam:</b> yarın için buzluktan ${d.thaw} kutu indir.</span></div>`);
+    else if (cur===TODAY && d.thaw > 0) notes.push(`<div class="nnote">${ico("note")}<span>Bu akşam: yarın için buzluktan ${d.thaw} kutu indireceksin.</span></div>`);
+    if (d.displaced){
+      const to = W.days.find(x => x.ds > cur && x.pick && x.pick.t===d.displaced && x.pick.from==="moved");
+      notes.push(`<div class="nnote">${ico("r")}<span>Plan değişti: ${esc(NT[d.displaced].label.toLocaleLowerCase("tr-TR"))} ${to ? `${esc(DOW[parse(to.ds).getDay()])} gününe kaydı` : "bu hafta sığmadı"}.</span></div>`);
+    }
+    if (W.cigerNoRoom && cur <= addDays(nMon(cur),6)) notes.push(`<div class="nnote">${ico("note")}<span>Ciğer bu hafta sığmıyor. Boş bir öğün bulursan yerine kırmızı et ye.</span></div>`);
+    const sunday = addDays(nMon(cur), 6);
+    let summary = "";
+    if (cur===sunday && (cur < TODAY || (cur===TODAY && nHour() >= 18))){
+      const lines = Object.keys(NT).map(k => `<tr><td>${NT[k].label}</td><td class="num">${T[k]}</td><td class="num">${W.yes[k]}</td><td>${W.yes[k] >= T[k] ? `<span class="dch up">tamam</span>` : `<span class="dch dn">${T[k]-W.yes[k]} eksik</span>`}</td></tr>`).join("");
+      const unans = W.days.reduce((a,x) => a + (x.pick && x.ate===null ? 1 : 0) + x.smalls.filter(s => s.ate===null).length, 0);
+      summary = `<div class="nsum"><span class="lbl">Haftalık özet</span><table><thead><tr><th>Besin</th><th>Hedef</th><th>Yenen</th><th></th></tr></thead><tbody>${lines}</tbody></table>
+        ${unans ? `<small>${unans} öğe cevapsız kaldı; cevaplamak için güne dokun.</small>` : `<small>Kaçanlar yeni haftaya devretmez.</small>`}</div>`;
+    }
+
+    box.innerHTML = `<div class="chd"><span class="lbl">Beslenme · ${esc(rel)}</span><span class="lr">${esc(right)}</span></div>
+      <div class="nrows">${rows}</div>
+      ${cur <= TODAY ? `<div class="ncks">${checks}</div>` : ""}
+      ${notes.join("")}
+      <div class="nweek">${strip}</div>
+      <div class="nprog">${prog}</div>
+      ${summary}`;
+  }
+  // the evening question and the thaw note depend on the clock
+  setInterval(() => { const h = nHour(); if (h !== renderNutrition.h){ renderNutrition.h = h; renderNutrition(); } }, 60000);
+  function nSafe(){ try { renderNutrition(); } catch(e) { /* not loaded yet */ } }
+
   function renderMetrics(){
     const rows = mRows(), B = mBaseline(rows);
     renderStale();
@@ -1482,6 +1803,7 @@
       "Yediğin kcal tahmini: Fitbit'in aynı günlerde yaktığını söylediği ortalamadan bu açık çıkarılır. Bileklikler harcamayı çoğu zaman fazla yazar; saydığın rakam belirgin düşükse fark oradan gelir.",
       "Bulgular: her gecenin HRV'si önceki 14 gecenin ortancasına göre ölçülür, böylece formunun yavaş yavaş artması sonucu bozmaz. Alışkanlıkla ilişki sıra korelasyonu ve 10.000 karıştırmalı permütasyon testiyle sınanır; on test birlikte düzeltilir. Fark, yüksek yarı ile düşük yarının ortalaması arasındadır.",
       "Geçen hafta kartı: her pazartesi sabahı önceki haftanın raporu hazırlanır (antrenman günleri, kilo ortalaması, uyku, HRV). Öneriler sabit kurallardan gelir; en fazla üç tane.",
+      "Beslenme: haftanın planı (hangi gün balık, kırmızı et, ciğer, baklagil, yeşil) ve kutu stoğu kayıtlı; her gün ne gösterileceği senin cevaplarından yeniden hesaplanır. \"Kaçtı\" dersen ana ek haftanın sıradaki boş gününe, küçük ek ertesi güne kayar; öncelik balık, sonra kırmızı et, sonra ciğer. Dolaptaki kutular son gününü geçecekse o gün ana ek yerine kutu planlanır. Hafta pazar kapanır, kaçanlar devretmez.",
       "Kilo, bel, not ve antrenmanlar sen yazdıkça kendiliğinden kaydolur."
     ];
     $("howBody").innerHTML = items.map(x => `<li>${esc(x)}</li>`).join("");
@@ -1495,8 +1817,8 @@
     if (!db){
       const b = $("dbBanner"); b.hidden = false;
       b.textContent = "Kayıt şu an kullanılamıyor. Plan görünüyor ama girdiklerin kaydedilmez. Sayfayı Claude hesabın açıkken aç.";
-      daysSeen = true; fitSeen = true; cfgSeen = true;
-      renderTrend(); renderStrength(); renderSessions();
+      daysSeen = true; fitSeen = true; cfgSeen = true; nSeen = true;
+      renderTrend(); renderStrength(); renderSessions(); nSafe();
       pReady = true; maybeAlarm();
       return;
     }
@@ -1513,6 +1835,12 @@
     db.collection("metrics").orderBy("date","desc").limit(60).onSnapshot(qs => {
       met.clear(); qs.docs.forEach(d => { const v = d.data(); if (v && v.date) met.set(v.date, v); }); renderMetrics();
     }, () => {});
+    db.collection("beslenme").orderBy("date","desc").limit(200).onSnapshot(qs => {
+      nDocs.clear();
+      qs.docs.forEach(x => { const v = x.data(); if (!v || typeof v.date!=="string") return;
+        const plan = v.kind==="plan" || (!v.kind && (v.days || v.boxes || v.targets)); nDocs.set((plan ? "plan-" : "log-") + v.date, v); });
+      nSeen = true; nSafe();
+    }, () => { nSeen = true; nSafe(); });
     db.doc("meta/report").onSnapshot(snap => { weekRep = snap.exists ? snap.data() : null; renderWeek(); }, () => {});
     db.doc("meta/baseline").onSnapshot(snap => { mBase = snap.exists ? snap.data() : null; renderMetrics(); }, () => {});
     db.doc("fitbit/daily").onSnapshot(snap => { fit = snap.exists ? snap.data() : null; fitSeen = true; safeRenderSessions(); renderTrend(); }, () => { fitSeen = true; safeRenderSessions(); });
