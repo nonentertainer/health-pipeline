@@ -292,67 +292,92 @@
   .stale b{font-weight:700}
   .stale code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:#FFFFFF8C;border-radius:6px;padding:1px 5px}
 
-  /* nutrition */
+  /* nutrition: one color per food, so the day reads at a glance */
   .nut{display:flex;flex-direction:column;gap:12px;padding:16px}
-  .nrows{display:flex;flex-direction:column}
-  .nr{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
-  .nr:first-child{border-top:0;padding-top:2px}
-  .nk{font-size:12px;font-weight:600;color:var(--ink-3)}
-  .nv{min-width:0}
-  .nv b{display:block;font-size:15px;font-weight:600}
-  .nv b em{font-style:normal;font-size:12px;font-weight:500;color:var(--ink-3);margin-left:4px}
-  .nv small{display:block;font-size:12px;color:var(--ink-3);line-height:1.4;margin-top:1px}
-  .nr.main{background:var(--data-3);border-radius:16px;padding:10px 10px 10px 12px;margin:4px 0;border-top:0}
-  .nr.main .nk{color:#1B1D8C}
-  .nr.main.ok{background:#DDF1E5}
-  .nr.main.miss{background:var(--risk-bg)}
-  .nr.main + .nr{border-top:0}
-  .nr.sub{border-top:0;padding-top:0}
-  .nr.sub .nv b{font-size:13px;font-weight:600;color:var(--ink-2)}
-  .nr.ok .nv b::after{content:" ✓";color:var(--ok)}
-  .nr.miss .nv b{text-decoration:line-through;text-decoration-thickness:1.5px;color:var(--ink-2)}
-  .nans{display:flex;gap:4px}
-  .nab{border:0;background:var(--field);color:var(--ink-2);border-radius:10px;min-height:34px;padding:0 10px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}
-  .nr.main .nab{background:#FFFFFF}
-  .nab.on.y{background:var(--ok);color:#FFFFFF}
-  .nab.on.n{background:var(--warn);color:#FFFFFF}
-  .ncks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
-  .nck{border:0;background:var(--field);border-radius:14px;padding:9px 10px;display:flex;align-items:center;gap:8px;text-align:left;cursor:pointer;min-width:0;color:var(--ink)}
-  .nck i{flex:none;width:22px;height:22px;border-radius:7px;background:#FFFFFF;box-shadow:inset 0 0 0 1.5px #C9CBD1;display:grid;place-items:center}
-  .nck i svg.i{width:15px;height:15px;stroke-width:3}
-  .nck.on{background:var(--lime)}
-  .nck.on i{background:#111318;box-shadow:none;color:var(--lime)}
-  .nck span{min-width:0}
-  .nck b{display:block;font-size:13px;font-weight:600}
-  .nck small{display:block;font-size:11.5px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .nck.on small{color:#3B4200}
-  .nck:disabled{cursor:default;opacity:.6}
-  .nnote{display:flex;gap:10px;align-items:flex-start;background:var(--field);border-radius:14px;padding:10px 12px;font-size:13px;line-height:1.45;color:var(--ink-2)}
-  .nnote svg.i{flex:none;width:18px;height:18px;margin-top:1px}
-  .nnote b{color:var(--ink)}
-  .nnote.thaw{background:#111318;color:#FFFFFF}
-  .nnote.thaw b{color:var(--lime)}
-  .nweek{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
-  .nwd{border:0;background:var(--field);border-radius:12px;padding:6px 0 5px;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;min-width:0;color:var(--ink-2)}
-  .nwd span{font-size:10.5px;font-weight:600;color:var(--ink-3)}
-  .nwd b{font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;padding:0 2px}
-  .nwd i{font-style:normal;font-size:11px;font-weight:700;min-height:14px;color:var(--ink-3)}
-  .nwd.has{background:var(--data-3);color:#1B1D8C}
-  .nwd.moved{outline:1.5px dashed #6B6EEA;outline-offset:-3px}
-  .nwd.ok{background:#DDF1E5;color:var(--ok)}
-  .nwd.ok i{color:var(--ok)}
-  .nwd.miss{background:var(--risk-bg);color:var(--risk-ink)}
-  .nwd.miss i{color:var(--warn)}
-  .nwd.today{box-shadow:inset 0 0 0 2px var(--ink-3)}
-  .nwd.sel{box-shadow:inset 0 0 0 2.5px #111318}
-  .nprog{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
-  .npg{display:flex;flex-direction:column;gap:3px;min-width:0}
-  .npg span{font-size:11px;font-weight:600;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .npg b{font-family:var(--sg);font-size:18px;font-weight:700;letter-spacing:-.02em}
-  .npg b em{font-family:"Inter",sans-serif;font-style:normal;font-size:11px;font-weight:500;color:var(--ink-3)}
-  .nbar{height:6px;border-radius:3px;background:var(--field);overflow:hidden}
-  .nbar i{display:block;height:100%;background:var(--data);border-radius:3px}
-  .npg.full .nbar i{background:var(--ok)}
+  .f-kutu,.f-ev{--fs:#5F636B;--fb:#FFFFFF;--fi:#3F434A}
+  .f-et{--fs:#E03131;--fb:#FFE6E6;--fi:#7D1A1A}
+  .f-balik{--fs:#1971C2;--fb:#E1EFFC;--fi:#0B3F73}
+  .f-ciger{--fs:#9C36B5;--fb:#F4E6F8;--fi:#5A1F69}
+  .f-baklagil{--fs:#C77700;--fb:#FFF1D6;--fi:#6B4100}
+  .f-yesil{--fs:#2B8A3E;--fb:#E4F5E7;--fi:#174D23}
+  .fstock{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-3);white-space:nowrap}
+  .fstock svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .fstock b{color:var(--ink);font-family:var(--sg);font-weight:700}
+  .fgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .ft{background:var(--fb);border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:1px;min-width:0;min-height:118px}
+  .ft.f-kutu,.ft.f-ev{box-shadow:inset 0 0 0 1.5px var(--line)}
+  .ft.sm{min-height:0}
+  .fth{display:flex;align-items:center;gap:8px;margin-bottom:8px;min-width:0}
+  .fic{width:34px;height:34px;border-radius:11px;background:var(--fs);color:#FFFFFF;display:grid;place-items:center;flex:none}
+  .f-kutu .fic,.f-ev .fic{background:var(--field);color:var(--ink)}
+  .fic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .fslot{font-size:12px;font-weight:600;color:var(--ink-3)}
+  .fslot{white-space:nowrap}
+  .fmv{display:inline-block;font-size:11px;font-weight:700;color:var(--fi);background:#FFFFFFB3;border-radius:999px;padding:1px 7px;white-space:nowrap;vertical-align:1px}
+  .ft b{font-family:var(--sg);font-size:20px;font-weight:700;letter-spacing:-.01em;color:var(--ink);line-height:1.15;overflow-wrap:anywhere}
+  .ft.sm b{font-size:17px}
+  .ft small{font-size:13px;color:var(--ink-2);line-height:1.35}
+  .ft.dim b{color:var(--ink-3)}
+  .fta{margin-top:auto;padding-top:10px}
+  .fyn{display:flex;gap:6px}
+  .fb{width:38px;height:38px;border-radius:50%;border:0;background:#FFFFFF;display:grid;place-items:center;cursor:pointer;box-shadow:inset 0 0 0 1.5px rgba(17,19,24,.14);padding:0}
+  .fb svg.i,.fst svg.i{stroke-width:2.8}
+  .fb svg.i{width:18px;height:18px}
+  .fb.y{color:var(--ok)}
+  .fb.n{color:var(--warn)}
+  .fb:active{transform:scale(.94)}
+  .fst{border:0;border-radius:999px;min-height:32px;padding:0 11px 0 8px;font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;gap:4px;cursor:pointer;color:#FFFFFF}
+  .fst svg.i{width:15px;height:15px}
+  .fst.y{background:var(--ok)}
+  .fst.n{background:var(--warn)}
+  .ft.miss{background:var(--field)}
+  .ft.miss .fic{background:#B8BAC0}
+  .ft.miss b{color:var(--ink-3);text-decoration:line-through;text-decoration-thickness:2px}
+  .fbox{display:flex;align-items:center;justify-content:space-between;gap:8px 10px;flex-wrap:wrap;background:var(--field);border-radius:14px;padding:8px 8px 8px 12px;font-size:13.5px;font-weight:500;color:var(--ink-2)}
+  .fpills{display:flex;gap:6px}
+  .fpill{border:0;background:#FFFFFF;border-radius:999px;min-height:36px;padding:0 16px;font-weight:600;font-size:13px;cursor:pointer;color:var(--ink)}
+  .fpill.on{background:#111318;color:#FFFFFF}
+  .fsec{font-size:12px;font-weight:600;color:var(--ink-3);margin-bottom:-4px}
+  .ffix{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--ink-2);line-height:1.4;padding:2px 2px 0}
+  .ffix b{color:var(--ink);font-weight:600;margin-right:6px}
+  .ffix em{font-style:normal;color:var(--ink-3)}
+  .fcks{display:flex;flex-wrap:wrap;gap:6px}
+  .fck{border:0;background:var(--field);border-radius:999px;min-height:40px;padding:0 14px 0 8px;display:inline-flex;align-items:center;gap:7px;cursor:pointer;font:inherit;font-size:13.5px;font-weight:600;color:var(--ink);white-space:nowrap}
+  .fck i{width:24px;height:24px;border-radius:50%;background:#FFFFFF;box-shadow:inset 0 0 0 1.5px #C9CBD1;display:grid;place-items:center;flex:none}
+  .fck i svg.i{width:14px;height:14px;stroke-width:3}
+  .fck small{font-size:12px;font-weight:500;color:var(--ink-3)}
+  .fck.on{background:var(--lime)}
+  .fck.on i{background:#111318;box-shadow:none;color:var(--lime)}
+  .fck.on small{color:#3B4200}
+  .fnote{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.45;color:var(--ink-2);background:var(--field);border-radius:14px;padding:9px 12px}
+  .fnote svg.i{width:16px;height:16px;flex:none;margin-top:2px}
+  .fnote b{color:var(--ink)}
+  .fnote.thaw{background:#111318;color:#FFFFFF}
+  .fnote.thaw b{color:var(--lime)}
+  .fweek{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+  .fwd{border:0;background:var(--fb);border-radius:12px;padding:6px 0 5px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;min-width:0;font:inherit}
+  .fwd.f-kutu,.fwd.f-ev{background:var(--field)}
+  .fwd>span:first-child{font-size:10.5px;font-weight:600;color:var(--ink-3)}
+  .fwd b{font-size:11.5px;font-weight:700;color:var(--fi);white-space:nowrap;max-width:100%;overflow:hidden;padding:0 1px}
+  .fdots{display:flex;gap:3px;align-items:center;justify-content:center;min-height:12px}
+  .fdots em{width:6px;height:6px;border-radius:50%}
+  .fdots em.d-baklagil{background:#C77700}
+  .fdots em.d-yesil{background:#2B8A3E}
+  .fdots em.off{opacity:.3}
+  .fdots .wk{font-style:normal;font-size:11px;font-weight:800;line-height:1}
+  .wk.y{color:var(--ok)}
+  .wk.n{color:var(--warn)}
+  .fwd.sel{box-shadow:inset 0 0 0 2px #111318}
+  .fwd.today>span:first-child{color:var(--ink);text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1.5px}
+  .fwd.moved{outline:1.5px dashed var(--fs);outline-offset:-3px}
+  .fwd.miss b{text-decoration:line-through}
+  @media (max-width:360px){.fwd b{font-size:10.5px}.ft b{font-size:18px}.ft.sm b{font-size:16px}}
+  .ftally{display:flex;flex-direction:column;gap:6px}
+  .ftally>div{display:flex;flex-wrap:wrap;gap:6px 14px}
+  .ftg{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ink-2)}
+  .ftok{display:inline-flex;gap:3px}
+  .ftok i{width:10px;height:10px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--fs);opacity:.5}
+  .ftok i.on{background:var(--fs);box-shadow:none;opacity:1}
   .nsum{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:12px}
   .nsum table{width:100%;border-collapse:collapse;font-size:13px}
   .nsum th{text-align:left;font-size:11.5px;font-weight:600;color:var(--ink-3);padding:4px 0}
@@ -1589,11 +1614,11 @@
     balik:   {label:"Balık", q:"balık", amount:"~200 g", what:"somon, uskumru, palamut, hamsi, sardalya", target:2, pri:1},
     et:      {label:"Kırmızı et", q:"kırmızı et", amount:"~200 g", what:"köfte, kuşbaşı, ızgara", target:2, pri:2},
     ciger:   {label:"Ciğer", q:"ciğer", amount:"100–150 g", what:"dana, kuzu ya da tavuk", target:1, pri:3},
-    baklagil:{label:"Baklagil", q:"baklagil", amount:"3–4 yk humus ya da ½ kase", what:"nohut, mercimek", target:3},
+    baklagil:{label:"Baklagil", q:"baklagil", amount:"humus ya da ½ kase", what:"nohut, mercimek", target:3},
     yesil:   {label:"Yeşil", q:"yeşil yapraklı", amount:"bir avuç", what:"roka, ıspanak, maydanoz, marul", target:5}
   };
   const N_MAIN = ["balik","et","ciger"], N_SMALL = ["baklagil","yesil"];
-  const N_DAILY = [["zeytin","Zeytinyağı","1 tatlı kaşığı"],["kuruyemis","Kuruyemiş","15 g"],["meyve","C meyvesi","mandalina, portakal, kivi"]];
+  const N_DAILY = [["zeytin","Zeytinyağı","1 tk"],["kuruyemis","Kuruyemiş","15 g"],["meyve","C meyvesi","1 adet"]];
   // the default week, by JS weekday (0 = Sunday); a plan document overrides any day
   const N_TEMPLATE = {1:{main:"et", small:["baklagil","yesil"]}, 2:{small:["yesil"]}, 3:{main:"balik", small:["baklagil","yesil"]},
     4:{main:"et", small:["yesil"]}, 5:{small:["baklagil","yesil"]}, 6:{main:"ciger", small:["yesil"]}, 0:{main:"balik", small:[], home:true}};
@@ -1715,11 +1740,17 @@
   }
 
   const nDayName = ds => ds===TODAY ? "bugün" : ds===addDays(TODAY,1) ? "yarın" : DOW[parse(ds).getDay()].toLocaleLowerCase("tr-TR");
-  function nAnsBtns(ds, kind, t, val){
-    if (ds > TODAY) return "";
-    const b = (v, txt) => `<button class="nab${val===v ? " on " + (v ? "y" : "n") : ""}" data-nans="${ds}|${kind}|${t}|${v}" aria-pressed="${val===v}">${txt}</button>`;
-    return `<span class="nans">${b(true, kind==="box" ? "Evet" : "Yedim")}${b(false, kind==="box" ? "Hayır" : "Kaçtı")}</span>`;
-  }
+  const svg24 = p => `<svg viewBox="0 0 24 24" aria-hidden="true">${p}</svg>`;
+  const FI = {
+    kutu: svg24('<path d="M4 9.5h16v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5z"/><path d="M3 9.5h18M8.5 6.5h7"/>'),
+    et: svg24('<path d="M6.2 7.2c2.6-3 8-3.4 11.4-.6 3 2.5 2.9 7-.4 9.3-2.6 1.8-5.4 1-7.4 2.4s-4.2 2.6-5.4.4C3 16 3.8 10 6.2 7.2z"/><circle cx="14.2" cy="10.4" r="1.9"/>'),
+    balik: svg24('<path d="M2.8 12c3-4.4 9-5.8 13.8-1.6L21 7.5v9l-4.4-2.9C11.8 17.8 5.8 16.4 2.8 12z"/><circle cx="8.3" cy="11.2" r=".9" fill="currentColor" stroke="none"/>'),
+    ciger: svg24('<path d="M3.8 10.2C3.8 7 7 5 11 5c5.2 0 9.2 2.2 9.2 5.8 0 4.6-5.2 8.7-9.4 8.7-2.9 0-2-2.7-4-4.4C5 13.6 3.8 12.6 3.8 10.2z"/>'),
+    baklagil: svg24('<ellipse cx="9" cy="9.5" rx="4.6" ry="3.3" transform="rotate(-28 9 9.5)"/><ellipse cx="15.2" cy="15" rx="4.6" ry="3.3" transform="rotate(-28 15.2 15)"/>'),
+    yesil: svg24('<path d="M5 19.5C5 11 10 6 19 4.5c0 9-5 15-14 15z"/><path d="M5 19.5c3-4.2 6.3-7.3 10-9.5"/>'),
+    ev: svg24('<path d="M4 11l8-6.5 8 6.5v8.5H4z"/><path d="M10 19.5v-5h4v5"/>')
+  };
+  const XI = `<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg>`;
 
   function renderNutrition(){
     renderSupp();
@@ -1741,56 +1772,63 @@
     if (cur < first){ box.innerHTML = `<div class="chd"><span class="lbl">Beslenme</span></div><span class="mempty">Beslenme takibi ${esc(shortDate(first))} haftasında başladı.</span>`; return; }
     // ---- the selected day
     const W = nSim(nMon(cur)), d = W.days.find(x => x.ds===cur), P = W.P, T = P.targets;
-    const rel = cur===TODAY ? "bugün" : nDayName(cur);
-    const right = d.hasBoxes && (d.stock.fridge + d.stock.freezer > 0) ? `Kutu: dolap ${d.stock.fridge} · buzluk ${d.stock.freezer}` : "";
-    const row = (k, main, sub, extra, cls) => `<div class="nr${cls ? " " + cls : ""}"><span class="nk">${k}</span><div class="nv"><b>${main}</b>${sub ? `<small>${sub}</small>` : ""}</div>${extra||""}</div>`;
-    let rows = row("Kahvaltı", "3 yumurta + 1 muz", "");
-    const boxTxt = i => d.slots[i]!==undefined ? `Kutu${d.slots[i] ? ` <em>${d.slots[i]}</em>` : ""}` : d.hasBoxes ? "Öğün <em>kutu kalmadı</em>" : "Öğün";
-    const mainRow = () => {
-      const t = d.pick.t, n = NT[t], st = d.ate===true ? " ok" : d.ate===false ? " miss" : "";
-      const sub = `${n.amount} · ${n.what}${d.home ? "" : " · kutunun yerine"}${d.pick.from==="moved" ? " · kaydırıldı" : ""}`;
-      let extra = nAnsBtns(cur, "main", t, d.ate);
-      let h = row("Öğün 2", esc(n.label), esc(sub), extra, "main" + st);
-      if (d.ate===false && d.hasBoxes && cur <= TODAY) h += row("", "Yerine kutu yedin mi?", d.box===true ? "kutu sayacından düşüldü" : "", nAnsBtns(cur, "box", t, d.box == null ? null : d.box), "sub");
-      return h;
+    const rel = cur===TODAY ? "bugün" : nDayName(cur), canAns = cur <= TODAY;
+    const stock = d.hasBoxes && (d.stock.fridge + d.stock.freezer > 0)
+      ? `<span class="fstock">${FI.kutu}<span>dolap <b>${d.stock.fridge}</b></span><span>buzluk <b>${d.stock.freezer}</b></span></span>` : "";
+    // eaten? two round buttons; once answered, one pill (tap it to undo)
+    const yn = (kind, t, val) => {
+      if (!canAns) return "";
+      const L = NT[t].label;
+      if (val === true) return `<button class="fst y" data-nans="${cur}|${kind}|${t}|true" aria-pressed="true" aria-label="${L} yendi, geri al">${ico("check")}yendi</button>`;
+      if (val === false) return `<button class="fst n" data-nans="${cur}|${kind}|${t}|false" aria-pressed="true" aria-label="${L} kaçtı, geri al">${XI}kaçtı</button>`;
+      return `<span class="fyn"><button class="fb y" data-nans="${cur}|${kind}|${t}|true" aria-label="${L}: yedim">${ico("check")}</button><button class="fb n" data-nans="${cur}|${kind}|${t}|false" aria-label="${L}: kaçtı">${XI}</button></span>`;
     };
-    if (d.home){
-      rows += row("Öğün 1", "Ev yemeği", "");
-      rows += d.pick ? mainRow() : row("Öğün 2", "Serbest", "");
-    } else {
-      rows += row("Öğün 1", boxTxt(0), "");
-      rows += d.pick ? mainRow() : row("Öğün 2", boxTxt(1), "");
+    const tile = (type, slot, title, sub, o = {}) => `<div class="ft f-${type}${o.cls ? " " + o.cls : ""}">
+      <div class="fth"><span class="fic">${FI[type] || FI.kutu}</span>${slot ? `<span class="fslot">${slot}</span>` : ""}</div>
+      <b>${title}</b>${sub || o.flag ? `<small>${sub}${sub && o.flag ? " " : ""}${o.flag ? `<span class="fmv">${o.flag}</span>` : ""}</small>` : ""}${o.act ? `<div class="fta">${o.act}</div>` : ""}</div>`;
+    const SRC = {"dolap":"dolaptan", "dolap, son":"dolaptan · son kutu", "buzluktan":"buzluktan", "":""};
+    const boxTile = (i, slot) => d.slots[i]!==undefined ? tile("kutu", slot, "Kutu", SRC[d.slots[i]] ?? "")
+      : tile("kutu", slot, "Öğün", d.hasBoxes ? "kutu kalmadı" : "", {cls:"dim"});
+    const st = v => v===true ? "done" : v===false ? "miss" : "";
+    let meals;
+    if (d.home) meals = tile("ev", "Öğün 1", "Ev yemeği", "");
+    else meals = boxTile(0, "Öğün 1");
+    if (d.pick){ const n = NT[d.pick.t];
+      meals += tile(d.pick.t, "Öğün 2", n.label, n.amount, {cls: st(d.ate), act: yn("main", d.pick.t, d.ate), flag: d.pick.from==="moved" ? "↻ kaydı" : ""}); }
+    else meals += d.home ? tile("ev", "Öğün 2", "Serbest", "") : boxTile(1, "Öğün 2");
+    let boxQ = "";
+    if (d.pick && d.ate===false && d.hasBoxes && canAns){
+      const b = d.box == null ? null : d.box, pill = (v, txt) => `<button class="fpill${b===v ? " on" : ""}" data-nans="${cur}|box|${d.pick.t}|${v}" aria-pressed="${b===v}">${txt}</button>`;
+      boxQ = `<div class="fbox"><span>${esc(NT[d.pick.t].label)} yerine kutu yedin mi?</span><span class="fpills">${pill(true, "Evet")}${pill(false, "Hayır")}</span></div>`;
     }
-    d.smalls.forEach(s => { const n = NT[s.t];
-      rows += row("Ek", esc(n.label), esc(`${n.amount} · ${n.what}${s.from==="moved" ? " · dünden kaydı" : ""}`), nAnsBtns(cur, "small", s.t, s.ate), s.ate===true ? "ok" : s.ate===false ? "miss" : ""); });
-    const ironMeal = (d.pick && d.pick.t!=="balik") || d.smalls.some(s => s.t==="baklagil");
-    rows += row("Ara öğün", "200 g yoğurt", ironMeal ? `${d.pick && d.pick.t!=="balik" ? NT[d.pick.t].label.toLocaleLowerCase("tr-TR") : "baklagil"} öğününden ~1 saat ayrı ye` : "");
+    const sides = d.smalls.map(s => tile(s.t, "", NT[s.t].label, NT[s.t].amount, {cls: "sm " + st(s.ate), act: yn("small", s.t, s.ate), flag: s.from==="moved" ? "↻ dünden" : ""})).join("");
+    const FROM = {et:"etten", ciger:"ciğerden", baklagil:"baklagilden"};
+    const iron = d.pick && FROM[d.pick.t] ? FROM[d.pick.t] : d.smalls.some(s => s.t==="baklagil") ? FROM.baklagil : "";
+    const fixed = `<div class="ffix"><span><b>Kahvaltı</b>3 yumurta + muz</span><span><b>Ara öğün</b>200 g yoğurt${iron ? ` <em>(${iron} 1 saat ayrı)</em>` : ""}</span></div>`;
+    const checks = canAns ? `<div class="fcks">${N_DAILY.map(([k, lab, amt]) => { const on = !!d.daily[k];
+      return `<button class="fck${on ? " on" : ""}" data-nans="${cur}|daily|${k}|${!on}" aria-pressed="${on}"><i>${on ? ico("check") : ""}</i>${lab}<small>${amt}</small></button>`; }).join("")}</div>` : "";
 
-    // daily checks
-    const checks = N_DAILY.map(([k, lab, sub]) => {
-      const on = !!d.daily[k], dis = cur > TODAY;
-      return `<button class="nck${on ? " on" : ""}" data-nans="${cur}|daily|${k}|${!on}" aria-pressed="${on}"${dis ? " disabled" : ""}><i>${on ? ico("check") : ""}</i><span><b>${lab}</b><small>${sub}</small></span></button>`; }).join("");
-
-    // week strip: the main add of each day, as replanned
+    // the week: each day colored by its main add, side adds as dots
     const strip = W.days.map(x => {
-      const lab = x.pick ? (x.pick.t==="et" ? "Et" : NT[x.pick.t].label) : x.home ? "Ev" : "Kutu";
-      const st = x.ate===true ? "ok" : x.ate===false ? "miss" : "";
-      const cls = ["nwd", st, x.ds===cur ? "sel" : "", x.ds===TODAY ? "today" : "", x.pick ? "has" : "", x.pick && x.pick.from==="moved" ? "moved" : ""].filter(Boolean).join(" ");
-      return `<button class="${cls}" data-ndate="${x.ds}" aria-label="${esc(`${DOW[parse(x.ds).getDay()]}: ${x.pick ? NT[x.pick.t].label : "ana ek yok"}${x.ate===true ? ", yendi" : x.ate===false ? ", kaçtı" : ""}`)}"><span>${DOW_S[parse(x.ds).getDay()]}</span><b>${lab}</b><i>${st==="ok" ? "✓" : st==="miss" ? "✕" : x.smalls.length ? "+" + x.smalls.length : ""}</i></button>`; }).join("");
-
-    // weekly progress (answered "yes" only)
-    const prog = Object.keys(NT).map(k => { const y = W.yes[k], t = T[k];
-      return `<div class="npg${y >= t ? " full" : ""}"><span>${NT[k].label}</span><b class="num">${y}<em>/${t}</em></b><div class="nbar"><i style="width:${t ? Math.min(100, y/t*100).toFixed(0) : 0}%"></i></div></div>`; }).join("");
+      const ty = x.pick ? x.pick.t : x.home ? "ev" : "kutu", lab = x.pick ? (x.pick.t==="et" ? "Et" : NT[x.pick.t].label) : x.home ? "Ev" : "Kutu";
+      const mark = x.ate===true ? `<i class="wk y">✓</i>` : x.ate===false ? `<i class="wk n">✕</i>` : "";
+      const dots = x.smalls.map(s => `<em class="d-${s.t}${s.ate===false ? " off" : ""}"></em>`).join("");
+      const cls = ["fwd", "f-" + ty, x.ds===cur ? "sel" : "", x.ds===TODAY ? "today" : "", x.pick && x.pick.from==="moved" ? "moved" : "", x.ate===false ? "miss" : ""].filter(Boolean).join(" ");
+      const say = `${DOW[parse(x.ds).getDay()]}: ${x.pick ? NT[x.pick.t].label : x.home ? "ev yemeği" : "iki kutu"}${x.ate===true ? ", yendi" : x.ate===false ? ", kaçtı" : ""}${x.smalls.length ? ", yanına " + x.smalls.map(s => NT[s.t].label.toLocaleLowerCase("tr-TR")).join(" ve ") : ""}`;
+      return `<button class="${cls}" data-ndate="${x.ds}" aria-label="${esc(say)}"><span>${DOW_S[parse(x.ds).getDay()]}</span><b>${lab}</b><span class="fdots">${dots}${mark}</span></button>`; }).join("");
+    const tally = keys => keys.map(k => { const y = W.yes[k], t = T[k]; let tok = "";
+      for (let i=0; i < Math.max(t, y); i++) tok += `<i class="${i < y ? "on" : ""}"></i>`;
+      return `<span class="ftg f-${k}" aria-label="${NT[k].label} ${y}/${t}"><span>${NT[k].label}</span><span class="ftok" aria-hidden="true">${tok}</span></span>`; }).join("");
 
     // notes: tonight's thaw, moved items, liver that no longer fits
     const notes = [];
-    if (cur===TODAY && d.thaw > 0 && nHour() >= 17) notes.push(`<div class="nnote thaw">${ico("bolt")}<span><b>Akşam:</b> yarın için buzluktan ${d.thaw} kutu indir.</span></div>`);
-    else if (cur===TODAY && d.thaw > 0) notes.push(`<div class="nnote">${ico("note")}<span>Bu akşam: yarın için buzluktan ${d.thaw} kutu indireceksin.</span></div>`);
+    if (cur===TODAY && d.thaw > 0 && nHour() >= 17) notes.push(`<div class="fnote thaw">${ico("bolt")}<span><b>Bu akşam:</b> yarın için buzluktan ${d.thaw} kutu indir.</span></div>`);
+    else if (cur===TODAY && d.thaw > 0) notes.push(`<div class="fnote">${ico("note")}<span>Akşam buzluktan ${d.thaw} kutu indireceksin.</span></div>`);
     if (d.displaced){
       const to = W.days.find(x => x.ds > cur && x.pick && x.pick.t===d.displaced && x.pick.from==="moved");
-      notes.push(`<div class="nnote">${ico("r")}<span>Plan değişti: ${esc(NT[d.displaced].label.toLocaleLowerCase("tr-TR"))} ${to ? `${esc(DOW[parse(to.ds).getDay()])} gününe kaydı` : "bu hafta sığmadı"}.</span></div>`);
+      notes.push(`<div class="fnote">${ico("r")}<span>${esc(NT[d.displaced].label)} ${to ? `${cur===TODAY ? "bugünden" : "bu günden"} ${esc(DOW[parse(to.ds).getDay()])} gününe kaydı` : "bu hafta sığmadı"}.</span></div>`);
     }
-    if (W.cigerNoRoom && cur <= addDays(nMon(cur),6)) notes.push(`<div class="nnote">${ico("note")}<span>Ciğer bu hafta sığmıyor. Boş bir öğün bulursan yerine kırmızı et ye.</span></div>`);
+    if (W.cigerNoRoom) notes.push(`<div class="fnote">${ico("note")}<span>Ciğer bu hafta sığmıyor. Boş bir öğün bulursan yerine kırmızı et ye.</span></div>`);
     const sunday = addDays(nMon(cur), 6);
     let summary = "";
     if (cur===sunday && (cur < TODAY || (cur===TODAY && nHour() >= 18))){
@@ -1801,12 +1839,16 @@
         ${unans ? `<small>${unans} öğe cevapsız kaldı; cevaplamak için güne dokun.</small>` : `<small>Kaçanlar yeni haftaya devretmez.</small>`}</div>`;
     }
 
-    box.innerHTML = `<div class="chd"><span class="lbl">Beslenme · ${esc(rel)}</span><span class="lr">${esc(right)}</span></div>
-      <div class="nrows">${rows}</div>
-      ${cur <= TODAY ? `<div class="ncks">${checks}</div>` : ""}
+    box.innerHTML = `<div class="chd"><span class="lbl">Beslenme · ${esc(rel)}</span>${stock}</div>
+      <div class="fgrid">${meals}</div>
+      ${boxQ}
+      ${sides ? `<span class="fsec">Yanına</span><div class="fgrid">${sides}</div>` : ""}
+      ${fixed}
+      ${checks}
       ${notes.join("")}
-      <div class="nweek">${strip}</div>
-      <div class="nprog">${prog}</div>
+      <span class="fsec">Bu hafta</span>
+      <div class="fweek">${strip}</div>
+      <div class="ftally"><div>${tally(N_MAIN)}</div><div>${tally(N_SMALL)}</div></div>
       ${summary}`;
   }
   // the evening question and the thaw note depend on the clock
